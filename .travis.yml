@@ -1,0 +1,10 @@
+language: java
+
+script:
+  - mvn clean test
+  - mvn install
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: "YOUR ENCRYPTED API KEY"
