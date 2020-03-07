@@ -6,5 +6,5 @@ script:
 
 deploy:
   provider: heroku
-  api_key:
-    secure: "YOUR ENCRYPTED API KEY"
+  app: heig-pro-b04
+  api_key: $HEROKU_TOKEN
