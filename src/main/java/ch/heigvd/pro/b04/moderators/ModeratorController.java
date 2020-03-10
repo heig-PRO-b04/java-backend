@@ -8,21 +8,24 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class ModeratorController {
+public class ModeratorController
+{
+    private ModeratorRepository repository;
 
-  private ModeratorRepository repository;
+    public ModeratorController(ModeratorRepository repository)
+    {
+        this.repository = repository;
+    }
 
-  public ModeratorController(ModeratorRepository repository) {
-    this.repository = repository;
-  }
+    @RequestMapping(value = "/moderator", method = RequestMethod.GET)
+    List<Moderator> all()
+    {
+        return repository.findAll();
+    }
 
-  @RequestMapping(value = "/moderator", method = RequestMethod.GET)
-  List<Moderator> all() {
-    return repository.findAll();
-  }
-
-  @RequestMapping(value = "/moderator/{id}", method = RequestMethod.GET)
-  Moderator byId(@PathVariable Long id) {
-    return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found."));
-  }
+    @RequestMapping(value = "/moderator/{id}", method = RequestMethod.GET)
+    Moderator byId(@PathVariable Long id)
+    {
+        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found."));
+    }
 }

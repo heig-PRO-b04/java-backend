@@ -7,14 +7,17 @@ import java.io.Serializable;
 
 @Data
 @Embeddable
-public class PollIdentifier implements Serializable {
-  private Long idModerator;
-  private Long idPoll;
+public class PollIdentifier implements Serializable
+{
+    private Long idModerator;
+    private Long idPoll;
 
-  public PollIdentifier() {}
+    public PollIdentifier()
+    {}
 
-  public PollIdentifier(Long moderator, Long poll) {
-    this.idModerator = moderator;
-    this.idPoll = poll;
-  }
+    public PollIdentifier(Long moderator, Long poll)
+    {
+        this.idModerator = moderator;
+        this.idPoll = poll;
+    }
 }
