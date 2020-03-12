@@ -1,7 +1,7 @@
-package ch.heigvd.pro.b04.question;
+package ch.heigvd.pro.b04.questions;
 
 import lombok.Data;
-import java.utils.*;
+import java.util.*;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
@@ -9,6 +9,6 @@ import javax.persistence.Entity;
 @Entity //but not Tina Turner
 public class Question
 {
-    @EmbeddedId private  QuestionIdentifier id;
+   // @EmbeddedId private  QuestionIdentifier id;
     private String title;
 }
