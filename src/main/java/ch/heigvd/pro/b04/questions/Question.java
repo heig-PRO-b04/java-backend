@@ -9,6 +9,6 @@ import javax.persistence.Entity;
 @Entity //but not Tina Turner
 public class Question
 {
-   // @EmbeddedId private  QuestionIdentifier id;
+    @EmbeddedId private  QuestionIdentifier idQuestion;
     private String title;
 }

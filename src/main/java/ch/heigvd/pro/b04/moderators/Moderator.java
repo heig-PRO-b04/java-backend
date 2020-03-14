@@ -8,16 +8,17 @@ import javax.persistence.Id;
 
 @Data
 @Entity
-public class Moderator {
+public class Moderator
+{
 
-  @GeneratedValue @Id private Long id;
-  private String name;
-  private String secret;
+    @GeneratedValue @Id private Long id;
+    private String secret;
 
-  public Moderator() {}
+    public Moderator()
+    {}
 
-  public Moderator(String name, String secret) {
-    this.name = name;
-    this.secret = secret;
-  }
+    public Moderator(String secret)
+    {
+        this.secret = secret;
+    }
 }
