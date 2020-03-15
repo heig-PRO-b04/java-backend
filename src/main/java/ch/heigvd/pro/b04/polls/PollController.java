@@ -22,9 +22,10 @@ public class PollController {
   }
 
   @RequestMapping(value = "/poll/{idModerator}/{idPoll}", method = RequestMethod.GET)
-  public Poll byId(@PathVariable("idModerator") Long moderator, @PathVariable("idPoll") Long poll) {
+  public Poll byId(@PathVariable("idModerator") Long moderator)//, @PathVariable("idPoll") Long poll)
+  {
     return repository
-        .findById(new PollIdentifier(moderator, poll))
+        .findById(new PollIdentifier(moderator))//, poll))
         .orElseThrow(IllegalArgumentException::new);
   }
 }
