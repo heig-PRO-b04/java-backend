@@ -10,14 +10,13 @@ import javax.persistence.Id;
 @Entity
 public class Moderator {
 
-  @GeneratedValue @Id private Long id;
-  private String name;
+  @GeneratedValue @Id private String idModerator;
   private String secret;
 
   public Moderator() {}
 
   public Moderator(String name, String secret) {
-    this.name = name;
+    this.idModerator = name;
     this.secret = secret;
   }
 }

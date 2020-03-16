@@ -8,12 +8,15 @@ import javax.persistence.Entity;
 @Data
 @Entity
 public class Poll {
-  @EmbeddedId private PollIdentifier id;
-  private String title;
+    @EmbeddedId
+    private PollIdentifier idPoll;
+    private String title;
 
-  public Poll() {}
+    public Poll() {
+    }
 
-  public Poll(String title) {
-    this.title = title;
-  }
+    public Poll(String idxModerator, String title) {
+        this.title = title;
+        this.idPoll=new PollIdentifier(idxModerator);
+    }
 }
