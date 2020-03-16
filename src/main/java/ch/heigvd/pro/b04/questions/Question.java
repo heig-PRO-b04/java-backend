@@ -12,11 +12,27 @@ import javax.persistence.*;
 @Entity
 public class Question {
     @EmbeddedId private QuestionIdentifier idQuestion;
+    private short indexInPoll;
+    private String title, details;
+    private boolean visibility;
+    private short answersMin, answersMax;
 
     public Question(){}
 
-    public Question(PollIdentifier idxPoll)
+    public Question(PollIdentifier idxPoll,
+                    short index,
+                    String title,
+                    String details,
+                    boolean visible,
+                    short min,
+                    short max)
     {
         this.idQuestion=new QuestionIdentifier(idxPoll);
+        this.indexInPoll=index;
+        this.title=title;
+        this.details=details;
+        visibility=visible;
+        this.answersMax=max;
+        this.answersMin=min;
     }
 }
