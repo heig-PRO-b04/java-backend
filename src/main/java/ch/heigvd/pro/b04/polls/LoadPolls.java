@@ -11,7 +11,7 @@ public class LoadPolls {
     @Bean
     CommandLineRunner configurePolls(PollRepository repo) {
         return args -> {
-            repo.save(new Poll("david", "Darth Talon"));
+            repo.save(new Poll("david", "What do you know about Darth Talon ?"));
         };
     }
 }
