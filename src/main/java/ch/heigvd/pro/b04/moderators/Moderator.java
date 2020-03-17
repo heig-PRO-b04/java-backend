@@ -6,9 +6,9 @@ import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
+@Data
 @Entity
-@Table(name="Moderator")
+//@Table(name="Moderator")
 public class Moderator {
 
   @Id private String idModerator;
