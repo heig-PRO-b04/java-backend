@@ -1,5 +1,6 @@
 package ch.heigvd.pro.b04.moderators;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,6 +11,7 @@ import java.util.List;
 @RestController
 public class ModeratorController {
 
+  @Autowired
   private ModeratorRepository repository;
 
   public ModeratorController(ModeratorRepository repository) {

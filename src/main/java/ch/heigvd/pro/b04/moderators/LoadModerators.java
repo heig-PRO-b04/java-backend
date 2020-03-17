@@ -15,7 +15,6 @@ public class LoadModerators {
             repository.save(new Moderator("david", "33"));
             repository.save(new Moderator("guy-laurent", "44"));
             repository.save(new Moderator("matthieu", "55"));
-
         };
     }
 }
