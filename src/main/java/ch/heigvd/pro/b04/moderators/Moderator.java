@@ -1,16 +1,17 @@
 package ch.heigvd.pro.b04.moderators;
 
+import javax.persistence.Table;
 import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Data
 @Entity
+@Table(name="Moderator")
 public class Moderator {
 
-  @GeneratedValue @Id private String idModerator;
+  @Id private String idModerator;
   private String secret;
 
   public Moderator() {}

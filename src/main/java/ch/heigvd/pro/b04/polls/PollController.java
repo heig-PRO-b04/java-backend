@@ -1,5 +1,6 @@
 package ch.heigvd.pro.b04.polls;
 
+import ch.heigvd.pro.b04.moderators.Moderator;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
