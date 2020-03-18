@@ -1,24 +1,32 @@
 package ch.heigvd.pro.b04.polls;
 
 import ch.heigvd.pro.b04.moderators.*;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import lombok.Data;
 
 import javax.persistence.Embeddable;
 import javax.persistence.GeneratedValue;
 import java.io.Serializable;
+import org.springframework.lang.NonNull;
 
 @Data
 @Embeddable
 public class PollIdentifier implements Serializable {
-  private String idxModerator;
-  //@GeneratedValue
-  private Long idPoll;
 
-  public PollIdentifier() {}
+    private String idxModerator;
+    @GeneratedValue @NonNull private Long idPoll;
 
-  public PollIdentifier(String moderatorName) {
-      this.idxModerator = moderatorName;
-      idPoll=new Long(1);
-  }
+    public PollIdentifier() {}
+
+    je fais de la merde
+
+    public PollIdentifier(String moderatorName) {
+        this.idxModerator = moderatorName;
+    }
+
+//    public void setModerator(String idxModerator)
+//    {
+//      this.idxModerator=idxModerator;
+    //}
 }

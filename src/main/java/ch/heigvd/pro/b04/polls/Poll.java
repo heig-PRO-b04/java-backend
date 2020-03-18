@@ -17,6 +17,7 @@ public class Poll {
 
     public Poll(String idxModerator, String title) {
         this.title = title;
-        this.idPoll=new PollIdentifier(idxModerator);
+        this.idPoll=new PollIdentifier();
+        this.idPoll.setIdxModerator(idxModerator);
     }
 }
