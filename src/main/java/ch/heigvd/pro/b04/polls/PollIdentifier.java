@@ -19,8 +19,6 @@ public class PollIdentifier implements Serializable {
 
     public PollIdentifier() {}
 
-    je fais de la merde
-
     public PollIdentifier(String moderatorName) {
         this.idxModerator = moderatorName;
     }
