@@ -2,6 +2,7 @@ package ch.heigvd.pro.b04.questions;
 
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 public class QuestionController {
+
+    @Autowired
     private QuestionRepository repository;
 
     public QuestionController(QuestionRepository repo) {repository=repo;}

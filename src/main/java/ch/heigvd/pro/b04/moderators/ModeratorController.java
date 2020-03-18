@@ -24,7 +24,7 @@ public class ModeratorController {
   }
 
   @RequestMapping(value = "/moderator/{id}", method = RequestMethod.GET)
-  Moderator byId(@PathVariable String id) {
+  public Moderator byId(@PathVariable String id) {
     return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found."));
   }
 }

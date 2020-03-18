@@ -11,13 +11,19 @@ import javax.persistence.Id;
 //@Table(name="moderator")
 public class Moderator {
 
-  @Id private String idModerator;
-  private String secret;
+    @Id private String idModerator;
+    private String secret;
 
-  public Moderator() {}
+    public Moderator() {
+    }
 
-  public Moderator(String name, String secret) {
-    this.idModerator = name;
-    this.secret = secret;
-  }
+    public Moderator(String name, String secret) {
+        this.idModerator = name;
+        this.secret = secret;
+    }
+
+    public String getIdModerator()
+    {
+        return idModerator;
+    }
 }
