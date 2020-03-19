@@ -14,16 +14,16 @@ import org.springframework.data.domain.Sort;
 @Configuration
 public class LoadPolls {
 
-    @Bean
-    CommandLineRunner configurePolls(PollRepository repo, ModeratorRepository repoMod) {
-//        final Moderator test=repoMod.findByIdModerator("david");
-//        if(test==null)
-//        {
-//            throw new RuntimeException("Moderator not found");
-//        }
-
-        return args -> {
-            repo.save(new Poll(/*test.getIdModerator(),*/ "What do you know about Darth Talon ?"));
-        };
-    }
+//    @Bean
+//    CommandLineRunner configurePolls(PollRepository repo, ModeratorRepository repoMod) {
+////        final Moderator test=repoMod.findByIdModerator("david");
+////        if(test==null)
+////        {
+////            throw new RuntimeException("Moderator not found");
+////        }
+//
+//        return args -> {
+//            repo.save(new Poll(/*test.getIdModerator(),*/ "What do you know about Darth Talon ?"));
+//        };
+//    }
 }

@@ -3,6 +3,7 @@ package ch.heigvd.pro.b04.polls;
 import ch.heigvd.pro.b04.moderators.*;
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.Data;
 
@@ -11,26 +12,20 @@ import javax.persistence.GeneratedValue;
 import java.io.Serializable;
 import org.springframework.lang.NonNull;
 
-//@Data
-//@Embeddable
+@Data
+@Embeddable
 public class PollIdentifier implements Serializable {
 
-    //@Column
-    @GeneratedValue
+    @Column
     private Long idPoll;
 
-    //@Column
-    private String idxModerator;
+    @ManyToOne
+    @JoinColumn
+    private Moderator idxModerator;
 
     public PollIdentifier() {}
 
-    public PollIdentifier(String moderatorName) {
-        this.idxModerator = "david";
-        //idPoll=new Long(1);
+    public PollIdentifier(long id) {
+        idPoll=new Long(id);
     }
-
-//    public void setModerator(String idxModerator)
-//    {
-//      this.idxModerator=idxModerator;
-    //}
 }

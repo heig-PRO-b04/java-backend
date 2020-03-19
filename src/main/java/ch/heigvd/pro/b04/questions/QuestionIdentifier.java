@@ -10,13 +10,16 @@ import java.io.Serializable;
 @Data
 @Embeddable
 public class QuestionIdentifier implements Serializable {
-    @GeneratedValue private long idQuestion;
-    private PollIdentifier idxPoll;
+    @Column
+    private long idQuestion;
+
+    @ManyToOne @JoinColumn
+    private Poll idxPoll;
 
     public QuestionIdentifier(){}
 
-    public QuestionIdentifier(PollIdentifier idxPoll)
+    public QuestionIdentifier(long id)
     {
-        this.idxPoll=idxPoll;
+        this.idQuestion=id;
     }
 }

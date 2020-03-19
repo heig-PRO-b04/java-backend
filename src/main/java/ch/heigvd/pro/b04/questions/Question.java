@@ -12,12 +12,7 @@ import javax.persistence.*;
 @Data
 @Entity
 public class Question {
-    //@EmbeddedId private QuestionIdentifier idQuestion;
-    @Id //@GeneratedValue
-    private Long idQuestion;
-
-    @ManyToOne
-    private Poll idxPoll;
+    @EmbeddedId private QuestionIdentifier idQuestion;
 
     private short indexInPoll;
     private String title, details;
@@ -26,7 +21,7 @@ public class Question {
 
     public Question(){}
 
-    public Question(PollIdentifier idxPoll,
+    public Question(long id,
                     short index,
                     String title,
                     String details,
@@ -34,7 +29,7 @@ public class Question {
                     short min,
                     short max)
     {
-        //this.idQuestion=new QuestionIdentifier(idxPoll);
+        this.idQuestion=new QuestionIdentifier(id);
         this.indexInPoll=index;
         this.title=title;
         this.details=details;

@@ -22,8 +22,8 @@ public class Moderator {
     @Id private String idModerator;
     private String secret;
 
-    /*@OneToMany(mappedBy = "idxModerator", cascade = CascadeType.ALL)
-    private Set<Poll> pollSet;*/
+    @OneToMany(mappedBy = "idPoll.idxModerator", cascade = CascadeType.ALL)
+    private Set<Poll> pollSet;
 
     public Moderator() {
     }
@@ -34,14 +34,12 @@ public class Moderator {
         this.secret = secret;
     }
 
-    /*public Moderator(String name, String secret, String titlePoll) {
-        this.idModerator = name;
-        this.secret = secret;
-        Poll newPoll=new Poll(titlePoll);
-        newPoll.setIdxModerator(this);
+    public Moderator(String name, String secret, String titlePoll) {
+        this(name, secret);
+        Poll newPoll=new Poll(1,titlePoll);
+        newPoll.getIdPoll().setIdxModerator(this);
         this.pollSet= Stream.of(newPoll).collect(Collectors.toSet());
-        //pollSet.add(newPoll);
-    }*/
+    }
 
     public String getIdModerator()
     {
