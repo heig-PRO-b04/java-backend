@@ -41,6 +41,12 @@ public class Moderator {
         this.pollSet= Stream.of(newPoll).collect(Collectors.toSet());
     }
 
+    public void addPoll(Poll newPoll)
+    {
+        newPoll.getIdPoll().setIdxModerator(this);
+        this.pollSet= Stream.of(newPoll).collect(Collectors.toSet());
+    }
+
     public String getIdModerator()
     {
         return idModerator;

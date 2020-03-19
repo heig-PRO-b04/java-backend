@@ -5,6 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import lombok.Data;
 
 import javax.persistence.Embeddable;
@@ -20,7 +21,7 @@ public class PollIdentifier implements Serializable {
     private Long idPoll;
 
     @ManyToOne
-    @JoinColumn
+    @PrimaryKeyJoinColumn//(name = "moderator")
     private Moderator idxModerator;
 
     public PollIdentifier() {}

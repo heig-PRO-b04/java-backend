@@ -10,10 +10,13 @@ import java.io.Serializable;
 @Data
 @Embeddable
 public class QuestionIdentifier implements Serializable {
+
     @Column
     private long idQuestion;
 
-    @ManyToOne @JoinColumn
+    @ManyToOne
+    //@JoinColumns({@JoinColumn(name= "idPoll"),@JoinColumn(name="idxModerator")})
+    @PrimaryKeyJoinColumn
     private Poll idxPoll;
 
     public QuestionIdentifier(){}
@@ -21,5 +24,10 @@ public class QuestionIdentifier implements Serializable {
     public QuestionIdentifier(long id)
     {
         this.idQuestion=id;
+    }
+
+    public Poll getIdxPoll()
+    {
+        return idxPoll;
     }
 }

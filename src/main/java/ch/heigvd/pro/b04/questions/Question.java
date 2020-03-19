@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.*;
 
-@Data
+//@Data
 @Entity
 public class Question {
     @EmbeddedId private QuestionIdentifier idQuestion;
@@ -36,5 +36,10 @@ public class Question {
         visibility=visible;
         this.answersMax=max;
         this.answersMin=min;
+    }
+
+    public QuestionIdentifier getIdQuestion()
+    {
+        return idQuestion;
     }
 }
