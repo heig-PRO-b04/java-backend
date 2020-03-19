@@ -15,12 +15,14 @@ import org.springframework.lang.NonNull;
 public class PollIdentifier implements Serializable {
 
     private String idxModerator;
-    @GeneratedValue @NonNull private Long idPoll;
+    //@GeneratedValue
+    @NonNull private Long idPoll;
 
     public PollIdentifier() {}
 
     public PollIdentifier(String moderatorName) {
         this.idxModerator = moderatorName;
+        this.idPoll=new Long(1);
     }
 
 //    public void setModerator(String idxModerator)
