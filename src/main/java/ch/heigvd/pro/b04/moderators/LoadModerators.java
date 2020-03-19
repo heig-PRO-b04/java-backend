@@ -13,15 +13,23 @@ public class LoadModerators {
     Moderator david=(new Moderator("david", "33"));//, "Your favorite Togruta or Twi\'lek ?"));
     Poll testPoll=new Poll(1,"Your favorite Togruta or Twi\'lek ?");
 
-    Question cantoByte=new Question(1, (short)1,
-        "Who would you rather spend with a candlelit dinner on Canto Byte ?", "",
+    Question question1=new Question(1, (short)1,
+        "Who would you rather spend a candlelit dinner with on Canto Byte ?", "",
+        true, (short)1, (short)1);
+    Question question2=new Question(2, (short)2,
+        "And who would you choose for a torrid night on the beaches of Scarif ?", "",
+        true, (short)1, (short)1);
+    Question question3=new Question(3, (short)3,
+        "And for endless dancing night on Coruscant ?", "",
         true, (short)1, (short)1);
 
     @Bean
     CommandLineRunner configureModerators(ModeratorRepository repository, PollRepository poooools, QuestionRepository qestrepo) {
 
         david.addPoll(testPoll);
-        testPoll.addQuestion(cantoByte);
+        testPoll.addQuestion(question1);
+        testPoll.addQuestion(question2);
+        testPoll.addQuestion(question3);
         return args -> {
             repository.save(david);
             //testPoll.addQuestion(cantoByte);

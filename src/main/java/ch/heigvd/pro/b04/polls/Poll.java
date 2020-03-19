@@ -43,7 +43,15 @@ public class Poll implements Serializable {
     public void addQuestion(Question newQuestion)
     {
         newQuestion.getIdQuestion().setIdxPoll(this);
-        pollQuestions= Stream.of(newQuestion).collect(Collectors.toSet());
+        if(pollQuestions==null)
+        {
+            pollQuestions= Stream.of(newQuestion).collect(Collectors.toSet());
+        }
+        else
+        {
+            pollQuestions.add(newQuestion);
+        }
+
         System.out.println("Wouf wouf");
     }
 }
