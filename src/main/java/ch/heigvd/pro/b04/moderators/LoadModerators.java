@@ -5,6 +5,9 @@ import ch.heigvd.pro.b04.polls.Poll;
 import ch.heigvd.pro.b04.polls.PollRepository;
 import ch.heigvd.pro.b04.questions.Question;
 import ch.heigvd.pro.b04.questions.QuestionRepository;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.var;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,10 +26,7 @@ public class LoadModerators {
     Question question3=new Question(3, (short)3,
         "And for endless dance night on Coruscant ?", "",
         true, (short)1, (short)1);
-    Answer answer1=new Answer(1, "Darth Talon", "");
-    Answer answer2=new Answer(2, "Shaak Ti", "");
-    Answer answer3=new Answer(3, "Aayla Secura", "");
-    Answer answer4=new Answer(4, "Ahsoka Tano", "");
+
     @Bean
     CommandLineRunner configureModerators(ModeratorRepository repository, PollRepository poooools, QuestionRepository qestrepo) {
 
@@ -34,10 +34,24 @@ public class LoadModerators {
         testPoll.addQuestion(question1);
         testPoll.addQuestion(question2);
         testPoll.addQuestion(question3);
-        question1.addAnswer(answer1);
-        question1.addAnswer(answer2);
-        question1.addAnswer(answer3);
-        question1.addAnswer(answer4);
+
+        //yes I'm tired and I drunk whisky
+        Answer[] aphra=createAnswers(0);
+        for(Answer a:aphra)
+        {
+            question1.addAnswer(a);
+        }
+        aphra=createAnswers(4);
+        for(Answer a:aphra)
+        {
+            question2.addAnswer(a);
+        }
+        aphra=createAnswers(8);
+        for(Answer a:aphra)
+        {
+            question3.addAnswer(a);
+        }
+
         return args -> {
             repository.save(david);
 //            repository.save(new Moderator("alexandre", "11"));
@@ -46,5 +60,16 @@ public class LoadModerators {
 //            repository.save(new Moderator("guy-laurent", "44"));
 //            repository.save(new Moderator("matthieu", "55"));
         };
+    }
+
+    private Answer[] createAnswers(int id)
+    {
+        Answer answer1=new Answer(id++, "Darth Talon", "");
+        Answer answer2=new Answer(id++, "Shaak Ti", "");
+        Answer answer3=new Answer(id++, "Aayla Secura", "");
+        Answer answer4=new Answer(id++, "Ahsoka Tano", "");
+
+        Answer[] aphra =new Answer[]{answer1, answer2, answer3, answer4};
+        return aphra;
     }
 }
