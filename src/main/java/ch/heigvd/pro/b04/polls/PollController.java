@@ -33,7 +33,7 @@ public class PollController {
     @RequestMapping(value = "/poll/{idModerator}/{idPoll}", method = RequestMethod.GET)
     public Poll byId(@PathVariable("idModerator") String moderator, @PathVariable("idPoll") Long poll) {
         PollIdentifier pollId=new PollIdentifier();
-        pollId.setIdxModerator(moderator);
+        //pollId.setIdxModerator(moderator);
 
         return repository
             .findById(pollId)

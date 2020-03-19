@@ -12,7 +12,7 @@ public class LoadModerators {
         return args -> {
             repository.save(new Moderator("alexandre", "11"));
             repository.save(new Moderator("clarisse", "21"));
-            repository.save(new Moderator("david", "33"));
+            repository.save(new Moderator("david", "33"));//, "Your favorites Togruta or Twi\'lek ?"));
             repository.save(new Moderator("guy-laurent", "44"));
             repository.save(new Moderator("matthieu", "55"));
         };

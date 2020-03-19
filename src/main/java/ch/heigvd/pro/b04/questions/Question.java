@@ -1,5 +1,6 @@
 package ch.heigvd.pro.b04.questions;
 
+import ch.heigvd.pro.b04.polls.Poll;
 import ch.heigvd.pro.b04.polls.PollIdentifier;
 import lombok.Data;
 
@@ -11,7 +12,13 @@ import javax.persistence.*;
 @Data
 @Entity
 public class Question {
-    @EmbeddedId private QuestionIdentifier idQuestion;
+    //@EmbeddedId private QuestionIdentifier idQuestion;
+    @Id //@GeneratedValue
+    private Long idQuestion;
+
+    @ManyToOne
+    private Poll idxPoll;
+
     private short indexInPoll;
     private String title, details;
     private boolean visibility;
@@ -27,7 +34,7 @@ public class Question {
                     short min,
                     short max)
     {
-        this.idQuestion=new QuestionIdentifier(idxPoll);
+        //this.idQuestion=new QuestionIdentifier(idxPoll);
         this.indexInPoll=index;
         this.title=title;
         this.details=details;
