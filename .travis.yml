@@ -11,3 +11,4 @@ deploy:
   api_key: $HEROKU_TOKEN
   on:
     branch: master
+    repo: heig-PRO-b04/java-backend
