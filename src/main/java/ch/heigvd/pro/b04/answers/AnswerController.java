@@ -1,28 +1,27 @@
-package ch.heigvd.pro.b04.questions;
+package ch.heigvd.pro.b04.answers;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
-
-public class QuestionController {
+public class AnswerController {
 
   @Autowired
-  private QuestionRepository repository;
+  private AnswerRepository repository;
 
-  public QuestionController(QuestionRepository repo) {
+  public AnswerController(AnswerRepository repo) {
     repository = repo;
   }
 
-  @RequestMapping(value = "/question", method = RequestMethod.GET)
-  List<Question> all() {
+  @RequestMapping(value = "/answer", method = RequestMethod.GET)
+  List<Answer> all() {
     return repository.findAll();
   }
 
-  @RequestMapping(value = "/question/{id}", method = RequestMethod.GET)
-  Question byId(@PathVariable QuestionIdentifier id) {
+  @RequestMapping(value = "/answer/{id}", method = RequestMethod.GET)
+  Answer byId(@PathVariable AnswerIdentifier id) {
     return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found."));
   }
 }

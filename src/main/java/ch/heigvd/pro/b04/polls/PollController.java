@@ -1,6 +1,6 @@
 package ch.heigvd.pro.b04.polls;
 
-
+import ch.heigvd.pro.b04.moderators.Moderator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +22,7 @@ public class PollController {
     }
 
     @RequestMapping(value = "/poll/{idModerator}/{idPoll}", method = RequestMethod.GET)
-    public Poll byId(@PathVariable("idModerator") String moderator, @PathVariable("idPoll") Long poll) {
+    public Poll byId(@PathVariable("idModerator") Moderator moderator, @PathVariable("idPoll") Long poll) {
         PollIdentifier pollId=new PollIdentifier();
         pollId.setIdxModerator(moderator);
 
