@@ -7,6 +7,5 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 public interface ModeratorRepository extends JpaRepository<Moderator, String> {
-
     Moderator findByIdModerator(String id_moderator);
 }
