@@ -1,5 +1,8 @@
-package ch.heigvd.pro.b04.answers;
+package ch.heigvd.pro.b04.endpoints;
 
+import ch.heigvd.pro.b04.answers.Answer;
+import ch.heigvd.pro.b04.answers.AnswerIdentifier;
+import ch.heigvd.pro.b04.answers.AnswerRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
