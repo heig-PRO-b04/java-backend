@@ -1,6 +1,15 @@
 package ch.heigvd.pro.b04.polls;
 
-import ch.heigvd.pro.b04.moderators.Moderator;
+import ch.heigvd.pro.b04.questions.Question;
+import java.io.Serializable;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.persistence.CascadeType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import lombok.Data;
 
 import javax.persistence.EmbeddedId;
@@ -8,16 +17,34 @@ import javax.persistence.Entity;
 
 @Data
 @Entity
-public class Poll {
-    @EmbeddedId private PollIdentifier idPoll;
-    private String title;
+public class Poll implements Serializable {
 
-    public Poll() {
-    }
+  @EmbeddedId
+  private PollIdentifier idPoll;
 
-    public Poll(String idxModerator, String title) {
-        this.title = title;
-        this.idPoll=new PollIdentifier(idxModerator);
-        //this.idPoll.setIdxModerator(idxModerator);
+  @OneToMany(mappedBy = "idQuestion.idxPoll", cascade = CascadeType.ALL)
+  private Set<Question> pollQuestions;
+
+  private String title;
+
+  public Poll() {
+  }
+
+  public Poll(long id, String title) {
+    idPoll = new PollIdentifier(id);
+    this.title = title;
+  }
+
+  public PollIdentifier getIdPoll() {
+    return idPoll;
+  }
+
+  public void addQuestion(Question newQuestion) {
+    newQuestion.getIdQuestion().setIdxPoll(this);
+    if (pollQuestions == null) {
+      pollQuestions = Stream.of(newQuestion).collect(Collectors.toSet());
+    } else {
+      pollQuestions.add(newQuestion);
     }
+  }
 }

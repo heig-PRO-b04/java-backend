@@ -7,7 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 @RepositoryRestResource
-public interface PollRepository extends JpaRepository<Poll, PollIdentifier>, JpaSpecificationExecutor<Poll> {
-  //List<Poll> findByIdxModerator(String idxModerator);
-  //List<Poll> findByTitle(String pollTitle);
+public interface PollRepository extends JpaRepository<Poll, PollIdentifier>,
+    JpaSpecificationExecutor<Poll> {
+
 }
