@@ -1,6 +1,9 @@
-package ch.heigvd.pro.b04.moderators;
+package ch.heigvd.pro.b04.endpoints;
 
+import ch.heigvd.pro.b04.moderators.Moderator;
+import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ModeratorController {
 
+  @Autowired
   private ModeratorRepository repository;
 
   public ModeratorController(ModeratorRepository repository) {
@@ -21,7 +25,7 @@ public class ModeratorController {
   }
 
   @RequestMapping(value = "/moderator/{id}", method = RequestMethod.GET)
-  Moderator byId(@PathVariable Long id) {
+  public Moderator byId(@PathVariable String id) {
     return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found."));
   }
 }

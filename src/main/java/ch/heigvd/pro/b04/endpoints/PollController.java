@@ -1,15 +1,22 @@
-package ch.heigvd.pro.b04.polls;
+package ch.heigvd.pro.b04.endpoints;
 
+import ch.heigvd.pro.b04.moderators.Moderator;
+import ch.heigvd.pro.b04.polls.Poll;
+import ch.heigvd.pro.b04.polls.PollIdentifier;
+import ch.heigvd.pro.b04.polls.PollRepository;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+
+@Controller
 public class PollController {
 
-  private PollRepository repository;
+  @Autowired
+  private final PollRepository repository;
 
   public PollController(PollRepository repository) {
     this.repository = repository;
@@ -28,9 +35,13 @@ public class PollController {
    * @return A {@link Poll} instance, if it exists.
    */
   @RequestMapping(value = "/poll/{idModerator}/{idPoll}", method = RequestMethod.GET)
-  public Poll byId(@PathVariable("idModerator") Long moderator, @PathVariable("idPoll") Long poll) {
+  public Poll byId(@PathVariable("idModerator") Moderator moderator,
+      @PathVariable("idPoll") Long poll) {
+    PollIdentifier pollId = new PollIdentifier();
+    pollId.setIdxModerator(moderator);
+
     return repository
-        .findById(new PollIdentifier(moderator, poll))
+        .findById(pollId)
         .orElseThrow(IllegalArgumentException::new);
   }
 }

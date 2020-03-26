@@ -1,25 +1,39 @@
 package ch.heigvd.pro.b04.moderators;
 
+import ch.heigvd.pro.b04.polls.Poll;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import lombok.Data;
+import javax.persistence.OneToMany;
 
-@Data
+
 @Entity
 public class Moderator {
 
-  @GeneratedValue
   @Id
-  private Long id;
-  private String name;
+  private String idModerator;
   private String secret;
+
+  @OneToMany(mappedBy = "idPoll.idxModerator", cascade = CascadeType.ALL)
+  private Set<Poll> pollSet;
 
   public Moderator() {
   }
 
   public Moderator(String name, String secret) {
-    this.name = name;
+    this.idModerator = name;
     this.secret = secret;
+  }
+
+  public void addPoll(Poll newPoll) {
+    newPoll.getIdPoll().setIdxModerator(this);
+    this.pollSet = Stream.of(newPoll).collect(Collectors.toSet());
+  }
+
+  public String getIdModerator() {
+    return idModerator;
   }
 }
