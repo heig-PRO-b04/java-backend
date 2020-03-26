@@ -6,14 +6,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.CascadeType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import lombok.Data;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
 
 @Data
 @Entity
@@ -39,6 +36,11 @@ public class Poll implements Serializable {
     return idPoll;
   }
 
+  /**
+   * Add a new {@link Question} to this {@link Poll} instance.
+   *
+   * @param newQuestion The question to be added.
+   */
   public void addQuestion(Question newQuestion) {
     newQuestion.getIdQuestion().setIdxPoll(this);
     if (pollQuestions == null) {

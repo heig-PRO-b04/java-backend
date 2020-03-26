@@ -1,17 +1,12 @@
 package ch.heigvd.pro.b04.polls;
 
-import ch.heigvd.pro.b04.moderators.*;
-
+import ch.heigvd.pro.b04.moderators.Moderator;
+import java.io.Serializable;
 import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import lombok.Data;
-
-import javax.persistence.Embeddable;
-import javax.persistence.GeneratedValue;
-import java.io.Serializable;
 
 @Data
 @Embeddable
@@ -28,6 +23,6 @@ public class PollIdentifier implements Serializable {
   }
 
   public PollIdentifier(long id) {
-    idPoll = new Long(id);
+    this.idPoll = id;
   }
 }

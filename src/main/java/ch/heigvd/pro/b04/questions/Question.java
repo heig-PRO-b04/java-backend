@@ -1,14 +1,13 @@
 package ch.heigvd.pro.b04.questions;
 
 import ch.heigvd.pro.b04.answers.Answer;
-
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.*;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Question {
@@ -20,13 +19,26 @@ public class Question {
   private Set<Answer> answersToQuestion;
 
   private short indexInPoll;
-  private String title, details;
+  private String title;
+  private String details;
   private boolean visibility;
-  private short answersMin, answersMax;
+  private short answersMin;
+  private short answersMax;
 
   public Question() {
   }
 
+  /**
+   * Creates a new {@link Question}.
+   *
+   * @param id      The question identifier.
+   * @param index   The question index.
+   * @param title   The question title.
+   * @param details The question details.
+   * @param visible The question visibility.
+   * @param min     The lower bound for the number of required answers.
+   * @param max     The upper bound for the number of required answers.
+   */
   public Question(long id,
       short index,
       String title,
@@ -47,6 +59,11 @@ public class Question {
     return idQuestion;
   }
 
+  /**
+   * Add a new answer to this {@link Question}.
+   *
+   * @param newAnswer The {@link Answer} to add.
+   */
   public void addAnswer(Answer newAnswer) {
     newAnswer.getIdAnswer().setIdxQuestion(this);
     if (answersToQuestion == null) {

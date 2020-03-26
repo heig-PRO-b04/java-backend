@@ -1,10 +1,12 @@
 package ch.heigvd.pro.b04.questions;
 
 import ch.heigvd.pro.b04.polls.Poll;
-
-import lombok.Data;
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import lombok.Data;
 
 @Data
 @Embeddable

@@ -1,7 +1,6 @@
 package ch.heigvd.pro.b04.moderators;
 
 import ch.heigvd.pro.b04.answers.Answer;
-
 import ch.heigvd.pro.b04.polls.Poll;
 import ch.heigvd.pro.b04.questions.Question;
 import org.springframework.boot.CommandLineRunner;
@@ -9,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This method creates a complete poll to test insert and recuperation requests
+ * This method creates a complete poll to test insert and recuperation requests.
  */
 @Configuration
 public class LoadModerators {
@@ -63,7 +62,8 @@ public class LoadModerators {
   }
 
   /**
-   * Auxiliary method to create hard-coded answers Will probably be deleted once in production
+   * Auxiliary method to create hard-coded answers. TODO : Will probably be deleted once in
+   * production.
    *
    * @param id id to assign to the first of the 4 answers
    * @return array of answers

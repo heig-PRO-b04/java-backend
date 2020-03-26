@@ -8,16 +8,16 @@ import org.springframework.context.annotation.Configuration;
 public class LoadPolls {
 
   /**
-   * Stores a poll into the database
-   * Ununsed for now
+   * Stores a poll into the database.
+   *
    * @param repo repository of the DB, let Spring magic assign this parameter
    * @return thing for Spring magic
    */
   @Bean
-    CommandLineRunner configurePolls(PollRepository repo ) {
+  CommandLineRunner configurePolls(PollRepository repo) {
 
-        return args -> {
-            //repo.save(new Poll)
-        };
-    }
+    return args -> {
+      //repo.save(new Poll)
+    };
+  }
 }

@@ -1,14 +1,14 @@
 package ch.heigvd.pro.b04.moderators;
 
 import ch.heigvd.pro.b04.polls.Poll;
-
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.CascadeType;
-import javax.persistence.OneToMany;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
 
 @Entity
 public class Moderator {
@@ -26,13 +26,6 @@ public class Moderator {
   public Moderator(String name, String secret) {
     this.idModerator = name;
     this.secret = secret;
-  }
-
-  public Moderator(String name, String secret, String titlePoll) {
-    this(name, secret);
-    Poll newPoll = new Poll(1, titlePoll);
-    newPoll.getIdPoll().setIdxModerator(this);
-    this.pollSet = Stream.of(newPoll).collect(Collectors.toSet());
   }
 
   public void addPoll(Poll newPoll) {

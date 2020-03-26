@@ -2,9 +2,13 @@ language: java
 
 script:
   - mvn clean test
+  - mvn checkstyle:check
   - mvn install
 
 deploy:
   provider: heroku
   app: heig-pro-b04
   api_key: $HEROKU_TOKEN
+  on:
+    branch: master
+    repo: heig-PRO-b04/java-backend
