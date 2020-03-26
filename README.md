@@ -1,6 +1,7 @@
 # heig-PRO-b04/java-backend
 
 [![Build Status](https://travis-ci.com/heig-PRO-b04/java-backend.svg?branch=master)](https://travis-ci.com/heig-PRO-b04/java-backend)
+[![Heroku App Status](https://heroku-shields.herokuapp.com/heig-PRO-b04)](https://heig-PRO-b04.herokuapp.com)
 
 An application to create, edit and delete polls that can be answered in real
 time. In this repository, you'll find the codebase of the web server of the
