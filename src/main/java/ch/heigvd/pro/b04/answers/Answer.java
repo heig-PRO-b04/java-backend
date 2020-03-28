@@ -16,6 +16,13 @@ public class Answer {
   private String text;
   private String description;
 
+  /**
+   * Builds a new {@link Answer} entity.
+   *
+   * @param id          An identifier for this specific answer.
+   * @param title       The title of the answer. Always displayed.
+   * @param description The description of the answer. Displayed on demand.
+   */
   public Answer(long id, String title, String description) {
     this.idAnswer = new AnswerIdentifier(id);
     this.text = title;
