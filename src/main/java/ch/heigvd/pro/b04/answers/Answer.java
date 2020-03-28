@@ -3,9 +3,11 @@ package ch.heigvd.pro.b04.answers;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class Answer {
 
   @EmbeddedId
@@ -14,11 +16,9 @@ public class Answer {
   private String text;
   private String description;
 
-  public Answer() {
-  }
-
   public Answer(long id, String title, String description) {
-    idAnswer = new AnswerIdentifier(id);
+    this.idAnswer = new AnswerIdentifier(id);
     this.text = title;
+    this.description = description;
   }
 }
