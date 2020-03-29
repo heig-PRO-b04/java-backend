@@ -29,6 +29,14 @@ on the Spring framework.
 
 To launch the app locally, you need to :
 
+0. Install a local PostgreSQL instance, configured to work with the backend. You need to have the
+   following environment variables set :
+    + `SPRING_DATASOURCE_URL` : this is the URL at which the database is exposed.
+    + `SPRING_DATASOURCE_USERNAME` : this is a valid username to access the database.
+    + `SPRING_DATASOURCE_PASSWORD` : this is a valid password to access the database.
+    + The schema will **automatically** be created by the backend environment !
+    + More details information on how to set the environment variables can be found in the
+      [Wiki](https://github.com/heig-PRO-b04/java-backend/wiki/Database.Setup).
 1. Clone the repository
 2. Run `mvn clean install` at the root of the repo. This will resolve all the
    required dependencies.
