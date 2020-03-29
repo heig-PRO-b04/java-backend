@@ -11,6 +11,10 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
 
   private static final String ERROR_PATH = "/error";
 
+  /**
+   * Returns a {@link ResponseEntity} whenever an error occurs because a resource could not be found
+   * on the server. The associated HTTP code is 404.
+   */
   @RequestMapping("/error")
   public ResponseEntity<ErrorResponse> notFound() {
     return new ResponseEntity<>(
