@@ -36,4 +36,12 @@ public class Moderator {
   public String getIdModerator() {
     return idModerator;
   }
+
+  public String getUsername() {
+    return idModerator;
+  }
+
+  public String getSecret() {
+    return secret;
+  }
 }
