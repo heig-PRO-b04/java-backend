@@ -1,9 +1,6 @@
-package ch.heigvd.pro.b04.endpoints;
+package ch.heigvd.pro.b04.polls;
 
 import ch.heigvd.pro.b04.moderators.Moderator;
-import ch.heigvd.pro.b04.polls.Poll;
-import ch.heigvd.pro.b04.polls.PollIdentifier;
-import ch.heigvd.pro.b04.polls.PollRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;

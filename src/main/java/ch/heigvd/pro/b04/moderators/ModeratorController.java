@@ -1,4 +1,4 @@
-package ch.heigvd.pro.b04.endpoints;
+package ch.heigvd.pro.b04.moderators;
 
 import ch.heigvd.pro.b04.login.UserCredentials;
 import ch.heigvd.pro.b04.login.UserCredentialsDeserializer;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+
 
 @RestController
 public class ModeratorController {
@@ -33,7 +35,7 @@ public class ModeratorController {
   }
 
   @RequestMapping(value = "/moderator/{id}", method = RequestMethod.GET)
-  public Moderator byId(@PathVariable String id) {
+  public Moderator byId(@PathVariable Integer id) {
     return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found."));
   }
 

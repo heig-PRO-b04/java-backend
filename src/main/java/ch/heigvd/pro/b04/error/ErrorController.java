@@ -1,6 +1,6 @@
-package ch.heigvd.pro.b04.endpoints;
+package ch.heigvd.pro.b04.error;
 
-import ch.heigvd.pro.b04.endpoints.exceptions.ErrorResponse;
+import ch.heigvd.pro.b04.error.exceptions.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class LoadModerators {
 
   //creation of a moderator
-  Moderator david = (new Moderator("david", "33"));
+  Moderator david = Moderator.builder().username("david").secret("33").build();
 
   //creation of a poll
   Poll testPoll = new Poll(1, "Your favorites Togrutas and Twi\'leks ?");

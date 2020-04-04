@@ -6,41 +6,39 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 public class Moderator {
 
   @Id
-  private String idModerator;
+  @Getter
+  @GeneratedValue
+  private int idModerator;
+
+  @Getter
+  private String username;
+
+  @Getter
   private String secret;
 
   @OneToMany(mappedBy = "idPoll.idxModerator", cascade = CascadeType.ALL)
   private Set<Poll> pollSet;
 
-  public Moderator() {
-  }
-
-  public Moderator(String name, String secret) {
-    this.idModerator = name;
-    this.secret = secret;
-  }
-
   public void addPoll(Poll newPoll) {
     newPoll.getIdPoll().setIdxModerator(this);
     this.pollSet = Stream.of(newPoll).collect(Collectors.toSet());
-  }
-
-  public String getIdModerator() {
-    return idModerator;
-  }
-
-  public String getUsername() {
-    return idModerator;
-  }
-
-  public String getSecret() {
-    return secret;
   }
 }
