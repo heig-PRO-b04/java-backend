@@ -2,6 +2,7 @@ package ch.heigvd.pro.b04.endpoints;
 
 import ch.heigvd.pro.b04.login.TokenCredentials;
 import ch.heigvd.pro.b04.login.UserCredentials;
+import ch.heigvd.pro.b04.login.exceptions.DuplicateUsernameException;
 import ch.heigvd.pro.b04.login.exceptions.UnknownUserCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
@@ -34,7 +35,7 @@ public class LoginController {
       throws UnknownUserCredentialsException {
     // FIXME : Use proper token-based authentication, rather than returning the password of the
     //         user.
-    Optional<Moderator> moderator = moderators.findById(credentials.getUsername());
+    Optional<Moderator> moderator = moderators.findByUsername(credentials.getUsername());
     Optional<TokenCredentials> response = moderator.flatMap(m -> {
       if (m.getSecret().equals(credentials.getPassword())) {
         return Optional.of(TokenCredentials.builder().token(m.getSecret()).build());
@@ -52,9 +53,17 @@ public class LoginController {
    * @return An authentication token for the provided account.
    */
   @RequestMapping(value = "register", method = RequestMethod.POST)
-  public TokenCredentials register(@RequestBody UserCredentials credentials) {
-    Moderator moderator = new Moderator(credentials.getUsername(), credentials.getPassword());
-    moderators.saveAndFlush(moderator);
+  public TokenCredentials register(@RequestBody UserCredentials credentials)
+      throws DuplicateUsernameException {
+    Moderator moderator = Moderator.builder()
+        .username(credentials.getUsername())
+        .secret(credentials.getPassword())
+        .build();
+    try {
+      moderators.saveAndFlush(moderator);
+    } catch (Throwable t) {
+      throw new DuplicateUsernameException();
+    }
     return TokenCredentials.builder().token(credentials.getPassword()).build();
   }
 }

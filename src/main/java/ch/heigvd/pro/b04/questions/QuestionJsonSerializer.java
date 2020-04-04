@@ -16,10 +16,13 @@ public class QuestionJsonSerializer extends JsonSerializer<Question> {
       SerializerProvider serializerProvider
   ) throws IOException {
     jsonGenerator.writeStartObject();
-    jsonGenerator.writeStringField("idModerator",
-        question.getIdQuestion().getIdxPoll().getIdPoll().getIdxModerator().getIdModerator());
-    jsonGenerator
-        .writeNumberField("idPoll", question.getIdQuestion().getIdxPoll().getIdPoll().getIdPoll());
+    jsonGenerator.writeNumberField("idModerator", question.getIdQuestion().getIdxPoll()
+        .getIdPoll().getIdxModerator()
+        .getIdModerator()
+    );
+    jsonGenerator.writeNumberField("idPoll", question.getIdQuestion().getIdxPoll()
+        .getIdPoll().getIdPoll()
+    );
     jsonGenerator.writeNumberField("idQuestion", question.getIdQuestion().getIdQuestion());
     jsonGenerator.writeEndObject();
   }
