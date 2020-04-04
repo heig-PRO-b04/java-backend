@@ -1,27 +1,58 @@
 package ch.heigvd.pro.b04.polls;
 
+import ch.heigvd.pro.b04.auth.exceptions.UnknownUserCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
+import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
 public class PollController {
 
-  @Autowired
-  private final PollRepository repository;
+  private final PollRepository polls;
+  private final ModeratorRepository moderators;
 
-  public PollController(PollRepository repository) {
-    this.repository = repository;
+  public PollController(
+      ModeratorRepository moderators,
+      PollRepository polls
+  ) {
+    this.moderators = moderators;
+    this.polls = polls;
   }
 
-  @RequestMapping(value = "/poll", method = RequestMethod.GET)
-  public List<Poll> all() {
-    return repository.findAll();
+  /**
+   * Returns a {@link List} of all the {@link Poll} instances that are associated with a certain
+   * moderator, with a certain token.
+   *
+   * @param token       The authentication token to use for the moderator.
+   * @param idModerator The identifier of the moderator for which we query the polls.
+   * @return The {@link List} of all the {@link Poll}s of this moderator.
+   * @throws UnknownUserCredentialsException If the moderator is not known, or the credentials are
+   *                                         not valid.
+   */
+  @RequestMapping(value = "/mod/{idModerator}/poll", method = RequestMethod.GET)
+  public List<Poll> all(
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") Integer idModerator
+  ) throws UnknownUserCredentialsException {
+    Optional<Moderator> moderatorForId = moderators.findById(idModerator);
+    Optional<Moderator> moderatorForSecret = moderators.findBySecret(token);
+
+    System.out.println(moderatorForId);
+    System.out.println(moderatorForSecret);
+
+    if (!moderatorForId.equals(moderatorForSecret)) {
+      throw new UnknownUserCredentialsException();
+    }
+
+    Optional<List<Poll>> pollsForModerator = moderatorForId.map(polls::findAllByModerator);
+    return pollsForModerator.orElseThrow(UnknownUserCredentialsException::new);
   }
 
   /**
@@ -37,7 +68,7 @@ public class PollController {
     PollIdentifier pollId = new PollIdentifier(poll);
     pollId.setIdxModerator(moderator);
 
-    return repository
+    return polls
         .findById(pollId)
         .orElseThrow(IllegalArgumentException::new);
   }
