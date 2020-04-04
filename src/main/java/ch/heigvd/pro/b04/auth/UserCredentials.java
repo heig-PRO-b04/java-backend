@@ -1,4 +1,4 @@
-package ch.heigvd.pro.b04.login;
+package ch.heigvd.pro.b04.auth;
 
 import lombok.Builder;
 import lombok.Data;
