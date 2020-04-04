@@ -26,7 +26,7 @@ public class LoginController {
    * @return An authentication token for the provided account.
    * @throws UnknownUserCredentialsException If the provided credentials are unknown to the app.
    */
-  @RequestMapping(value = "login", method = RequestMethod.POST)
+  @RequestMapping(value = "auth", method = RequestMethod.POST)
   @ResponseBody
   public TokenCredentials login(@RequestBody UserCredentials credentials)
       throws UnknownUserCredentialsException {
