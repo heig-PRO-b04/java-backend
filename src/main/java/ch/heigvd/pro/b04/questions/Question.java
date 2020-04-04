@@ -18,7 +18,7 @@ public class Question {
   @OneToMany(mappedBy = "idAnswer.idxQuestion", cascade = CascadeType.ALL)
   private Set<Answer> answersToQuestion;
 
-  private short indexInPoll;
+  private double indexInPoll;
   private String title;
   private String details;
   private boolean visibility;
@@ -40,7 +40,7 @@ public class Question {
    * @param max     The upper bound for the number of required answers.
    */
   public Question(long id,
-      short index,
+      double index,
       String title,
       String details,
       boolean visible,
