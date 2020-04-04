@@ -18,7 +18,8 @@ public class LoadModerators {
 
   //creation of a moderator
   Moderator david = Moderator.builder().username("david").secret(
-      Hashing.sha512().hashString("33"+ Constants.HASH, StandardCharsets.UTF_8).toString()).build();
+      Hashing.sha512().hashString("33" + Constants.HASH, StandardCharsets.UTF_8).toString())
+      .build();
 
   //creation of a poll
   Poll testPoll = new Poll(1, "Your favorites Togrutas and Twi\'leks ?");
