@@ -1,4 +1,4 @@
-package ch.heigvd.pro.b04.endpoints.exceptions;
+package ch.heigvd.pro.b04.auth;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -7,16 +7,16 @@ import java.io.IOException;
 import org.springframework.boot.jackson.JsonComponent;
 
 @JsonComponent
-public class ErrorResponseSerializer extends JsonSerializer<ErrorResponse> {
+public class TokenCredentialsSerializer extends JsonSerializer<TokenCredentials> {
 
   @Override
   public void serialize(
-      ErrorResponse errorResponse,
+      TokenCredentials tokenCredentials,
       JsonGenerator jsonGenerator,
       SerializerProvider serializerProvider
   ) throws IOException {
     jsonGenerator.writeStartObject();
-    jsonGenerator.writeStringField("message", errorResponse.getMessage());
+    jsonGenerator.writeStringField("token", tokenCredentials.getToken());
     jsonGenerator.writeEndObject();
   }
 }

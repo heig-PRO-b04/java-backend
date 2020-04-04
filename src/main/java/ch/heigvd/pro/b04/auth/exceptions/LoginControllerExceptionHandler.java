@@ -1,6 +1,6 @@
-package ch.heigvd.pro.b04.login.exceptions;
+package ch.heigvd.pro.b04.auth.exceptions;
 
-import ch.heigvd.pro.b04.endpoints.exceptions.ErrorResponse;
+import ch.heigvd.pro.b04.error.exceptions.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

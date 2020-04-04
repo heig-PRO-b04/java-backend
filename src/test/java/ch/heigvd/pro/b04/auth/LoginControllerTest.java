@@ -1,11 +1,10 @@
-package ch.heigvd.pro.b04.login;
+package ch.heigvd.pro.b04.auth;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import ch.heigvd.pro.b04.endpoints.LoginController;
-import ch.heigvd.pro.b04.login.exceptions.UnknownUserCredentialsException;
+import ch.heigvd.pro.b04.auth.exceptions.UnknownUserCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import java.util.Optional;
@@ -21,6 +20,9 @@ public class LoginControllerTest {
   @InjectMocks
   LoginController loginController;
 
+  @InjectMocks
+  RegisterController registerController;
+
   @Mock
   ModeratorRepository moderatorRepository;
 
@@ -32,7 +34,7 @@ public class LoginControllerTest {
         .password("password")
         .build();
 
-    assertDoesNotThrow(() -> loginController.register(credentials));
+    assertDoesNotThrow(() -> registerController.register(credentials));
   }
 
   @Test

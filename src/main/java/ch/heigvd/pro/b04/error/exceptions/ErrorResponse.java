@@ -1,4 +1,4 @@
-package ch.heigvd.pro.b04.endpoints.exceptions;
+package ch.heigvd.pro.b04.error.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
