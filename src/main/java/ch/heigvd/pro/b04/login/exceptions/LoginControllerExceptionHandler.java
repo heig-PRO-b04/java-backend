@@ -14,4 +14,15 @@ public class LoginControllerExceptionHandler extends ResponseEntityExceptionHand
   public ResponseEntity<ErrorResponse> unknownUserCredentials() {
     return new ResponseEntity<>(ErrorResponse.from("Invalid credentials."), HttpStatus.FORBIDDEN);
   }
+
+  /**
+   * Returns an {@link ErrorResponse} if a duplicate username exception is triggered.
+   */
+  @ExceptionHandler(DuplicateUsernameException.class)
+  public ResponseEntity<ErrorResponse> duplicateUsername() {
+    return new ResponseEntity<>(
+        ErrorResponse.from("Username already registered !"),
+        HttpStatus.FORBIDDEN
+    );
+  }
 }

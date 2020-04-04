@@ -16,8 +16,8 @@ public class PollJsonSerializer extends JsonSerializer<Poll> {
       SerializerProvider serializerProvider
   ) throws IOException {
     jsonGenerator.writeStartObject();
-    jsonGenerator
-        .writeStringField("idModerator", poll.getIdPoll().getIdxModerator().getIdModerator());
+    jsonGenerator.writeNumberField("idModerator", poll.getIdPoll()
+        .getIdxModerator().getIdModerator());
     jsonGenerator.writeNumberField("idPoll", poll.getIdPoll().getIdPoll());
     jsonGenerator.writeStringField("title", poll.getTitle());
     jsonGenerator.writeEndObject();

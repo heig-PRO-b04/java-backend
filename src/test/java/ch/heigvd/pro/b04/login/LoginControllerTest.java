@@ -54,8 +54,12 @@ public class LoginControllerTest {
         .password("password")
         .build();
 
-    when(moderatorRepository.findById("sample"))
-        .thenReturn(Optional.of(new Moderator("sample", "password")));
+    when(moderatorRepository.findByUsername("sample"))
+        .thenReturn(Optional.of(Moderator.builder()
+            .username("sample")
+            .secret("password")
+            .build())
+        );
 
     assertDoesNotThrow(() -> loginController.login(credentials));
   }
@@ -68,8 +72,12 @@ public class LoginControllerTest {
         .password("password")
         .build();
 
-    when(moderatorRepository.findById("sample"))
-        .thenReturn(Optional.of(new Moderator("sample", "another password")));
+    when(moderatorRepository.findByUsername("sample"))
+        .thenReturn(Optional.of(Moderator.builder()
+            .username("sample")
+            .secret("another password")
+            .build())
+        );
 
     assertThrows(UnknownUserCredentialsException.class, () -> loginController.login(credentials));
   }

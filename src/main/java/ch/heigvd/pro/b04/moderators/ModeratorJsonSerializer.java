@@ -16,7 +16,7 @@ public class ModeratorJsonSerializer extends JsonSerializer<Moderator> {
       SerializerProvider serializerProvider
   ) throws IOException {
     jsonGenerator.writeStartObject();
-    jsonGenerator.writeStringField("idModerator", moderator.getIdModerator());
+    jsonGenerator.writeNumberField("idModerator", moderator.getIdModerator());
     jsonGenerator.writeEndObject();
   }
 }
