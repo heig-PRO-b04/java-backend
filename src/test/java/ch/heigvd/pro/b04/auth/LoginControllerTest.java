@@ -20,6 +20,9 @@ public class LoginControllerTest {
   @InjectMocks
   LoginController loginController;
 
+  @InjectMocks
+  RegisterController registerController;
+
   @Mock
   ModeratorRepository moderatorRepository;
 
@@ -31,7 +34,7 @@ public class LoginControllerTest {
         .password("password")
         .build();
 
-    assertDoesNotThrow(() -> loginController.register(credentials));
+    assertDoesNotThrow(() -> registerController.register(credentials));
   }
 
   @Test
