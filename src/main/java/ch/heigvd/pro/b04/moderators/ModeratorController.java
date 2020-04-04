@@ -1,8 +1,5 @@
 package ch.heigvd.pro.b04.moderators;
 
-import ch.heigvd.pro.b04.login.UserCredentials;
-import ch.heigvd.pro.b04.login.UserCredentialsDeserializer;
-import ch.heigvd.pro.b04.login.UserCredentialsSerializer;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
