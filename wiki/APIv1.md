@@ -21,3 +21,14 @@ As a general rule, and if not specified otherwise, all errors will be sent with 
     "message"       : "Error 2: This is not normal"
 }
 ```
+
+## Status
+
+When the endpoint is running, you may hit the root endpoint. You will always get a 200 response
+code, indicating that everything is fine.
+
+```json
+{
+    "message"       : "Everything is fine."
+}
+```
