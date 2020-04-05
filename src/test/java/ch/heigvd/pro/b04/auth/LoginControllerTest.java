@@ -1,6 +1,7 @@
 package ch.heigvd.pro.b04.auth;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -37,6 +38,8 @@ public class LoginControllerTest {
   @Test
   public void testLoginWorksWithExistingAccountAndGoodPassword() {
 
+    final int moderatorId = 123;
+
     UserCredentials credentials = UserCredentials.builder()
         .username("sample")
         .password("password")
@@ -46,10 +49,14 @@ public class LoginControllerTest {
         .thenReturn(Optional.of(Moderator.builder()
             .username("sample")
             .secret("password")
+            .idModerator(moderatorId)
             .build())
         );
 
-    assertDoesNotThrow(() -> loginController.login(credentials));
+    assertDoesNotThrow(() -> {
+      TokenCredentials response = loginController.login(credentials);
+      assertEquals(moderatorId, response.getIdModerator());
+    });
   }
 
   @Test

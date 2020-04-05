@@ -17,6 +17,7 @@ public class TokenCredentialsSerializer extends JsonSerializer<TokenCredentials>
   ) throws IOException {
     jsonGenerator.writeStartObject();
     jsonGenerator.writeStringField("token", tokenCredentials.getToken());
+    jsonGenerator.writeNumberField("idModerator", tokenCredentials.getIdModerator());
     jsonGenerator.writeEndObject();
   }
 }
