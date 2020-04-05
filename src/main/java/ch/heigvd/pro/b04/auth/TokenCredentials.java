@@ -8,4 +8,5 @@ import lombok.Data;
 public class TokenCredentials {
 
   private String token;
+  private int idModerator;
 }
