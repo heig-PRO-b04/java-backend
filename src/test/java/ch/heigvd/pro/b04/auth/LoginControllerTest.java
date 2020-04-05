@@ -20,22 +20,8 @@ public class LoginControllerTest {
   @InjectMocks
   LoginController loginController;
 
-  @InjectMocks
-  RegisterController registerController;
-
   @Mock
   ModeratorRepository moderatorRepository;
-
-  @Test
-  public void testRegistrationWorks() {
-
-    UserCredentials credentials = UserCredentials.builder()
-        .username("sample")
-        .password("password")
-        .build();
-
-    assertDoesNotThrow(() -> registerController.register(credentials));
-  }
 
   @Test
   public void testLoginDoesNotWorkWithExistingAccount() {
