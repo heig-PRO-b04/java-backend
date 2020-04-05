@@ -33,8 +33,9 @@ public class LoginController {
     // FIXME : Use proper token-based authentication, rather than returning the password of the
     //         user.
     Optional<Moderator> moderator = moderators.findByUsername(credentials.getUsername());
+    String hashed = Utils.hash(credentials.getPassword());
     Optional<TokenCredentials> response = moderator.flatMap(m -> {
-      if (m.getSecret().equals(credentials.getPassword())) {
+      if (m.getSecret().equals(hashed)) {
         return Optional.of(
             TokenCredentials.builder()
                 .token(m.getSecret())
