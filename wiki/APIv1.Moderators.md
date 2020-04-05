@@ -2,7 +2,8 @@
 All of theses requests are to be made by moderators only.
 
 ## Token request
-Ask for a token
+Ask for a token. Additionally, the identifier for the moderator will be returned, as it is needed by
+clients to perform ulterior requests with the provided token.
 
 ### Request
 `POST: /api/auth/`
@@ -17,7 +18,8 @@ Ask for a token
 ### Success
 ```json
 {
-    "token"   : "ab5j20dk"
+    "token"         : "ab5j20dk",
+    "idModerator"   : 123
 }
 ```
 

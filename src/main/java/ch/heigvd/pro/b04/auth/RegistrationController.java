@@ -26,9 +26,10 @@ public class RegistrationController {
   @RequestMapping(value = "register", method = RequestMethod.POST)
   public TokenCredentials register(@RequestBody UserCredentials credentials)
       throws DuplicateUsernameException {
+    String hashed = Utils.hash(credentials.getPassword());
     Moderator moderator = Moderator.builder()
         .username(credentials.getUsername())
-        .secret(credentials.getPassword())
+        .secret(hashed)
         .build();
     try {
       moderators.saveAndFlush(moderator);
