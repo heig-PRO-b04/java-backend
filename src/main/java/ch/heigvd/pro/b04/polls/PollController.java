@@ -44,9 +44,6 @@ public class PollController {
     Optional<Moderator> moderatorForId = moderators.findById(idModerator);
     Optional<Moderator> moderatorForSecret = moderators.findBySecret(token);
 
-    System.out.println(moderatorForId);
-    System.out.println(moderatorForSecret);
-
     if (!moderatorForId.equals(moderatorForSecret)) {
       throw new UnknownUserCredentialsException();
     }
