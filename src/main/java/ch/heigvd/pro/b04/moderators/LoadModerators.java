@@ -1,8 +1,11 @@
 package ch.heigvd.pro.b04.moderators;
 
+import ch.heigvd.pro.b04.Constants;
 import ch.heigvd.pro.b04.answers.Answer;
 import ch.heigvd.pro.b04.polls.Poll;
 import ch.heigvd.pro.b04.questions.Question;
+import com.google.common.hash.Hashing;
+import java.nio.charset.StandardCharsets;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +17,9 @@ import org.springframework.context.annotation.Configuration;
 public class LoadModerators {
 
   //creation of a moderator
-  Moderator david = Moderator.builder().username("david").secret("33").build();
+  Moderator david = Moderator.builder().username("david").secret(
+      Hashing.sha512().hashString("33" + Constants.HASH, StandardCharsets.UTF_8).toString())
+      .build();
 
   //creation of a poll
   Poll testPoll = new Poll(1, "Your favorites Togrutas and Twi\'leks ?");

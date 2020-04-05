@@ -48,7 +48,7 @@ public class LoginControllerTest {
     when(moderatorRepository.findByUsername("sample"))
         .thenReturn(Optional.of(Moderator.builder()
             .username("sample")
-            .secret("password")
+            .secret(Utils.hash("password"))
             .idModerator(moderatorId)
             .build())
         );

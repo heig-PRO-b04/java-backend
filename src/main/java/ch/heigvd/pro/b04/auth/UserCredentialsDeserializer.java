@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.springframework.boot.jackson.JsonComponent;
 
 @JsonComponent
-class UserCredentialsDeserializer extends JsonDeserializer<UserCredentials> {
+public class UserCredentialsDeserializer extends JsonDeserializer<UserCredentials> {
 
   @Override
   public UserCredentials deserialize(
