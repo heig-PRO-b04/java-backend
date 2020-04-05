@@ -35,7 +35,12 @@ public class LoginController {
     Optional<Moderator> moderator = moderators.findByUsername(credentials.getUsername());
     Optional<TokenCredentials> response = moderator.flatMap(m -> {
       if (m.getSecret().equals(credentials.getPassword())) {
-        return Optional.of(TokenCredentials.builder().token(m.getSecret()).build());
+        return Optional.of(
+            TokenCredentials.builder()
+                .token(m.getSecret())
+                .idModerator(m.getIdModerator())
+                .build()
+        );
       } else {
         return Optional.empty();
       }
