@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class RegisterController {
+public class RegistrationController {
 
   private ModeratorRepository moderators;
 
-  public RegisterController(ModeratorRepository moderators) {
+  public RegistrationController(ModeratorRepository moderators) {
     this.moderators = moderators;
   }
 
