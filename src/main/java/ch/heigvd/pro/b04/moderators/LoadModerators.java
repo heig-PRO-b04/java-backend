@@ -1,7 +1,7 @@
 package ch.heigvd.pro.b04.moderators;
 
 import ch.heigvd.pro.b04.Constants;
-import ch.heigvd.pro.b04.Constants.QUESTION_VISIBILITY;
+import ch.heigvd.pro.b04.Constants.QuestionVisbility;
 import ch.heigvd.pro.b04.answers.Answer;
 import ch.heigvd.pro.b04.polls.Poll;
 import ch.heigvd.pro.b04.questions.Question;
@@ -28,13 +28,13 @@ public class LoadModerators {
   //creation of 3 questions
   Question question1 = new Question(1, (short) 1,
       "Who would you rather spend a candlelit dinner with on Canto Byte ?", "",
-      QUESTION_VISIBILITY.VISIBLE, (short) 1, (short) 1);
+      QuestionVisbility.VISIBLE, (short) 1, (short) 1);
   Question question2 = new Question(2, (short) 2,
       "And who would you choose for a torrid night on the beaches of Scarif ?", "",
-      QUESTION_VISIBILITY.VISIBLE, (short) 1, (short) 1);
+      QuestionVisbility.VISIBLE, (short) 1, (short) 1);
   Question question3 = new Question(3, (short) 3,
       "And for an endless dance night on Coruscant ?", "",
-      QUESTION_VISIBILITY.VISIBLE, (short) 1, (short) 1);
+      QuestionVisbility.VISIBLE, (short) 1, (short) 1);
 
   // creation of answers
   // all 3 questions have same answers

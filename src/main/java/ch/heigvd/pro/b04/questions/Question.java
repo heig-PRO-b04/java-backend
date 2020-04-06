@@ -1,6 +1,6 @@
 package ch.heigvd.pro.b04.questions;
 
-import ch.heigvd.pro.b04.Constants;
+import ch.heigvd.pro.b04.Constants.QuestionVisbility;
 import ch.heigvd.pro.b04.answers.Answer;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,7 +22,7 @@ public class Question {
   private double indexInPoll;
   private String title;
   private String details;
-  private Constants.QUESTION_VISIBILITY visibility;
+  private QuestionVisbility visibility;
   private short answersMin;
   private short answersMax;
 
@@ -44,7 +44,7 @@ public class Question {
       double index,
       String title,
       String details,
-      Constants.QUESTION_VISIBILITY visible,
+      QuestionVisbility visible,
       short min,
       short max) {
     this.idQuestion = new QuestionIdentifier(id);

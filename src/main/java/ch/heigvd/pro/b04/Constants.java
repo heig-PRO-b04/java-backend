@@ -11,6 +11,7 @@ public class Constants {
 
   public static final String HASH = "Tu-144";
 
-  public enum QUESTION_VISIBILITY {VISIBLE, HIDDEN, ARCHIVED};
+  public enum QuestionVisbility { VISIBLE, HIDDEN, ARCHIVED
+  }
 
 }
