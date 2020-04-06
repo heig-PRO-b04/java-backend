@@ -32,7 +32,7 @@ public class LoadModerators {
       "And who would you choose for a torrid night on the beaches of Scarif ?", "",
       true, (short) 1, (short) 1);
   Question question3 = new Question(3, (short) 3,
-      "And for endless dance night on Coruscant ?", "",
+      "And for an endless dance night on Coruscant ?", "",
       true, (short) 1, (short) 1);
 
   // creation of answers
