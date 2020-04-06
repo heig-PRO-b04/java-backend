@@ -9,5 +9,8 @@ public class Constants {
   private Constants() {
   }
 
-  public static final String HASH = "TU_144";
+  public static final String HASH = "Tu-144";
+
+  public enum QUESTION_VISIBILITY {VISIBLE, HIDDEN, ARCHIVED};
+
 }
