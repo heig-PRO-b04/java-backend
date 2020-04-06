@@ -1,13 +1,9 @@
 package ch.heigvd.pro.b04.auth;
 
-import ch.heigvd.pro.b04.Constants;
 import ch.heigvd.pro.b04.auth.exceptions.UnknownUserCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
-import com.google.common.hash.Hashing;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,16 +28,20 @@ public class LoginController {
    */
   @RequestMapping(value = "auth", method = RequestMethod.POST)
   @ResponseBody
-  public String login(@RequestBody UserCredentials credentials)
+  public TokenCredentials login(@RequestBody UserCredentials credentials)
       throws UnknownUserCredentialsException {
     // FIXME : Use proper token-based authentication, rather than returning the password of the
     //         user.
     Optional<Moderator> moderator = moderators.findByUsername(credentials.getUsername());
-    Optional<String> response = moderator.flatMap(m -> {
-      if (m.getSecret().equals(
-          Hashing.sha512().hashString(credentials.getPassword() + Constants.HASH,
-              StandardCharsets.UTF_8).toString())) {
-        return Optional.of(TokenCredentials.builder().token(m.getSecret()).build().getToken());
+    String hashed = Utils.hash(credentials.getPassword());
+    Optional<TokenCredentials> response = moderator.flatMap(m -> {
+      if (m.getSecret().equals(hashed)) {
+        return Optional.of(
+            TokenCredentials.builder()
+                .token(m.getSecret())
+                .idModerator(m.getIdModerator())
+                .build()
+        );
       } else {
         return Optional.empty();
       }

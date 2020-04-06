@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class RegisterController {
+public class RegistrationController {
 
   private ModeratorRepository moderators;
 
-  public RegisterController(ModeratorRepository moderators) {
+  public RegistrationController(ModeratorRepository moderators) {
     this.moderators = moderators;
   }
 
@@ -26,9 +26,10 @@ public class RegisterController {
   @RequestMapping(value = "register", method = RequestMethod.POST)
   public TokenCredentials register(@RequestBody UserCredentials credentials)
       throws DuplicateUsernameException {
+    String hashed = Utils.hash(credentials.getPassword());
     Moderator moderator = Moderator.builder()
         .username(credentials.getUsername())
-        .secret(credentials.getPassword())
+        .secret(hashed)
         .build();
     try {
       moderators.saveAndFlush(moderator);

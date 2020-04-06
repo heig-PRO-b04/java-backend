@@ -1,6 +1,7 @@
 package ch.heigvd.pro.b04.auth;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -20,22 +21,8 @@ public class LoginControllerTest {
   @InjectMocks
   LoginController loginController;
 
-  @InjectMocks
-  RegisterController registerController;
-
   @Mock
   ModeratorRepository moderatorRepository;
-
-  @Test
-  public void testRegistrationWorks() {
-
-    UserCredentials credentials = UserCredentials.builder()
-        .username("sample")
-        .password("password")
-        .build();
-
-    assertDoesNotThrow(() -> registerController.register(credentials));
-  }
 
   @Test
   public void testLoginDoesNotWorkWithExistingAccount() {
@@ -51,6 +38,8 @@ public class LoginControllerTest {
   @Test
   public void testLoginWorksWithExistingAccountAndGoodPassword() {
 
+    final int moderatorId = 123;
+
     UserCredentials credentials = UserCredentials.builder()
         .username("sample")
         .password("password")
@@ -59,11 +48,15 @@ public class LoginControllerTest {
     when(moderatorRepository.findByUsername("sample"))
         .thenReturn(Optional.of(Moderator.builder()
             .username("sample")
-            .secret("password")
+            .secret(Utils.hash("password"))
+            .idModerator(moderatorId)
             .build())
         );
 
-    assertDoesNotThrow(() -> loginController.login(credentials));
+    assertDoesNotThrow(() -> {
+      TokenCredentials response = loginController.login(credentials);
+      assertEquals(moderatorId, response.getIdModerator());
+    });
   }
 
   @Test
