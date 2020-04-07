@@ -11,9 +11,10 @@ public class Constants {
 
   public static final String HASH = "Tu-144";
 
-  public enum QuestionVisbility { VISIBLE, HIDDEN, ARCHIVED
+  public enum QuestionVisbility {
+    VISIBLE, HIDDEN, ARCHIVED
   }
 
-  protected static final short IDGEN_NB_ARRAY=4;
-  protected static final short IDGEN_SIZE_ARRAY=1000;
+  protected static final short IDGEN_NB_ARRAY = 4;
+  protected static final short IDGEN_SIZE_ARRAY = 1000;
 }

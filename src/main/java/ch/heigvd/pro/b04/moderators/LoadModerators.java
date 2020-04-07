@@ -1,10 +1,10 @@
 package ch.heigvd.pro.b04.moderators;
 
-import ch.heigvd.pro.b04.utils.Constants;
-import ch.heigvd.pro.b04.utils.Constants.QuestionVisbility;
 import ch.heigvd.pro.b04.answers.Answer;
 import ch.heigvd.pro.b04.polls.Poll;
 import ch.heigvd.pro.b04.questions.Question;
+import ch.heigvd.pro.b04.utils.Constants;
+import ch.heigvd.pro.b04.utils.Constants.QuestionVisbility;
 import ch.heigvd.pro.b04.utils.IdGenerator;
 import com.google.common.hash.Hashing;
 import java.nio.charset.StandardCharsets;
@@ -24,16 +24,17 @@ public class LoadModerators {
       .build();
 
   //creation of a poll
-  Poll testPoll = new Poll(1, "Your favorites Togrutas and Twi\'leks ?");
-  
+  Poll testPoll = new Poll(IdGenerator.getMachine().newId(),
+      "Your favorites Togrutas and Twi\'leks ?");
+
   //creation of 3 questions
-  Question question1 = new Question(1, (short) 1,
+  Question question1 = new Question(IdGenerator.getMachine().newId(), (short) 1,
       "Who would you rather spend a candlelit dinner with on Canto Byte ?", "",
       QuestionVisbility.VISIBLE, (short) 1, (short) 1);
-  Question question2 = new Question(2, (short) 2,
+  Question question2 = new Question(IdGenerator.getMachine().newId(), (short) 2,
       "And who would you choose for a torrid night on the beaches of Scarif ?", "",
       QuestionVisbility.VISIBLE, (short) 1, (short) 1);
-  Question question3 = new Question(3, (short) 3,
+  Question question3 = new Question(IdGenerator.getMachine().newId(), (short) 3,
       "And for an endless dance night on Coruscant ?", "",
       QuestionVisbility.VISIBLE, (short) 1, (short) 1);
 

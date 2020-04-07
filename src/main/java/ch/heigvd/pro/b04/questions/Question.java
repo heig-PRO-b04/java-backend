@@ -1,7 +1,7 @@
 package ch.heigvd.pro.b04.questions;
 
-import ch.heigvd.pro.b04.utils.Constants.QuestionVisbility;
 import ch.heigvd.pro.b04.answers.Answer;
+import ch.heigvd.pro.b04.utils.Constants.QuestionVisbility;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

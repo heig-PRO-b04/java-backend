@@ -4,54 +4,53 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class IdGenerator {
-  private static ArrayList<Boolean[]> factors=new ArrayList<>();
 
-  private IdGenerator()
-  {
-    for(short x=0;x<Constants.IDGEN_NB_ARRAY;++x)
-    {
+  private static ArrayList<Boolean[]> factors = new ArrayList<>();
+
+  private IdGenerator() {
+    for (short x = 0; x < Constants.IDGEN_NB_ARRAY; ++x) {
       factors.add(new Boolean[Constants.IDGEN_SIZE_ARRAY]);
-      for(short y=0;y<Constants.IDGEN_SIZE_ARRAY;++y)
-      {
-        factors.get(x)[y]=false;
+      for (short y = 0; y < Constants.IDGEN_SIZE_ARRAY; ++y) {
+        factors.get(x)[y] = false;
       }
     }
   }
 
-  public static IdGenerator getMachine()
-  {
+  public static IdGenerator getMachine() {
     return IdGeneratorMachine.idGeneratorMachine;
   }
 
-  public static long newId()
-  {
-    short nbTrues=0;
-    Random rand=new Random();
-    long id=1;
+  /**
+   * Calculate and return a numeric primary key. This id isguaranteed to be unique during execution
+   * of the program.
+   *
+   * @return
+   */
+  public static long newId() {
+    short nbTrues = 0;
+    Random rand = new Random();
+    long id = 1;
 
-    for(short v=0;v<Constants.IDGEN_NB_ARRAY;++v)
-    {
-      int index=rand.nextInt(Constants.IDGEN_SIZE_ARRAY);
-      if (factors.get(v)[index])
-      {
+    for (short v = 0; v < Constants.IDGEN_NB_ARRAY; ++v) {
+      int index = rand.nextInt(Constants.IDGEN_SIZE_ARRAY);
+      if (factors.get(v)[index]) {
         ++nbTrues;
       }
-      factors.get(v)[index]=true;
-      id*=(index+1+(v*Constants.IDGEN_SIZE_ARRAY));
+      factors.get(v)[index] = true;
+      id *= (index + 1 + (v * Constants.IDGEN_SIZE_ARRAY));
     }
 
     //if and only if nbTrues==4, this id has already been generated and
     //a new id has to be recalculated
-    if(nbTrues==Constants.IDGEN_NB_ARRAY)
-    {
+    if (nbTrues == Constants.IDGEN_NB_ARRAY) {
       return newId();
     }
 
     return id;
   }
 
-  private static class IdGeneratorMachine
-  {
-    static IdGenerator idGeneratorMachine=new IdGenerator();
+  private static class IdGeneratorMachine {
+
+    static IdGenerator idGeneratorMachine = new IdGenerator();
   }
 }
