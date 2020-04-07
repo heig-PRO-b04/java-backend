@@ -21,22 +21,30 @@
 
 ## Token
 ### `POST /auth`
-Requests a token. If wanting to be connected as a moderator, send `json` representation of a `user`
+Requests a token.
+
+If wanting to be connected as a moderator, send json representation of a user
 in the request's body.
 
 ## Poll
 ### `POST /mod/{idModerator}/poll`
-Creates a new poll. A token is needed. Send the `json` representation of the `poll` in the request's
+Creates a new poll.
+
+A token is needed. Send the json representation of the poll in the request's
 body.
 
-On success, the `poll` is returned by the server.
+On success, the poll is returned by the server.
 ### `PUT /mod/{idModerator}/poll/{idPoll}`
-Updates a poll. A token is needed. Send the `json` representation of the `poll` in the request's
+Updates a poll.
+
+A token is needed. Send the json representation of the poll in the request's
 body.
 
-On success, the `poll` is returned by the server.
+On success, the poll is returned by the server.
 ### `DELETE  /mod/{idModerator}/poll/{idPoll}`
-Deletes a poll. A token is needed.
+Deletes a poll.
+
+A token is needed.
 
 On success, this message is returned by the server:
 ```json
@@ -47,11 +55,44 @@ On success, this message is returned by the server:
 
 ## Question
 ### `POST /mod/{idModerator}/poll/{idPoll}/question`
+Creates a new question.
+
+A token is needed. Send the json representation of the question in the request's body.
+
 ### `PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`
+Updates a question.
+
+A token is needed. Send the json representation of the question in the request's body.
 ### `DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`
+Deletes a question.
+
+A token is needed.
+
+On success, this message is returned by the server:
+```json
+{
+  "message" : "Question deleted"
+}
+```
 
 ## Answer
 ### `POST /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer`
-### `PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`
-### `DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`
+Creates a new answer.
 
+A token is needed. Send the json representation of the answer in the request's body.
+
+### `PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`
+Updates an answer.
+
+A token is needed. Send the json representation of the answer in the request's body.
+### `DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`
+Deletes an answer.
+
+A token is needed.
+
+On success, this message is returned by the server:
+```json
+{
+  "message" : "Answer deleted"
+}
+```

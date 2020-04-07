@@ -14,32 +14,30 @@
         - [Server](#server-2)
 
 ## Token
-When a token is needed in a request, it should be passed in the URL as so:
+When a token needs to be sent, it must be via the URL:
 
-`/ex/ample?token=abcdef`
-
-The format is not yet defined.
+`/ex/ample?token=abcdefghi`
 
 ## Poll
 ### Client
 When a client needs to send a poll, it should be represented as so:
 ```json
 {
-  "title" : "My new poll"
+  "title" : "My title"
 }
 ```
+
 ### Server
 When the server needs to send a poll, it should be represented as so:
 ```json
 {
   "idModerator" : {idModerator},
   "idPoll"      : {idPoll},
-  "title"       : "My new poll"
+  "title"       : "My title"
 }
 ```
 
 ## Question
-
 ### Client
 When a client needs to send a question, it should be represented as so:
 
@@ -78,5 +76,21 @@ Attributes `answersMin` and `answersMax` are __optionnal__.
 ### Client
 When a client needs to send an answer, it should be represented as so:
 ```json
+{
+  "title"       : "First answer",
+  "description" : "This is a description"
+}
 ```
 ### Server
+When the server needs to send an answer, it should be represented as so:
+
+```json
+{
+  "idModerator" : {idModerator},
+  "idPoll"      : {idPoll},
+  "idQuestion"  : {idQuestion},
+  "idAnswer"    : {idAnswer},
+  "title"       : "First answer",
+  "description" : "This is a description"
+}
+```
