@@ -5,6 +5,7 @@ import ch.heigvd.pro.b04.utils.Constants.QuestionVisbility;
 import ch.heigvd.pro.b04.answers.Answer;
 import ch.heigvd.pro.b04.polls.Poll;
 import ch.heigvd.pro.b04.questions.Question;
+import ch.heigvd.pro.b04.utils.IdGenerator;
 import com.google.common.hash.Hashing;
 import java.nio.charset.StandardCharsets;
 import org.springframework.boot.CommandLineRunner;
@@ -24,7 +25,7 @@ public class LoadModerators {
 
   //creation of a poll
   Poll testPoll = new Poll(1, "Your favorites Togrutas and Twi\'leks ?");
-
+  
   //creation of 3 questions
   Question question1 = new Question(1, (short) 1,
       "Who would you rather spend a candlelit dinner with on Canto Byte ?", "",

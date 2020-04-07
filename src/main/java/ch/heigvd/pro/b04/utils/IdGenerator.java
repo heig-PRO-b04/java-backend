@@ -18,6 +18,11 @@ public class IdGenerator {
     }
   }
 
+  public static IdGenerator getMachine()
+  {
+    return IdGeneratorMachine.idGeneratorMachine;
+  }
+
   public static long newId()
   {
     short nbTrues=0;
@@ -36,12 +41,17 @@ public class IdGenerator {
     }
 
     //if and only if nbTrues==4, this id has already been generated and
-    //it needs to be recalculated
+    //a new id has to be recalculated
     if(nbTrues==Constants.IDGEN_NB_ARRAY)
     {
       return newId();
     }
 
     return id;
+  }
+
+  private static class IdGeneratorMachine
+  {
+    static IdGenerator idGeneratorMachine=new IdGenerator();
   }
 }
