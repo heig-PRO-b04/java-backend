@@ -3,6 +3,7 @@ package ch.heigvd.pro.b04.auth;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import ch.heigvd.pro.b04.auth.exceptions.UnknownUserCredentialsException;
@@ -75,5 +76,39 @@ public class LoginControllerTest {
         );
 
     assertThrows(UnknownUserCredentialsException.class, () -> loginController.login(credentials));
+  }
+
+  @Test
+  public void testLoginFindsTwoUsersWithSameTokenHash() {
+
+    UserCredentials loggedIn = UserCredentials.builder()
+        .username("u1")
+        .password("password")
+        .build();
+
+    Moderator first = Moderator.builder()
+        .idModerator(1)
+        .username("u1")
+        .secret(Utils.hash("password"))
+        .build();
+
+    Moderator second = Moderator.builder()
+        .idModerator(2)
+        .username("u2")
+        .secret(Utils.hash("password"))
+        .build();
+
+    lenient().when(moderatorRepository.findByUsername("u1"))
+        .thenReturn(Optional.of(first));
+
+    lenient().when(moderatorRepository.findByUsername("u2"))
+        .thenReturn(Optional.of(second));
+
+    // Find the second user.
+    lenient().when(moderatorRepository.findBySecret(Utils.hash("password")))
+        .thenReturn(Optional.of(second));
+
+    TokenCredentials credentials = loginController.login(loggedIn);
+    assertEquals(1, credentials.getIdModerator());
   }
 }
