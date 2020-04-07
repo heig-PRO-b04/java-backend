@@ -26,6 +26,25 @@ clients to perform ulterior requests with the provided token.
 A token is a character sequence with arbitrary length.
 
 ## Poll
+### Get all available polls
+URL should be of the form `/api/mod/nbMod/poll/`
+
+`GET : /api/mod/567/poll/`
+
+#### Success
+```json
+[{
+    "idModerator"   : 567,
+    "idPoll"        : 123,
+    "title"         : "My new exciting poll"
+},
+{
+    "idModerator"   : 567,
+    "idPoll"        : 124,
+    "title"         : "My second exciting poll"
+}]
+```
+
 ### Create a new Poll
 URL should be of the form `/api/mod/nbMod/poll/`
 
