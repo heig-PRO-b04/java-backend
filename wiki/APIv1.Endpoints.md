@@ -7,6 +7,7 @@
     - [User connection](#user-connection)
         - [`POST /connect`](#post-connect)
     - [Poll](#poll)
+        - [`GET /mod/{idModerator}/poll`](#get-modidmoderatorpoll)
         - [`POST /mod/{idModerator}/poll`](#post-modidmoderatorpoll)
         - [`PUT /mod/{idModerator}/poll/{idPoll}`](#put-modidmoderatorpollidpoll)
         - [`DELETE  /mod/{idModerator}/poll/{idPoll}`](#delete--modidmoderatorpollidpoll)
@@ -66,6 +67,13 @@ The emoji mapping table is as follows :
 | 🎹 | F |
 
 ## Poll
+### `GET /mod/{idModerator}/poll`
+Get all available polls.
+
+A token is needed.
+
+On success, a list of polls will be returned.
+
 ### `POST /mod/{idModerator}/poll`
 Creates a new poll.
 
