@@ -1,4 +1,4 @@
-package ch.heigvd.pro.b04;
+package ch.heigvd.pro.b04.utils;
 
 /*
  * Class to use for global constants inclusion

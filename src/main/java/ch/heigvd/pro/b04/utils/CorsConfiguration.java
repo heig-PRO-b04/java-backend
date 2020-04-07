@@ -1,4 +1,4 @@
-package ch.heigvd.pro.b04;
+package ch.heigvd.pro.b04.utils;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

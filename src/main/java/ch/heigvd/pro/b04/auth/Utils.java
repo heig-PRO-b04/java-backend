@@ -1,6 +1,6 @@
 package ch.heigvd.pro.b04.auth;
 
-import ch.heigvd.pro.b04.Constants;
+import ch.heigvd.pro.b04.utils.Constants;
 import com.google.common.hash.Hashing;
 import java.nio.charset.StandardCharsets;
 

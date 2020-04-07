@@ -1,7 +1,7 @@
 package ch.heigvd.pro.b04.moderators;
 
-import ch.heigvd.pro.b04.Constants;
-import ch.heigvd.pro.b04.Constants.QuestionVisbility;
+import ch.heigvd.pro.b04.utils.Constants;
+import ch.heigvd.pro.b04.utils.Constants.QuestionVisbility;
 import ch.heigvd.pro.b04.answers.Answer;
 import ch.heigvd.pro.b04.polls.Poll;
 import ch.heigvd.pro.b04.questions.Question;
