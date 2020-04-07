@@ -2,21 +2,35 @@
 
 - [Table of Contents](#table-of-contents)
     - [Token](#token)
-    - [Poll](#poll)
         - [Client](#client)
         - [Server](#server)
-    - [Question](#question)
+    - [Poll](#poll)
         - [Client](#client-1)
         - [Server](#server-1)
-        - [General](#general)
-    - [Answers](#answers)
+    - [Question](#question)
         - [Client](#client-2)
         - [Server](#server-2)
+        - [General](#general)
+    - [Answers](#answers)
+        - [Client](#client-3)
+        - [Server](#server-3)
+    - [Votes](#votes)
+        - [Client](#client-4)
 
 ## Token
-When a token needs to be sent, it must be via the URL:
+### Client
+When a token needs to be sent by a client, it must be via the URL:
 
 `/ex/ample?token=abcdefghi`
+
+### Server
+When the server needs to send a token, it should be represented as so:
+
+```json
+{
+  "token" : "abcdefghi"
+}
+```
 
 ## Poll
 ### Client
@@ -94,3 +108,15 @@ When the server needs to send an answer, it should be represented as so:
   "description" : "This is a description"
 }
 ```
+
+## Votes
+### Client
+When a client needs to send a vote for an answer, it should be represented as so:
+
+```json
+{
+  "checked" : true
+}
+```
+
+The value of `checked` is a boolean and should represent if the answer is selected in the user's UI.
