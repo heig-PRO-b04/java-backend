@@ -79,7 +79,7 @@ public class LoginControllerTest {
   }
 
   @Test
-  public void testLoginFindsTwoUsersWithSameTokenHash() {
+  public void testLoginFindsTwoModeratorsWithSameTokenHash() {
 
     UserCredentials loggedIn = UserCredentials.builder()
         .username("u1")
