@@ -9,8 +9,8 @@
 
 There are two parts to this API:
 
-1. __[Endpoints](APIv1.Users)__: Will specify what endpoints are available and how to use them
-2. __[Objects](APIv1.Moderators)__: Will specify how to represent different objects in json
+1. __[Endpoints](APIv1.Endpoints)__: Will specify what endpoints are available and how to use them
+2. __[Objects](APIv1.Objects)__: Will specify how to represent different objects in json
 
 ## Status
 
