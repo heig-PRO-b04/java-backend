@@ -17,5 +17,5 @@ jobs:
           git init .
           git add .
           git commit -m "Wiki update"
-          git remote add origin https://${{secrets.GH_PERSONAL_ACCESS_TOKEN}}@github.com/${{GITHUB_REPOSITORY}}.wiki.git
+          git remote add origin https://${{secrets.GH_PERSONAL_ACCESS_TOKEN}}@github.com/${{github.repository}}.wiki.git
           git push -u origin master --force
