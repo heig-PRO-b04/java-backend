@@ -12,8 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Update Wiki
-        uses: SwiftDocOrg/github-wiki-publish-action@v1
-        with:
-          path: "wiki"
-        env:
-          GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+        run : |
+          cd wiki/
+          git init .
+          git config user.name "${{github.actor}}"
+          git config user.email "${{github.actor}}@users.noreply.github.com"
+          git add .
+          git commit -m "Wiki update"
+          git remote add origin https://${{secrets.GH_PERSONAL_ACCESS_TOKEN}}@github.com/${{github.repository}}.wiki.git
+          git push -u origin master --force
