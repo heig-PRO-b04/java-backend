@@ -1,25 +1,49 @@
 # Table of Contents
 
 - [Table of Contents](#table-of-contents)
-    - [Token](#token)
+    - [Moderator](#moderator)
         - [Client](#client)
         - [Server](#server)
-    - [Poll](#poll)
+    - [Token](#token)
         - [Client](#client-1)
         - [Server](#server-1)
-    - [Question](#question)
+    - [Poll](#poll)
         - [Client](#client-2)
         - [Server](#server-2)
-        - [General](#general)
-    - [Answers](#answers)
+    - [Question](#question)
         - [Client](#client-3)
         - [Server](#server-3)
-    - [Votes](#votes)
+        - [General](#general)
+    - [Answers](#answers)
         - [Client](#client-4)
+        - [Server](#server-4)
+    - [Votes](#votes)
+        - [Client](#client-5)
+
+## Moderator
+### Client
+When a moderator needs to be sent by a client, it should be represented as so:
+
+```json
+{
+  "username" : "guy-laurent",
+  "password" : "1234"
+}
+```
+
+### Server
+When a moderator needs to be sent by the server, it should be represented as so:
+
+```json
+{
+  "idModerator" : "123",
+  "token"       : "abcdefghi"
+}
+```
 
 ## Token
 ### Client
-When a token needs to be sent by a client, it must be via the URL:
+When a token needs to be sent by a client, it should be via the URL:
 
 `/ex/ample?token=abcdefghi`
 

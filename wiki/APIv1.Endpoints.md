@@ -30,8 +30,9 @@
 ### `POST /auth`
 Requests a token.
 
-If wanting to be connected as a moderator, send json representation of a moderator
-in the request's body.
+To be connected as a moderator, send the json representation of a moderator in the request's body.
+
+On success, the server will send back the moderator back.
 
 ## User connection
 ### `POST /connect`
