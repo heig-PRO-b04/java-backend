@@ -9,18 +9,8 @@
 
 There are two parts to this API:
 
-1. __[Users](APIv1.Users)__: Will specify how to connect with the server from the point of view of a user
-2. __[Moderators](APIv1.Moderators)__: Will specify how to connect with the server from the point of view of a poll moderator
-
-## Errors
-
-As a general rule, and if not specified otherwise, all errors will be sent with a corresponding message. The correct HTTP error code will be sent as well.
-
-```json
-{
-    "message"       : "Error 2: This is not normal"
-}
-```
+1. __[Endpoints](APIv1.Endpoints)__: Will specify what endpoints are available and how to use them
+2. __[Objects](APIv1.Objects)__: Will specify how to represent different objects in json
 
 ## Status
 
