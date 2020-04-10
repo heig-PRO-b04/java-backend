@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.StoredProcedureParameter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -17,14 +18,6 @@ public class ParticipantIdentifier implements Serializable {
 
   @Column
   private long idParticipant;
-
-  @ManyToOne
-  @PrimaryKeyJoinColumn
-  private Poll idxPoll;
-
-  @ManyToOne
-  @PrimaryKeyJoinColumn
-  private Moderator idxModerator;
 
   @Setter
   @ManyToOne
