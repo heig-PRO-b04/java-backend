@@ -51,22 +51,4 @@ public class PollController {
     Optional<List<Poll>> pollsForModerator = moderatorForId.map(polls::findAllByModerator);
     return pollsForModerator.orElseThrow(UnknownUserCredentialsException::new);
   }
-
-  /**
-   * Returns a {@link Poll} for a certain identifier.
-   *
-   * @param moderator The moderator identifier of the poll.
-   * @param poll      The poll identifier.
-   * @return A {@link Poll} instance, if it exists.
-   */
-  @RequestMapping(value = "/poll/{idModerator}/{idPoll}", method = RequestMethod.GET)
-  public Poll byId(@PathVariable("idModerator") Moderator moderator,
-      @PathVariable("idPoll") Long poll) {
-    PollIdentifier pollId = new PollIdentifier(poll);
-    pollId.setIdxModerator(moderator);
-
-    return polls
-        .findById(pollId)
-        .orElseThrow(IllegalArgumentException::new);
-  }
 }
