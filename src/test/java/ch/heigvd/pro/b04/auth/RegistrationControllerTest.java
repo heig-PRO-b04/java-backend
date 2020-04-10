@@ -2,8 +2,10 @@ package ch.heigvd.pro.b04.auth;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import ch.heigvd.pro.b04.auth.exceptions.InvalidCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,30 @@ public class RegistrationControllerTest {
       TokenCredentials token = registrationController.register(credentials);
       assertEquals(42, token.getIdModerator());
     });
+  }
+
+  @Test
+  public void testRegistrationDoesNotWorkWithEmptyUsername() {
+
+    UserCredentials credentials = UserCredentials.builder()
+        .username("")
+        .password("password")
+        .build();
+
+    assertThrows(InvalidCredentialsException.class,
+        () -> registrationController.register(credentials));
+  }
+
+  @Test
+  public void testRegistrationDoesNotWorkWithEmptyPassword() {
+
+    UserCredentials credentials = UserCredentials.builder()
+        .username("sample")
+        .password("")
+        .build();
+
+    assertThrows(InvalidCredentialsException.class,
+        () -> registrationController.register(credentials));
   }
 
 }
