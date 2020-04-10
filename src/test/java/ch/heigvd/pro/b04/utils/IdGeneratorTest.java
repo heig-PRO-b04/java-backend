@@ -8,7 +8,7 @@ public class IdGeneratorTest {
   public void testGeneratorDoesNotHaltAfterManyGenerations() {
     int tries = 10_000;
     for (int i = 0; i < tries; i++) {
-      IdGenerator.newId();
+      IdGenerator.getMachine().newId();
     }
   }
 }

@@ -15,6 +15,10 @@ public class Constants {
     VISIBLE, HIDDEN, ARCHIVED
   }
 
+  public enum SessionState {
+    OPEN, CLOSED_TO_NEW_ONES, CLOSED
+  }
+
   protected static final short IDGEN_NB_ARRAY = 4;
   protected static final short IDGEN_SIZE_ARRAY = 1000;
 }
