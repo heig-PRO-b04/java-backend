@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import ch.heigvd.pro.b04.auth.exceptions.InvalidCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import org.junit.jupiter.api.Test;
@@ -50,14 +51,27 @@ public class RegistrationControllerTest {
   }
 
   @Test
-  public void testRegistrationDoesNotWorkWithEmptyPassword() {
+  public void testRegistrationDoesNotWorkWithEmptyUsername() {
 
     UserCredentials credentials = UserCredentials.builder()
         .username("")
         .password("password")
         .build();
 
-    assertThrows(Throwable.class, () -> registrationController.register(credentials));
+    assertThrows(InvalidCredentialsException.class,
+        () -> registrationController.register(credentials));
+  }
+
+  @Test
+  public void testRegistrationDoesNotWorkWithEmptyPassword() {
+
+    UserCredentials credentials = UserCredentials.builder()
+        .username("sample")
+        .password("")
+        .build();
+
+    assertThrows(InvalidCredentialsException.class,
+        () -> registrationController.register(credentials));
   }
 
 }
