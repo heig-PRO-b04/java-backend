@@ -16,6 +16,17 @@ public class LoginControllerExceptionHandler extends ResponseEntityExceptionHand
   }
 
   /**
+   * Returns an {@link ErrorResponse} if some invalid credentials are provided.
+   */
+  @ExceptionHandler(InvalidCredentialsException.class)
+  public ResponseEntity<ErrorResponse> invalidCredentials() {
+    return new ResponseEntity<>(
+        ErrorResponse.from("Invalid credentials (username / password)."),
+        HttpStatus.BAD_REQUEST
+    );
+  }
+
+  /**
    * Returns an {@link ErrorResponse} if a duplicate username exception is triggered.
    */
   @ExceptionHandler(DuplicateUsernameException.class)

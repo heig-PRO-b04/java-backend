@@ -1,6 +1,7 @@
 package ch.heigvd.pro.b04.auth;
 
 import ch.heigvd.pro.b04.auth.exceptions.DuplicateUsernameException;
+import ch.heigvd.pro.b04.auth.exceptions.InvalidCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,11 @@ public class RegistrationController {
    */
   @RequestMapping(value = "register", method = RequestMethod.POST)
   public TokenCredentials register(@RequestBody UserCredentials credentials)
-      throws DuplicateUsernameException {
+      throws DuplicateUsernameException, InvalidCredentialsException {
+    // Ensure that the username has a proper length.
+    if (credentials.getUsername().length() < 4 || credentials.getPassword().length() < 4) {
+      throw new InvalidCredentialsException();
+    }
     String hashed = Utils.hash(credentials.getPassword());
     Moderator moderator = Moderator.builder()
         .username(credentials.getUsername())
