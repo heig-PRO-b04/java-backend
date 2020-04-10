@@ -2,6 +2,7 @@ package ch.heigvd.pro.b04.polls;
 
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.questions.Question;
+import ch.heigvd.pro.b04.sessions.Session;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
@@ -23,6 +24,9 @@ public class Poll implements Serializable {
 
   @OneToMany(mappedBy = "idQuestion.idxPoll", cascade = CascadeType.ALL)
   private Set<Question> pollQuestions;
+
+  @OneToMany(mappedBy = "idSession.idxPoll", cascade = CascadeType.ALL)
+  private Set<Session> sessionSet;
 
   private String title;
 
@@ -67,6 +71,20 @@ public class Poll implements Serializable {
       pollQuestions = Stream.of(newQuestion).collect(Collectors.toSet());
     } else {
       pollQuestions.add(newQuestion);
+    }
+  }
+
+  /**
+   * Add a new {@link Session} to this {@link Poll} instance.
+   *
+   * @param newSession session to add
+   */
+  public void addSession(Session newSession) {
+    newSession.getIdSession().setIdxPoll(this);
+    if (sessionSet == null) {
+      sessionSet = Stream.of(newSession).collect(Collectors.toSet());
+    } else {
+      sessionSet.add(newSession);
     }
   }
 }
