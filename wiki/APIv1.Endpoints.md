@@ -2,6 +2,8 @@
 
 - [Table of Contents](#table-of-contents)
 - [List of endpoints](#list-of-endpoints)
+    - [Register](#register)
+        - [`POST /register`](#post-register)
     - [Token](#token)
         - [`POST /auth`](#post-auth)
     - [User connection](#user-connection)
@@ -26,13 +28,21 @@
 
 # List of endpoints
 
+## Register
+### `POST /register`
+Registers a moderator.
+
+The json representation of the moderator needs to be sent in the request's body.
+
+On success, the server will send the moderator back.
+
 ## Token
 ### `POST /auth`
 Requests a token.
 
 To be connected as a moderator, send the json representation of a moderator in the request's body.
 
-On success, the server will send back the moderator back.
+On success, the server will send the moderator back.
 
 ## User connection
 ### `POST /connect`
