@@ -41,8 +41,17 @@ public class Moderator {
   @Exclude
   private Set<Poll> pollSet;
 
+  /**
+   * add a new Poll {@link Poll} to the polls of this moderator.
+   *
+   * @param newPoll poll to add
+   */
   public void addPoll(Poll newPoll) {
     newPoll.getIdPoll().setIdxModerator(this);
-    this.pollSet = Stream.of(newPoll).collect(Collectors.toSet());
+    if (pollSet == null) {
+      this.pollSet = Stream.of(newPoll).collect(Collectors.toSet());
+    } else {
+      pollSet.add(newPoll);
+    }
   }
 }
