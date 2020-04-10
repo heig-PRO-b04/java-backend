@@ -9,10 +9,12 @@ import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Embeddable
 @NoArgsConstructor
 public class ParticipantIdentifier implements Serializable {
+
   @Column
   private long idParticipant;
 
@@ -24,12 +26,12 @@ public class ParticipantIdentifier implements Serializable {
   @PrimaryKeyJoinColumn
   private Moderator idxModerator;
 
+  @Setter
   @ManyToOne
   @PrimaryKeyJoinColumn
   private Session idxSession;
 
-  public ParticipantIdentifier(long id)
-  {
-    idParticipant=id;
+  public ParticipantIdentifier(long id) {
+    idParticipant = id;
   }
 }

@@ -8,23 +8,25 @@ import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Embeddable
 @NoArgsConstructor
 public class SessionIdentifier implements Serializable {
-    @Column
+
+  @Column
   private long idSession;
 
-    @ManyToOne
+  @ManyToOne
   @PrimaryKeyJoinColumn
   private Moderator idxModerator;
 
+  @Setter
   @ManyToOne
   @PrimaryKeyJoinColumn
   private Poll idxPoll;
 
-  public SessionIdentifier(long id)
-  {
-    this.idSession=id;
+  public SessionIdentifier(long id) {
+    this.idSession = id;
   }
 }

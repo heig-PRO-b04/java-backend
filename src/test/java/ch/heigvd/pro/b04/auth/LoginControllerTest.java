@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import ch.heigvd.pro.b04.auth.exceptions.UnknownUserCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
+import ch.heigvd.pro.b04.utils.Utils;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

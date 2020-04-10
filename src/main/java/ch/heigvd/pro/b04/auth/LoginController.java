@@ -3,6 +3,7 @@ package ch.heigvd.pro.b04.auth;
 import ch.heigvd.pro.b04.auth.exceptions.UnknownUserCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
+import ch.heigvd.pro.b04.utils.Utils;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

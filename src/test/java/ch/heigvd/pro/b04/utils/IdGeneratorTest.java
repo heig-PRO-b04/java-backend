@@ -6,7 +6,7 @@ public class IdGeneratorTest {
 
   @Test
   public void testGeneratorDoesNotHaltAfterManyGenerations() {
-    int tries = 10_000;
+    int tries = 1000;
     for (int i = 0; i < tries; i++) {
       IdGenerator.getMachine().newId();
     }

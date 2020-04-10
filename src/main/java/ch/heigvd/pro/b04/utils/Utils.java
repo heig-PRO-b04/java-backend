@@ -1,4 +1,4 @@
-package ch.heigvd.pro.b04.auth;
+package ch.heigvd.pro.b04.utils;
 
 import ch.heigvd.pro.b04.utils.Constants;
 import com.google.common.hash.Hashing;
