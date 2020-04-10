@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.EqualsAndHashCode.Exclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
+@EqualsAndHashCode
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 public class Moderator {
 
@@ -35,6 +38,7 @@ public class Moderator {
   private String secret;
 
   @OneToMany(mappedBy = "idPoll.idxModerator", cascade = CascadeType.ALL)
+  @Exclude
   private Set<Poll> pollSet;
 
   public void addPoll(Poll newPoll) {
