@@ -1,9 +1,8 @@
 package ch.heigvd.pro.b04.sessions;
 
-import ch.heigvd.pro.b04.Constants.SessionState;
-import ch.heigvd.pro.b04.answers.Answer;
-import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.Constants;
+import ch.heigvd.pro.b04.Constants.SessionState;
+import ch.heigvd.pro.b04.participants.Participant;
 import java.sql.Timestamp;
 import java.util.Random;
 import java.util.Set;
