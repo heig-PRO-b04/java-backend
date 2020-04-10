@@ -1,10 +1,8 @@
 package ch.heigvd.pro.b04.sessions;
 
+import ch.heigvd.pro.b04.Constants.SessionState;
 import ch.heigvd.pro.b04.auth.exceptions.SessionNotAvailableException;
 import ch.heigvd.pro.b04.auth.exceptions.SessionNotExistingException;
-import ch.heigvd.pro.b04.error.exceptions.ErrorResponse;
-import ch.heigvd.pro.b04.utils.Constants.SessionState;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +19,8 @@ public class SessionController {
   }
 
   @RequestMapping(value = "/connect", method = RequestMethod.POST)
-  Session byCode(@RequestBody String codeReceived) {
+  Session byCode(@RequestBody String codeReceived)
+      throws SessionNotAvailableException, SessionNotExistingException {
     Optional<Session> resp = repository.findByCode(codeReceived);
     if (resp.get().getState() != SessionState.OPEN) {
       throw new SessionNotAvailableException();

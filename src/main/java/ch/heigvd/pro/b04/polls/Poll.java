@@ -1,6 +1,7 @@
 package ch.heigvd.pro.b04.polls;
 
 import ch.heigvd.pro.b04.questions.Question;
+import ch.heigvd.pro.b04.sessions.Session;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.stream.Collectors;
