@@ -37,10 +37,13 @@ public class RegistrationController {
         .secret(hashed)
         .build();
     try {
-      moderators.saveAndFlush(moderator);
+      Moderator inserted = moderators.saveAndFlush(moderator);
+      return TokenCredentials.builder()
+          .token(credentials.getPassword())
+          .idModerator(inserted.getIdModerator())
+          .build();
     } catch (Throwable t) {
       throw new DuplicateUsernameException();
     }
-    return TokenCredentials.builder().token(credentials.getPassword()).build();
   }
 }

@@ -1,7 +1,10 @@
 package ch.heigvd.pro.b04.auth;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
+import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +29,23 @@ public class RegistrationControllerTest {
         .password("password")
         .build();
 
-    assertDoesNotThrow(() -> registrationController.register(credentials));
+    Moderator inserted = Moderator.builder()
+        .username("sample")
+        .secret(Utils.hash("password"))
+        .build();
+
+    Moderator expectedReturn = Moderator.builder()
+        .username("sample")
+        .secret(Utils.hash("password"))
+        .idModerator(42)
+        .build();
+
+    when(moderatorRepository.saveAndFlush(inserted)).thenReturn(expectedReturn);
+
+    assertDoesNotThrow(() -> {
+      TokenCredentials token = registrationController.register(credentials);
+      assertEquals(42, token.getIdModerator());
+    });
   }
 
 }
