@@ -13,7 +13,7 @@ import lombok.Data;
 public class PollIdentifier implements Serializable {
 
   @Column
-  private Long idPoll;
+  private long idPoll;
 
   @ManyToOne
   @PrimaryKeyJoinColumn
