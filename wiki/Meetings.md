@@ -6,18 +6,18 @@ Team alignments are organized **three times** a week. They occur :
 - On **Wednesdays at 09:00 AM**.
 - On **Fridays at 10:00 AM**.
 
-**If you can't be there on time, please let your team lead or your assistant
-team lead know about it.**
+If you can't be there on time, please let the team know about it :-)
 
 ## Goals and non-goals
 
 These regular team alignments have very specific goals, and there are a few
-important non-goals and traps to avoid.
+important non-goals and traps to avoid. At the end of the meeting :
 
 - Everyone should be able to (vaguely) explain what his/her teammates will be
   working on until the next group alignment.
-- Anyone with a technical or organizational blocker must have been able to
-  share it with his/her teammates, and must have been able to plan a one-to-one
+
+- Anyone with a technical or organizational blocker will have been able to
+  share it with his/her teammates, and will have been able to plan a one-to-one
   chat with whoever can help them solve their issue.
 
 - **Non-goal** : Team alignments must not replace technical discussions. They
