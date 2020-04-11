@@ -1,5 +1,6 @@
 package ch.heigvd.pro.b04.polls;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -42,9 +43,10 @@ public class PollControllerTest {
     when(moderators.findBySecret("secret")).thenReturn(Optional.of(moderator));
     when(polls.findAllByModerator(moderator)).thenReturn(expected);
 
-    List<Poll> response = controller.all("secret", 1);
-
-    assertEquals(expected, response);
+    assertDoesNotThrow(() -> {
+      List<Poll> response = controller.all("secret", 1);
+      assertEquals(expected, response);
+    });
   }
 
   @Test
