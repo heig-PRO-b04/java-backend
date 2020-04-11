@@ -14,6 +14,7 @@
         - [`PUT /mod/{idModerator}/poll/{idPoll}`](#put-modidmoderatorpollidpoll)
         - [`DELETE  /mod/{idModerator}/poll/{idPoll}`](#delete--modidmoderatorpollidpoll)
     - [Session](#session)
+        - [`GET /session`](#get-session)
         - [`GET /mod/{idModerator}/poll/{ídPoll}/session`](#get-modidmoderatorpollídpollsession)
         - [`PUT /mod/{idModerator}/poll/{ídPoll}/session`](#put-modidmoderatorpollídpollsession)
     - [Question](#question)
@@ -115,8 +116,15 @@ On success, this message is returned by the server:
 ```
 
 ## Session
+### `GET /session`
+Get the correct session coresponding with the given token.
+
+A token is needed.
+
+On success, the server will send a session object.
+
 ### `GET /mod/{idModerator}/poll/{ídPoll}/session`
-Get the last active session.
+Get the last active session for a given poll.
 
 A token is needed.
 
