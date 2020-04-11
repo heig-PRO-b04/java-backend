@@ -1,7 +1,10 @@
 package ch.heigvd.pro.b04.polls;
 
+import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.questions.Question;
+import ch.heigvd.pro.b04.sessions.Session;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,6 +25,9 @@ public class Poll implements Serializable {
   @OneToMany(mappedBy = "idQuestion.idxPoll", cascade = CascadeType.ALL)
   private Set<Question> pollQuestions;
 
+  @OneToMany(mappedBy = "idSession.idxPoll", cascade = CascadeType.ALL)
+  private Set<Session> sessionSet;
+
   private String title;
 
   public Poll() {
@@ -30,6 +36,24 @@ public class Poll implements Serializable {
   public Poll(long id, String title) {
     idPoll = new PollIdentifier(id);
     this.title = title;
+  }
+
+  /**
+   * Returns a boolean indicating whether a certain token has the permissions to perform some
+   * changes on a given poll.
+   *
+   * @param poll       The {@link Poll} for which we're checking the permissions.
+   * @param token      The token for which we're checking permissions.
+   * @param repository The repository in which moderators can be found.
+   * @return True if the user may make modifications to the poll, false otherwise.
+   */
+  public static boolean isAvailableWithToken(
+      Poll poll,
+      String token,
+      ModeratorRepository repository) {
+    return repository.findBySecret(token)
+        .map(moderator -> Objects.equals(moderator, poll.idPoll.getIdxModerator()))
+        .orElse(false);
   }
 
   public PollIdentifier getIdPoll() {
@@ -47,6 +71,20 @@ public class Poll implements Serializable {
       pollQuestions = Stream.of(newQuestion).collect(Collectors.toSet());
     } else {
       pollQuestions.add(newQuestion);
+    }
+  }
+
+  /**
+   * Add a new {@link Session} to this {@link Poll} instance.
+   *
+   * @param newSession session to add
+   */
+  public void addSession(Session newSession) {
+    newSession.getIdSession().setIdxPoll(this);
+    if (sessionSet == null) {
+      sessionSet = Stream.of(newSession).collect(Collectors.toSet());
+    } else {
+      sessionSet.add(newSession);
     }
   }
 }

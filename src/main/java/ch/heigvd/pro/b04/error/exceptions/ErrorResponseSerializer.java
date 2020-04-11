@@ -16,7 +16,7 @@ public class ErrorResponseSerializer extends JsonSerializer<ErrorResponse> {
       SerializerProvider serializerProvider
   ) throws IOException {
     jsonGenerator.writeStartObject();
-    jsonGenerator.writeStringField("message", errorResponse.getMessage());
+    jsonGenerator.writeStringField("error", errorResponse.getMessage());
     jsonGenerator.writeEndObject();
   }
 }

@@ -108,7 +108,9 @@ public class LoginControllerTest {
     lenient().when(moderatorRepository.findBySecret(Utils.hash("password")))
         .thenReturn(Optional.of(second));
 
-    TokenCredentials credentials = loginController.login(loggedIn);
-    assertEquals(1, credentials.getIdModerator());
+    assertDoesNotThrow(() -> {
+      TokenCredentials credentials = loginController.login(loggedIn);
+      assertEquals(1, credentials.getIdModerator());
+    });
   }
 }
