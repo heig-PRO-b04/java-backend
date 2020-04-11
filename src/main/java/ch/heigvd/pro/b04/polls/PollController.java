@@ -1,6 +1,6 @@
 package ch.heigvd.pro.b04.polls;
 
-import ch.heigvd.pro.b04.auth.exceptions.UnknownUserCredentialsException;
+import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import java.util.List;
@@ -33,23 +33,23 @@ public class PollController {
    * @param token       The authentication token to use for the moderator.
    * @param idModerator The identifier of the moderator for which we query the polls.
    * @return The {@link List} of all the {@link Poll}s of this moderator.
-   * @throws UnknownUserCredentialsException If the moderator is not known, or the credentials are
+   * @throws WrongCredentialsException If the moderator is not known, or the credentials are
    *                                         not valid.
    */
   @RequestMapping(value = "/mod/{idModerator}/poll", method = RequestMethod.GET)
   public List<Poll> all(
       @RequestParam(name = "token") String token,
       @PathVariable(name = "idModerator") Integer idModerator
-  ) throws UnknownUserCredentialsException {
+  ) throws WrongCredentialsException {
     Optional<Moderator> moderatorForId = moderators.findById(idModerator);
     Optional<Moderator> moderatorForSecret = moderators.findBySecret(token);
 
     if (!moderatorForId.equals(moderatorForSecret)) {
-      throw new UnknownUserCredentialsException();
+      throw new WrongCredentialsException();
     }
 
     Optional<List<Poll>> pollsForModerator = moderatorForId.map(polls::findAllByModerator);
-    return pollsForModerator.orElseThrow(UnknownUserCredentialsException::new);
+    return pollsForModerator.orElseThrow(WrongCredentialsException::new);
   }
 
   /**
