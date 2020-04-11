@@ -10,15 +10,18 @@
     - [Poll](#poll)
         - [Client](#client-2)
         - [Server](#server-2)
-    - [Question](#question)
+    - [Session](#session)
         - [Client](#client-3)
         - [Server](#server-3)
-        - [General](#general)
-    - [Answers](#answers)
+    - [Question](#question)
         - [Client](#client-4)
         - [Server](#server-4)
-    - [Votes](#votes)
+        - [General](#general)
+    - [Answers](#answers)
         - [Client](#client-5)
+        - [Server](#server-5)
+    - [Votes](#votes)
+        - [Client](#client-6)
 
 ## Moderator
 ### Client
@@ -72,6 +75,33 @@ When the server needs to send a poll, it should be represented as so:
   "idModerator" : {idModerator},
   "idPoll"      : {idPoll},
   "title"       : "My title"
+}
+```
+
+## Session
+**Note**: The `status` can be either:
+
+* `open` meaning the session is active and people can connect to it
+* `quarantined` meaning the session is active but people cannot connect to it anymore
+* `closed` meaning the session is not active anymore
+
+### Client
+When the client needs to send a session, it should be represented as so:
+
+```json
+{
+  "status"      : `open`
+}
+```
+### Server
+When the server needs to send a session, it should be represented as so:
+
+```json
+{
+  "idModerator" : {idModerator},
+  "idPoll"      : {idPoll},
+  "idSession"   : {idSession},
+  "status"      : `open`
 }
 ```
 

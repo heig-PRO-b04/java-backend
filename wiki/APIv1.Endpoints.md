@@ -13,6 +13,10 @@
         - [`POST /mod/{idModerator}/poll`](#post-modidmoderatorpoll)
         - [`PUT /mod/{idModerator}/poll/{idPoll}`](#put-modidmoderatorpollidpoll)
         - [`DELETE  /mod/{idModerator}/poll/{idPoll}`](#delete--modidmoderatorpollidpoll)
+    - [Session](#session)
+        - [`GET /session`](#get-session)
+        - [`GET /mod/{idModerator}/poll/{ídPoll}/session`](#get-modidmoderatorpollídpollsession)
+        - [`PUT /mod/{idModerator}/poll/{ídPoll}/session`](#put-modidmoderatorpollídpollsession)
     - [Question](#question)
         - [`GET /mod/{idModerator}/poll/{idPoll}/question`](#get-modidmoderatorpollidpollquestion)
         - [`POST /mod/{idModerator}/poll/{idPoll}/question`](#post-modidmoderatorpollidpollquestion)
@@ -110,6 +114,26 @@ On success, this message is returned by the server:
   "message" : "Poll deleted"
 }
 ```
+
+## Session
+### `GET /session`
+Get the correct session coresponding with the given token.
+
+A token is needed.
+
+On success, the server will send a session object.
+
+### `GET /mod/{idModerator}/poll/{ídPoll}/session`
+Get the last active session for a given poll.
+
+A token is needed.
+
+On success, a Session object is sent by the server.
+
+### `PUT /mod/{idModerator}/poll/{ídPoll}/session`
+Creates or updates the state of a session. A Session object should be sent in the request's body.
+
+A token is needed
 
 ## Question
 ### `GET /mod/{idModerator}/poll/{idPoll}/question`
