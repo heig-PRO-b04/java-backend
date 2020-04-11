@@ -12,7 +12,18 @@ public class LoginControllerExceptionHandler extends ResponseEntityExceptionHand
 
   @ExceptionHandler(UnknownUserCredentialsException.class)
   public ResponseEntity<ErrorResponse> unknownUserCredentials() {
-    return new ResponseEntity<>(ErrorResponse.from("Invalid credentials."), HttpStatus.FORBIDDEN);
+    return new ResponseEntity<>(ErrorResponse.from("Invalid credentials."), HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Returns an {@link ErrorResponse} if some invalid credentials are provided.
+   */
+  @ExceptionHandler(WrongCredentialsException.class)
+  public ResponseEntity<ErrorResponse> wrongCredentials() {
+    return new ResponseEntity<>(
+            ErrorResponse.from("Wrong credentials (username / password)."),
+            HttpStatus.FORBIDDEN
+    );
   }
 
   /**

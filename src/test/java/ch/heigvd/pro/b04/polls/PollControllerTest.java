@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import ch.heigvd.pro.b04.auth.exceptions.UnknownUserCredentialsException;
+import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import java.util.List;
@@ -60,7 +60,7 @@ public class PollControllerTest {
     when(moderators.findById(1)).thenReturn(Optional.empty());
     when(moderators.findBySecret("secret")).thenReturn(Optional.of(existingModerator));
 
-    assertThrows(UnknownUserCredentialsException.class, () -> controller.all("secret", 1));
+    assertThrows(WrongCredentialsException.class, () -> controller.all("secret", 1));
   }
 
   @Test
@@ -74,6 +74,6 @@ public class PollControllerTest {
     when(moderators.findById(42)).thenReturn(Optional.of(existingModerator));
     when(moderators.findBySecret("top secret")).thenReturn(Optional.empty());
 
-    assertThrows(UnknownUserCredentialsException.class, () -> controller.all("top secret", 42));
+    assertThrows(WrongCredentialsException.class, () -> controller.all("top secret", 42));
   }
 }
