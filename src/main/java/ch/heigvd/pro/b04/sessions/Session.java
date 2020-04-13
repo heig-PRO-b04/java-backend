@@ -32,10 +32,10 @@ public class Session {
 
   @Getter
   @Setter
-  private Timestamp start;
+  private Timestamp timestampStart;
   @Getter
   @Setter
-  private Timestamp end;
+  private Timestamp timestampEnd;
   @Getter
   @Column(unique = true)
   private String code;
