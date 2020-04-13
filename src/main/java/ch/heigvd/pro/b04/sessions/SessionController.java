@@ -19,9 +19,9 @@ public class SessionController {
   }
 
   @RequestMapping(value = "/connect", method = RequestMethod.POST)
-  Session byCode(@RequestBody String codeReceived)
+  Session byCode(@RequestBody SessionCode codeReceived)
       throws SessionNotAvailableException, SessionNotExistingException {
-    Optional<Session> resp = repository.findByCode(codeReceived);
+    Optional<Session> resp = repository.findByCode(codeReceived.getHexadecimal());
     if (resp.get().getState() != SessionState.OPEN) {
       throw new SessionNotAvailableException();
     }
