@@ -12,14 +12,20 @@ import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
-@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class ServerPoll implements Serializable {
 
   @EmbeddedId
+  @Getter
   private ServerPollIdentifier idPoll;
 
   @OneToMany(mappedBy = "idQuestion.idxPoll", cascade = CascadeType.ALL)
@@ -28,15 +34,8 @@ public class ServerPoll implements Serializable {
   @OneToMany(mappedBy = "idSession.idxPoll", cascade = CascadeType.ALL)
   private Set<Session> sessionSet;
 
+  @Getter
   private String title;
-
-  public ServerPoll() {
-  }
-
-  public ServerPoll(long id, String title) {
-    idPoll = new ServerPollIdentifier(id);
-    this.title = title;
-  }
 
   /**
    * Returns a boolean indicating whether a certain token has the permissions to perform some
@@ -54,10 +53,6 @@ public class ServerPoll implements Serializable {
     return repository.findBySecret(token)
         .map(moderator -> Objects.equals(moderator, poll.idPoll.getIdxModerator()))
         .orElse(false);
-  }
-
-  public ServerPollIdentifier getIdPoll() {
-    return idPoll;
   }
 
   /**

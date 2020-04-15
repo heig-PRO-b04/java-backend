@@ -32,12 +32,12 @@ public class ServerPollTest {
 
     when(repository.findBySecret(token)).thenReturn(Optional.of(moderator));
 
-    ServerPollIdentifier identifier = new ServerPollIdentifier();
-    identifier.setIdPoll(42L);
-    identifier.setIdxModerator(moderator);
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idPoll(42)
+        .idxModerator(moderator)
+        .build();
 
-    ServerPoll poll = new ServerPoll();
-    poll.setIdPoll(identifier);
+    ServerPoll poll = ServerPoll.builder().idPoll(identifier).build();
 
     assertTrue(ServerPoll.isAvailableWithToken(poll, token, repository));
   }
@@ -56,12 +56,12 @@ public class ServerPollTest {
 
     when(repository.findBySecret(wrongToken)).thenReturn(Optional.empty());
 
-    ServerPollIdentifier identifier = new ServerPollIdentifier();
-    identifier.setIdPoll(42L);
-    identifier.setIdxModerator(moderator);
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idPoll(42)
+        .idxModerator(moderator)
+        .build();
 
-    ServerPoll poll = new ServerPoll();
-    poll.setIdPoll(identifier);
+    ServerPoll poll = ServerPoll.builder().idPoll(identifier).build();
 
     assertFalse(ServerPoll.isAvailableWithToken(poll, wrongToken, repository));
   }

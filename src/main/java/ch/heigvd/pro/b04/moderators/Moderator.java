@@ -1,9 +1,10 @@
 package ch.heigvd.pro.b04.moderators;
 
+import ch.heigvd.pro.b04.polls.ClientPoll;
 import ch.heigvd.pro.b04.polls.ServerPoll;
+import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
+import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -41,17 +43,22 @@ public class Moderator {
   @Exclude
   private Set<ServerPoll> pollSet;
 
-  /**
-   * add a new Poll {@link ServerPoll} to the polls of this moderator.
-   *
-   * @param newPoll poll to add
-   */
-  public void addPoll(ServerPoll newPoll) {
-    newPoll.getIdPoll().setIdxModerator(this);
-    if (pollSet == null) {
-      this.pollSet = Stream.of(newPoll).collect(Collectors.toSet());
-    } else {
-      pollSet.add(newPoll);
-    }
+  @Transactional
+  public ServerPoll newPoll(ServerPollRepository repository, ClientPoll poll) {
+
+    Long identifier = repository.findAll().stream()
+        .map(ServerPoll::getIdPoll)
+        .map(ServerPollIdentifier::getIdPoll)
+        .map(id -> id + 1)
+        .max(Long::compareTo)
+        .orElse(1L);
+
+    return repository.save(ServerPoll.builder()
+        .idPoll(ServerPollIdentifier.builder()
+            .idxModerator(this)
+            .idPoll(identifier)
+            .build())
+        .title(poll.getTitle())
+        .build());
   }
 }

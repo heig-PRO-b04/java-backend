@@ -6,6 +6,8 @@ import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,14 +29,14 @@ public class PollController {
   }
 
   /**
-   * Returns a {@link List} of all the {@link ServerPoll} instances that are associated with a certain
-   * moderator, with a certain token.
+   * Returns a {@link List} of all the {@link ServerPoll} instances that are associated with a
+   * certain moderator, with a certain token.
    *
    * @param token       The authentication token to use for the moderator.
    * @param idModerator The identifier of the moderator for which we query the polls.
    * @return The {@link List} of all the {@link ServerPoll}s of this moderator.
-   * @throws WrongCredentialsException If the moderator is not known, or the credentials are
-   *                                         not valid.
+   * @throws WrongCredentialsException If the moderator is not known, or the credentials are not
+   *                                   valid.
    */
   @RequestMapping(value = "/mod/{idModerator}/poll", method = RequestMethod.GET)
   public List<ServerPoll> all(
@@ -50,5 +52,23 @@ public class PollController {
 
     Optional<List<ServerPoll>> pollsForModerator = moderatorForId.map(polls::findAllByModerator);
     return pollsForModerator.orElseThrow(WrongCredentialsException::new);
+  }
+
+  @PostMapping("/mod/{idModerator}/poll")
+  public ServerPoll insert(
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") Integer idModerator,
+      @RequestBody ClientPoll clientPoll)
+      throws WrongCredentialsException {
+    Optional<Moderator> moderatorForId = moderators.findById(idModerator);
+    Optional<Moderator> moderatorForSecret = moderators.findBySecret(token);
+
+    if (!moderatorForId.equals(moderatorForSecret)) {
+      throw new WrongCredentialsException();
+    }
+
+    return moderatorForId
+        .map(moderator -> moderator.newPoll(polls, clientPoll))
+        .orElseThrow(WrongCredentialsException::new);
   }
 }
