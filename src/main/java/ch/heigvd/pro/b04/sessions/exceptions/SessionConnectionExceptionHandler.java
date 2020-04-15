@@ -1,4 +1,4 @@
-package ch.heigvd.pro.b04.auth.exceptions;
+package ch.heigvd.pro.b04.sessions.exceptions;
 
 import ch.heigvd.pro.b04.error.exceptions.ErrorResponse;
 import org.springframework.http.HttpStatus;

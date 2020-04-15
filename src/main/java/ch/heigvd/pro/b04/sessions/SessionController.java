@@ -1,6 +1,6 @@
 package ch.heigvd.pro.b04.sessions;
 
-import ch.heigvd.pro.b04.auth.exceptions.SessionNotAvailableException;
+import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +18,7 @@ public class SessionController {
   }
 
   @RequestMapping(value = "/connect", method = RequestMethod.POST)
-  Session byCode(@RequestBody SessionCode codeReceived)
+  public Session byCode(@RequestBody SessionCode codeReceived)
       throws SessionNotAvailableException, ResourceNotFoundException {
     Optional<Session> resp = repository.findByCode(codeReceived.getHexadecimal());
 
