@@ -43,6 +43,14 @@ public class Moderator {
   @Exclude
   private Set<ServerPoll> pollSet;
 
+  /**
+   * Inserts a new poll in the provided {@link ServerPollRepository} for the current {@link
+   * Moderator} instance.
+   *
+   * @param repository The repository in which the poll is added.
+   * @param poll       The poll data.
+   * @return The newly inserted poll.
+   */
   @Transactional
   public ServerPoll newPoll(ServerPollRepository repository, ClientPoll poll) {
 

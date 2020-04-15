@@ -54,6 +54,16 @@ public class PollController {
     return pollsForModerator.orElseThrow(WrongCredentialsException::new);
   }
 
+  /**
+   * Inserts a new poll for a given user.
+   *
+   * @param token       The authentication token for the user.
+   * @param idModerator The identifier of the moderator who is adding the poll.
+   * @param clientPoll  The data that should be written in the added poll-
+   * @return The newly added poll, alongside with its identifier.
+   * @throws WrongCredentialsException If the moderator is not known, or the credentials are not
+   *                                   valid.
+   */
   @PostMapping("/mod/{idModerator}/poll")
   public ServerPoll insert(
       @RequestParam(name = "token") String token,
