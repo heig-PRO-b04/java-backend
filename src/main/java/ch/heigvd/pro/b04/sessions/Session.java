@@ -1,7 +1,5 @@
 package ch.heigvd.pro.b04.sessions;
 
-import ch.heigvd.pro.b04.Constants;
-import ch.heigvd.pro.b04.Constants.SessionState;
 import ch.heigvd.pro.b04.participants.Participant;
 import java.sql.Timestamp;
 import java.util.Random;
@@ -13,7 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,7 +38,7 @@ public class Session {
   private String code;
   @Getter
   @Setter
-  private Constants.SessionState state;
+  private SessionState state;
 
   /**
    * Constructor of a new {@link Session}.

@@ -1,6 +1,5 @@
 package ch.heigvd.pro.b04.sessions;
 
-import ch.heigvd.pro.b04.Constants.SessionState;
 import ch.heigvd.pro.b04.auth.exceptions.SessionNotAvailableException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import java.util.Optional;

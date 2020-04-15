@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class PollTest {
+public class ServerPollTest {
 
   @Mock
   ModeratorRepository repository;
@@ -32,14 +32,14 @@ public class PollTest {
 
     when(repository.findBySecret(token)).thenReturn(Optional.of(moderator));
 
-    PollIdentifier identifier = new PollIdentifier();
-    identifier.setIdPoll(42L);
-    identifier.setIdxModerator(moderator);
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idPoll(42)
+        .idxModerator(moderator)
+        .build();
 
-    Poll poll = new Poll();
-    poll.setIdPoll(identifier);
+    ServerPoll poll = ServerPoll.builder().idPoll(identifier).build();
 
-    assertTrue(Poll.isAvailableWithToken(poll, token, repository));
+    assertTrue(ServerPoll.isAvailableWithToken(poll, token, repository));
   }
 
   @Test
@@ -56,13 +56,13 @@ public class PollTest {
 
     when(repository.findBySecret(wrongToken)).thenReturn(Optional.empty());
 
-    PollIdentifier identifier = new PollIdentifier();
-    identifier.setIdPoll(42L);
-    identifier.setIdxModerator(moderator);
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idPoll(42)
+        .idxModerator(moderator)
+        .build();
 
-    Poll poll = new Poll();
-    poll.setIdPoll(identifier);
+    ServerPoll poll = ServerPoll.builder().idPoll(identifier).build();
 
-    assertFalse(Poll.isAvailableWithToken(poll, wrongToken, repository));
+    assertFalse(ServerPoll.isAvailableWithToken(poll, wrongToken, repository));
   }
 }

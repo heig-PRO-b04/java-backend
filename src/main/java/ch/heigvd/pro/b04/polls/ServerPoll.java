@@ -12,15 +12,21 @@ import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
-@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class Poll implements Serializable {
+public class ServerPoll implements Serializable {
 
   @EmbeddedId
-  private PollIdentifier idPoll;
+  @Getter
+  private ServerPollIdentifier idPoll;
 
   @OneToMany(mappedBy = "idQuestion.idxPoll", cascade = CascadeType.ALL)
   private Set<Question> pollQuestions;
@@ -28,27 +34,20 @@ public class Poll implements Serializable {
   @OneToMany(mappedBy = "idSession.idxPoll", cascade = CascadeType.ALL)
   private Set<Session> sessionSet;
 
+  @Getter
   private String title;
-
-  public Poll() {
-  }
-
-  public Poll(long id, String title) {
-    idPoll = new PollIdentifier(id);
-    this.title = title;
-  }
 
   /**
    * Returns a boolean indicating whether a certain token has the permissions to perform some
    * changes on a given poll.
    *
-   * @param poll       The {@link Poll} for which we're checking the permissions.
+   * @param poll       The {@link ServerPoll} for which we're checking the permissions.
    * @param token      The token for which we're checking permissions.
    * @param repository The repository in which moderators can be found.
    * @return True if the user may make modifications to the poll, false otherwise.
    */
   public static boolean isAvailableWithToken(
-      Poll poll,
+      ServerPoll poll,
       String token,
       ModeratorRepository repository) {
     return repository.findBySecret(token)
@@ -56,12 +55,8 @@ public class Poll implements Serializable {
         .orElse(false);
   }
 
-  public PollIdentifier getIdPoll() {
-    return idPoll;
-  }
-
   /**
-   * Add a new {@link Question} to this {@link Poll} instance.
+   * Add a new {@link Question} to this {@link ServerPoll} instance.
    *
    * @param newQuestion The question to be added.
    */
@@ -75,7 +70,7 @@ public class Poll implements Serializable {
   }
 
   /**
-   * Add a new {@link Session} to this {@link Poll} instance.
+   * Add a new {@link Session} to this {@link ServerPoll} instance.
    *
    * @param newSession session to add
    */

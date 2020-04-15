@@ -1,9 +1,10 @@
 package ch.heigvd.pro.b04.moderators;
 
-import ch.heigvd.pro.b04.polls.Poll;
+import ch.heigvd.pro.b04.polls.ClientPoll;
+import ch.heigvd.pro.b04.polls.ServerPoll;
+import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
+import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -39,19 +41,32 @@ public class Moderator {
 
   @OneToMany(mappedBy = "idPoll.idxModerator", cascade = CascadeType.ALL)
   @Exclude
-  private Set<Poll> pollSet;
+  private Set<ServerPoll> pollSet;
 
   /**
-   * add a new Poll {@link Poll} to the polls of this moderator.
+   * Inserts a new poll in the provided {@link ServerPollRepository} for the current {@link
+   * Moderator} instance.
    *
-   * @param newPoll poll to add
+   * @param repository The repository in which the poll is added.
+   * @param poll       The poll data.
+   * @return The newly inserted poll.
    */
-  public void addPoll(Poll newPoll) {
-    newPoll.getIdPoll().setIdxModerator(this);
-    if (pollSet == null) {
-      this.pollSet = Stream.of(newPoll).collect(Collectors.toSet());
-    } else {
-      pollSet.add(newPoll);
-    }
+  @Transactional
+  public ServerPoll newPoll(ServerPollRepository repository, ClientPoll poll) {
+
+    Long identifier = repository.findAll().stream()
+        .map(ServerPoll::getIdPoll)
+        .map(ServerPollIdentifier::getIdPoll)
+        .max(Long::compareTo)
+        .map(id -> id + 1)
+        .orElse(1L);
+
+    return repository.save(ServerPoll.builder()
+        .idPoll(ServerPollIdentifier.builder()
+            .idxModerator(this)
+            .idPoll(identifier)
+            .build())
+        .title(poll.getTitle())
+        .build());
   }
 }

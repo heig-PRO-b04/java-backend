@@ -3,8 +3,10 @@ package ch.heigvd.pro.b04.polls;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import ch.heigvd.pro.b04.auth.Utils;
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
@@ -14,10 +16,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
 @ExtendWith(MockitoExtension.class)
-public class PollControllerTest {
+public class ServerPollControllerTest {
 
   @InjectMocks
   PollController controller;
@@ -26,7 +31,7 @@ public class PollControllerTest {
   ModeratorRepository moderators;
 
   @Mock
-  PollRepository polls;
+  ServerPollRepository polls;
 
   @Test
   public void testAllPollsKnownModeratorWithCorrectCredentialsWorks() {
@@ -37,14 +42,14 @@ public class PollControllerTest {
         .secret("secret")
         .build();
 
-    List<Poll> expected = List.of(new Poll());
+    List<ServerPoll> expected = List.of(new ServerPoll());
 
     when(moderators.findById(1)).thenReturn(Optional.of(moderator));
     when(moderators.findBySecret("secret")).thenReturn(Optional.of(moderator));
     when(polls.findAllByModerator(moderator)).thenReturn(expected);
 
     assertDoesNotThrow(() -> {
-      List<Poll> response = controller.all("secret", 1);
+      List<ServerPoll> response = controller.all("secret", 1);
       assertEquals(expected, response);
     });
   }
@@ -75,5 +80,49 @@ public class PollControllerTest {
     when(moderators.findBySecret("top secret")).thenReturn(Optional.empty());
 
     assertThrows(WrongCredentialsException.class, () -> controller.all("top secret", 42));
+  }
+
+  @Test
+  public void testInsertNewPollWorksProperly() {
+
+    Moderator moderator = Moderator.builder()
+        .idModerator(1)
+        .username("username")
+        .secret(Utils.hash("secret"))
+        .build();
+
+    when(moderators.findBySecret(Utils.hash("secret"))).thenReturn(Optional.of(moderator));
+    when(moderators.findById(1)).thenReturn(Optional.of(moderator));
+    when(polls.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    ClientPoll request = ClientPoll.builder()
+        .title("Sample title")
+        .build();
+
+    ServerPoll response = controller.insert(Utils.hash("secret"), 1, request);
+
+    assertEquals(response.getTitle(), request.getTitle());
+    assertEquals(response.getIdPoll().getIdxModerator().getIdModerator(), 1);
+  }
+
+  @Test
+  public void testInsertNewPollWithIncorrectTokenDoesNotWork() {
+
+    Moderator moderator = Moderator.builder()
+        .idModerator(1)
+        .username("username")
+        .secret(Utils.hash("secret"))
+        .build();
+
+    when(moderators.findById(1)).thenReturn(Optional.of(moderator));
+    when(moderators.findBySecret(Utils.hash("top secret"))).thenReturn(Optional.empty());
+
+    ClientPoll request = ClientPoll.builder()
+        .title("Sample title")
+        .build();
+
+    assertThrows(WrongCredentialsException.class, () -> {
+      controller.insert(Utils.hash("top secret"), 1, request);
+    });
   }
 }
