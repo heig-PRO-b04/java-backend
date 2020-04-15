@@ -46,7 +46,7 @@ public class TokenUtils {
    */
   /* package */
   static String base64Encode(byte[] source) {
-    return Base64.getEncoder().encodeToString(source);
+    return Base64.getUrlEncoder().encodeToString(source);
   }
 
   /**
@@ -57,7 +57,7 @@ public class TokenUtils {
    */
   /* package */
   static byte[] base64Decode(String source) {
-    return Base64.getDecoder().decode(source);
+    return Base64.getUrlDecoder().decode(source);
   }
 
   /**
