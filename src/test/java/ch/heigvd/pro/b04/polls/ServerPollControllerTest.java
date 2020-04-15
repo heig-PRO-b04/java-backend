@@ -4,10 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import ch.heigvd.pro.b04.auth.Utils;
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
+import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import java.util.List;
@@ -16,10 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
 
 @ExtendWith(MockitoExtension.class)
 public class ServerPollControllerTest {
@@ -123,6 +123,102 @@ public class ServerPollControllerTest {
 
     assertThrows(WrongCredentialsException.class, () -> {
       controller.insert(Utils.hash("top secret"), 1, request);
+    });
+  }
+
+  @Test
+  public void testDeleteExistingPollWithCorrectTokenDoesWork() {
+
+    Moderator moderator = Moderator.builder()
+        .idModerator(1)
+        .username("username")
+        .secret(Utils.hash("secret"))
+        .build();
+
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idxModerator(moderator)
+        .idPoll(1)
+        .build();
+
+    ServerPoll deleted = ServerPoll.builder()
+        .idPoll(identifier)
+        .title("Hello there")
+        .build();
+
+    when(moderators.findBySecret(Utils.hash("secret"))).thenReturn(Optional.of(moderator));
+    when(polls.findById(identifier)).thenReturn(Optional.of(deleted));
+
+    assertDoesNotThrow(() -> {
+      ServerMessage message = controller.delete(Utils.hash("secret"), 1, 1);
+      assertEquals("Poll deleted", message.getMessage());
+    });
+  }
+
+  @Test
+  public void testDeleteNonExistingPollWithCorrectTokenDoesNotWork() {
+
+    Moderator moderator = Moderator.builder()
+        .idModerator(1)
+        .username("username")
+        .secret(Utils.hash("secret"))
+        .build();
+
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idxModerator(moderator)
+        .idPoll(1)
+        .build();
+
+    when(moderators.findBySecret(Utils.hash("secret"))).thenReturn(Optional.of(moderator));
+    when(polls.findById(identifier)).thenReturn(Optional.empty());
+
+    assertThrows(ResourceNotFoundException.class, () -> {
+      controller.delete(Utils.hash("secret"), 1, 1);
+    });
+  }
+
+  @Test
+  public void testDeleteExistingPollWithIncorrectTokenDoesNotWork() {
+
+    when(moderators.findBySecret(Utils.hash("top secret"))).thenReturn(Optional.empty());
+
+    assertThrows(WrongCredentialsException.class, () -> {
+      controller.delete(Utils.hash("top secret"), 1, 1);
+    });
+  }
+
+  @Test
+  public void testDeleteExistingPollFromOtherUserWithCorrectTokenDoesNotWork() {
+
+    Moderator alice = Moderator.builder()
+        .idModerator(1)
+        .username("alice")
+        .secret(Utils.hash("aliceSecret"))
+        .build();
+
+    Moderator mallory = Moderator.builder()
+        .idModerator(2)
+        .username("mallory")
+        .secret(Utils.hash("mallorySecret"))
+        .build();
+
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idxModerator(alice)
+        .idPoll(1)
+        .build();
+
+    ServerPoll alicePoll = ServerPoll.builder()
+        .idPoll(identifier)
+        .title("Hello there")
+        .build();
+
+    lenient().when(moderators.findBySecret(Utils.hash("aliceSecret")))
+        .thenReturn(Optional.of(alice));
+    lenient().when(moderators.findBySecret(Utils.hash("mallorySecret")))
+        .thenReturn(Optional.of(mallory));
+    lenient().when(polls.findById(identifier)).thenReturn(Optional.of(alicePoll));
+
+    assertThrows(WrongCredentialsException.class, () -> {
+      controller.delete(Utils.hash("mallorySecret"), 1, 1);
     });
   }
 }

@@ -1,10 +1,13 @@
 package ch.heigvd.pro.b04.polls;
 
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
+import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,5 +83,39 @@ public class PollController {
     return moderatorForId
         .map(moderator -> moderator.newPoll(polls, clientPoll))
         .orElseThrow(WrongCredentialsException::new);
+  }
+
+  /**
+   * Deletes a new poll for a given user.
+   *
+   * @param token       The authentication token for the user.
+   * @param idModerator The identifier of the moderator who is deleting the poll.
+   * @param idPoll      The identifier of the poll to delete.
+   * @return A message indicating whether the deletion was successful or not.
+   * @throws WrongCredentialsException If the moderator is invalid, or the credentials incorrect.
+   * @throws ResourceNotFoundException If the poll that we're trying to delete does not exist.
+   */
+  @DeleteMapping("/mod/{idModerator}/poll/{idPoll}")
+  public ServerMessage delete(
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") Integer idModerator,
+      @PathVariable(name = "idPoll") Integer idPoll
+  ) throws WrongCredentialsException, ResourceNotFoundException {
+
+    ServerPollIdentifier identifier = moderators.findBySecret(token)
+        .filter(moderator -> moderator.getIdModerator() == idModerator)
+        .map(moderator -> ServerPollIdentifier.builder()
+            .idxModerator(moderator)
+            .idPoll(idPoll)
+            .build()
+        )
+        .orElseThrow(WrongCredentialsException::new);
+
+    ServerPoll poll = polls.findById(identifier)
+        .orElseThrow(ResourceNotFoundException::new);
+
+    polls.delete(poll);
+
+    return ServerMessage.builder().message("Poll deleted").build();
   }
 }
