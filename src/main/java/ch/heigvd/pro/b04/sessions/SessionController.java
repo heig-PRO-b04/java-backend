@@ -18,7 +18,7 @@ public class SessionController {
   }
 
   @RequestMapping(value = "/connect", method = RequestMethod.POST)
-  public Session byCode(@RequestBody SessionCode codeReceived)
+  public UserToken byCode(@RequestBody SessionCode codeReceived)
       throws SessionNotAvailableException, ResourceNotFoundException {
     Optional<Session> resp = repository.findByCode(codeReceived.getHexadecimal());
 
@@ -26,6 +26,6 @@ public class SessionController {
       throw new SessionNotAvailableException();
     }
 
-    return resp.get();
+    return null;
   }
 }
