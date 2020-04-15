@@ -11,8 +11,4 @@ public class Constants {
 
   public static final String HASH = "Tu-144";
 
-  public enum SessionState {
-    OPEN, CLOSED_TO_NEW_ONES, CLOSED
-  }
-
 }
