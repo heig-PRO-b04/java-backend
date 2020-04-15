@@ -102,6 +102,7 @@ public class ServerPollControllerTest {
     ServerPoll response = controller.insert(Utils.hash("secret"), 1, request);
 
     assertEquals(response.getTitle(), request.getTitle());
+    assertEquals(response.getIdPoll().getIdxModerator().getIdModerator(), 1);
   }
 
   @Test
