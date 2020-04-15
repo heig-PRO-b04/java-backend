@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import ch.heigvd.pro.b04.auth.Utils;
@@ -151,6 +153,7 @@ public class ServerPollControllerTest {
     assertDoesNotThrow(() -> {
       ServerMessage message = controller.delete(Utils.hash("secret"), 1, 1);
       assertEquals("Poll deleted", message.getMessage());
+      verify(polls, times(1)).delete(deleted);
     });
   }
 
