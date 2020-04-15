@@ -58,6 +58,8 @@ Requests a token for a user connecting to a specified poll.
 }
 ```
 
+On success, the server will send a token associated to the user making the request.
+
 The `code` consists of a 4-letter-long sequence of hexadecimal digits, prefixed by the "0x" sequence. Codes must use only capital letters.
 
 The emoji mapping table is as follows :
