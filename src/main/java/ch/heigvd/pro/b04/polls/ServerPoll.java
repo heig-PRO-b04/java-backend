@@ -17,10 +17,10 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Poll implements Serializable {
+public class ServerPoll implements Serializable {
 
   @EmbeddedId
-  private PollIdentifier idPoll;
+  private ServerPollIdentifier idPoll;
 
   @OneToMany(mappedBy = "idQuestion.idxPoll", cascade = CascadeType.ALL)
   private Set<Question> pollQuestions;
@@ -30,11 +30,11 @@ public class Poll implements Serializable {
 
   private String title;
 
-  public Poll() {
+  public ServerPoll() {
   }
 
-  public Poll(long id, String title) {
-    idPoll = new PollIdentifier(id);
+  public ServerPoll(long id, String title) {
+    idPoll = new ServerPollIdentifier(id);
     this.title = title;
   }
 
@@ -42,13 +42,13 @@ public class Poll implements Serializable {
    * Returns a boolean indicating whether a certain token has the permissions to perform some
    * changes on a given poll.
    *
-   * @param poll       The {@link Poll} for which we're checking the permissions.
+   * @param poll       The {@link ServerPoll} for which we're checking the permissions.
    * @param token      The token for which we're checking permissions.
    * @param repository The repository in which moderators can be found.
    * @return True if the user may make modifications to the poll, false otherwise.
    */
   public static boolean isAvailableWithToken(
-      Poll poll,
+      ServerPoll poll,
       String token,
       ModeratorRepository repository) {
     return repository.findBySecret(token)
@@ -56,12 +56,12 @@ public class Poll implements Serializable {
         .orElse(false);
   }
 
-  public PollIdentifier getIdPoll() {
+  public ServerPollIdentifier getIdPoll() {
     return idPoll;
   }
 
   /**
-   * Add a new {@link Question} to this {@link Poll} instance.
+   * Add a new {@link Question} to this {@link ServerPoll} instance.
    *
    * @param newQuestion The question to be added.
    */
@@ -75,7 +75,7 @@ public class Poll implements Serializable {
   }
 
   /**
-   * Add a new {@link Session} to this {@link Poll} instance.
+   * Add a new {@link Session} to this {@link ServerPoll} instance.
    *
    * @param newSession session to add
    */

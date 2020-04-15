@@ -1,6 +1,6 @@
 package ch.heigvd.pro.b04.moderators;
 
-import ch.heigvd.pro.b04.polls.Poll;
+import ch.heigvd.pro.b04.polls.ServerPoll;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,14 +39,14 @@ public class Moderator {
 
   @OneToMany(mappedBy = "idPoll.idxModerator", cascade = CascadeType.ALL)
   @Exclude
-  private Set<Poll> pollSet;
+  private Set<ServerPoll> pollSet;
 
   /**
-   * add a new Poll {@link Poll} to the polls of this moderator.
+   * add a new Poll {@link ServerPoll} to the polls of this moderator.
    *
    * @param newPoll poll to add
    */
-  public void addPoll(Poll newPoll) {
+  public void addPoll(ServerPoll newPoll) {
     newPoll.getIdPoll().setIdxModerator(this);
     if (pollSet == null) {
       this.pollSet = Stream.of(newPoll).collect(Collectors.toSet());

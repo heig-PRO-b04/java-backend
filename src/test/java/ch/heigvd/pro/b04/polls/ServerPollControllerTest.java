@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class PollControllerTest {
+public class ServerPollControllerTest {
 
   @InjectMocks
   PollController controller;
@@ -26,7 +26,7 @@ public class PollControllerTest {
   ModeratorRepository moderators;
 
   @Mock
-  PollRepository polls;
+  ServerPollRepository polls;
 
   @Test
   public void testAllPollsKnownModeratorWithCorrectCredentialsWorks() {
@@ -37,14 +37,14 @@ public class PollControllerTest {
         .secret("secret")
         .build();
 
-    List<Poll> expected = List.of(new Poll());
+    List<ServerPoll> expected = List.of(new ServerPoll());
 
     when(moderators.findById(1)).thenReturn(Optional.of(moderator));
     when(moderators.findBySecret("secret")).thenReturn(Optional.of(moderator));
     when(polls.findAllByModerator(moderator)).thenReturn(expected);
 
     assertDoesNotThrow(() -> {
-      List<Poll> response = controller.all("secret", 1);
+      List<ServerPoll> response = controller.all("secret", 1);
       assertEquals(expected, response);
     });
   }

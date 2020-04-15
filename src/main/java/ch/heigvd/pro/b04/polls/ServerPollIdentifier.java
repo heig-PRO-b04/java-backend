@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Embeddable
-public class PollIdentifier implements Serializable {
+public class ServerPollIdentifier implements Serializable {
 
   @Column
   private long idPoll;
@@ -19,10 +19,10 @@ public class PollIdentifier implements Serializable {
   @PrimaryKeyJoinColumn
   private Moderator idxModerator;
 
-  public PollIdentifier() {
+  public ServerPollIdentifier() {
   }
 
-  public PollIdentifier(long id) {
+  public ServerPollIdentifier(long id) {
     this.idPoll = id;
   }
 }

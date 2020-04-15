@@ -1,6 +1,6 @@
 package ch.heigvd.pro.b04.questions;
 
-import ch.heigvd.pro.b04.polls.Poll;
+import ch.heigvd.pro.b04.polls.ServerPoll;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -17,7 +17,7 @@ public class QuestionIdentifier implements Serializable {
 
   @ManyToOne
   @PrimaryKeyJoinColumn
-  private Poll idxPoll;
+  private ServerPoll idxPoll;
 
   public QuestionIdentifier() {
   }
@@ -26,7 +26,7 @@ public class QuestionIdentifier implements Serializable {
     this.idQuestion = id;
   }
 
-  public Poll getIdxPoll() {
+  public ServerPoll getIdxPoll() {
     return idxPoll;
   }
 }
