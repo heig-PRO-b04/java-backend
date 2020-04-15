@@ -9,4 +9,7 @@ public interface ServerPollRepository extends JpaRepository<ServerPoll, ServerPo
 
   @Query("SELECT p FROM ServerPoll p WHERE p.idPoll.idxModerator = :moderator")
   List<ServerPoll> findAllByModerator(Moderator moderator);
+
+  @Query("UPDATE ServerPoll p SET p.title = :tile WHERE p.idPoll = :id")
+  void update(ServerPollIdentifier id, String title);
 }
