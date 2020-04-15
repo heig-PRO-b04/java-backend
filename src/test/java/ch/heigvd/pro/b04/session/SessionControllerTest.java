@@ -48,7 +48,6 @@ public class SessionControllerTest {
     @Test
     public void testIfSessionCodeIsHexadecimal() {
         Session currentSession = new Session(123);
-        currentSession.setState(SessionState.CLOSED);
 
         SessionCode code = SessionCode.builder().hexadecimal("abcd").build();
         when(repository.findByCode(any())).thenReturn(Optional.of(currentSession));
@@ -59,7 +58,6 @@ public class SessionControllerTest {
     @Test
     public void testIfSessionCodeIsAlmostHexadecimal() {
         Session currentSession = new Session(123);
-        currentSession.setState(SessionState.CLOSED);
 
         SessionCode code = SessionCode.builder().hexadecimal("11FE").build();
         when(repository.findByCode(any())).thenReturn(Optional.of(currentSession));
