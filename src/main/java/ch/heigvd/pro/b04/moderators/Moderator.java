@@ -57,8 +57,8 @@ public class Moderator {
     Long identifier = repository.findAll().stream()
         .map(ServerPoll::getIdPoll)
         .map(ServerPollIdentifier::getIdPoll)
-        .map(id -> id + 1)
         .max(Long::compareTo)
+        .map(id -> id + 1)
         .orElse(1L);
 
     return repository.save(ServerPoll.builder()
