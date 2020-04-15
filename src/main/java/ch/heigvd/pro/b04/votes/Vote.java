@@ -11,6 +11,7 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 public class Vote {
+
   @Getter
   @EmbeddedId
   private VoteIdentifier idVote;
@@ -19,9 +20,8 @@ public class Vote {
   @Setter
   private boolean answerChecked;
 
-  public Vote(Answer answer, Participant participant)
-  {
-    idVote=new VoteIdentifier(participant, answer);
-    answerChecked=false;
+  public Vote(Answer answer, Participant participant) {
+    idVote = new VoteIdentifier(participant, answer);
+    answerChecked = false;
   }
 }

@@ -28,11 +28,16 @@ public class VoteIdentifier implements Serializable {
   @PrimaryKeyJoinColumn
   private Answer idxAnswer;
 
-  public VoteIdentifier(Participant nP, Answer nA)
-  {
-    timeVote=new Timestamp(System.currentTimeMillis());
-    this.idxParticipant=nP;
-    this.idxAnswer=nA;
+  /**
+   * VoteIdentifier constructor.
+   *
+   * @param participant idxParticipant
+   * @param answer idxAnswer
+   */
+  public VoteIdentifier(Participant participant, Answer answer) {
+    timeVote = new Timestamp(System.currentTimeMillis());
+    this.idxParticipant = participant;
+    this.idxAnswer = answer;
   }
 
 }
