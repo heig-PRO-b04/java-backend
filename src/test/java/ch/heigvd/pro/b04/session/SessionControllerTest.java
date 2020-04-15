@@ -25,24 +25,28 @@ public class SessionControllerTest {
 
     @Test
     public void testIfSessionIsClosed() {
+        String code = "0x123F";
         Session currentSession = new Session(123);
+        currentSession.setCode(code);
         currentSession.setState(SessionState.CLOSED);
 
-        SessionCode code = SessionCode.builder().hexadecimal("0x123F").build();
-        when(repository.findByCode(any())).thenReturn(Optional.of(currentSession));
+        SessionCode sessionCode = SessionCode.builder().hexadecimal(code).build();
+        when(repository.findByCode(code)).thenReturn(Optional.of(currentSession));
 
-        assertThrows(SessionNotAvailableException.class, () -> session.byCode(code));
+        assertThrows(SessionNotAvailableException.class, () -> session.byCode(sessionCode));
     }
 
     @Test
     public void testIfSessionIsClosedToNewOnes() {
+        String code = "0x123F";
         Session currentSession = new Session(123);
+        currentSession.setCode(code);
         currentSession.setState(SessionState.CLOSED_TO_NEW_ONES);
 
-        SessionCode code = SessionCode.builder().hexadecimal("0x123F").build();
-        when(repository.findByCode(any())).thenReturn(Optional.of(currentSession));
+        SessionCode sessionCode = SessionCode.builder().hexadecimal(code).build();
+        when(repository.findByCode(code)).thenReturn(Optional.of(currentSession));
 
-        assertThrows(SessionNotAvailableException.class, () -> session.byCode(code));
+        assertThrows(SessionNotAvailableException.class, () -> session.byCode(sessionCode));
     }
 
     @Test
