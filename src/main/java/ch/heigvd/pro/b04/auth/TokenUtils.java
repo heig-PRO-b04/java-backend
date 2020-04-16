@@ -61,9 +61,12 @@ public class TokenUtils {
   }
 
   /**
-   * Returns an authentication token, based on some salt and an associated password. This function
+   * Returns a secured secret, based on some salt and an associated password. This function
    * is deterministic, and it is therefore extremely important that the provided salt is
    * cryptographically secure !
+   *
+   * A secret does not replace an authentication token, but instead ensures that if the database is
+   * accessed, the password can not be easily reversed.
    *
    * @param password The password that is used for generating the hash.
    * @param salt     The salt that is applied to the hash.
