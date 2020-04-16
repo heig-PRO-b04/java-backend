@@ -8,6 +8,7 @@ import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +32,7 @@ public class SessionController {
    * @throws SessionNotAvailableException If the session is closed or closed to newcomers
    * @throws ResourceNotFoundException If the session does not exist
    */
+  @Transactional
   @RequestMapping(value = "/connect", method = RequestMethod.POST)
   public UserToken byCode(@RequestBody SessionCode codeReceived)
       throws SessionNotAvailableException,
