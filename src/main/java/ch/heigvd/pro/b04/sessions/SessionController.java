@@ -1,7 +1,7 @@
 package ch.heigvd.pro.b04.sessions;
 
-import ch.heigvd.pro.b04.auth.exceptions.SessionNotAvailableException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +17,15 @@ public class SessionController {
     repository = repo;
   }
 
+  /**
+   * Connects a new User to a Session.
+   * @param codeReceived The code of the session
+   * @return The token associated with the newly connected user
+   * @throws SessionNotAvailableException If the session is closed or closed to newcomers
+   * @throws ResourceNotFoundException If the session does not exist
+   */
   @RequestMapping(value = "/connect", method = RequestMethod.POST)
-  Session byCode(@RequestBody SessionCode codeReceived)
+  public UserToken byCode(@RequestBody SessionCode codeReceived)
       throws SessionNotAvailableException, ResourceNotFoundException {
     Optional<Session> resp = repository.findByCode(codeReceived.getHexadecimal());
 
@@ -26,6 +33,6 @@ public class SessionController {
       throw new SessionNotAvailableException();
     }
 
-    return resp.get();
+    return null;
   }
 }

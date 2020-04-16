@@ -64,6 +64,7 @@ public class Session {
   @Getter
   private Timestamp timestampEnd;
   @Getter
+  @Setter
   @Column(unique = true)
   private String code;
   @Getter
