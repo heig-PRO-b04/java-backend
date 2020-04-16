@@ -6,14 +6,18 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Embeddable
 @NoArgsConstructor
+@Builder
 public class ParticipantIdentifier implements Serializable {
 
   @Column
+  @Getter
   private long idParticipant;
 
   @Setter
