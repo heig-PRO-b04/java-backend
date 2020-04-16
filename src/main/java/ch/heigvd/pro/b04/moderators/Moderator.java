@@ -39,6 +39,12 @@ public class Moderator {
   @Getter
   private String secret;
 
+  @Getter
+  private String salt;
+
+  @Getter
+  private String token;
+
   @OneToMany(mappedBy = "idPoll.idxModerator", cascade = CascadeType.ALL)
   @Exclude
   private Set<ServerPoll> pollSet;
