@@ -24,7 +24,7 @@ import lombok.Setter;
 @Entity
 @EqualsAndHashCode
 public class Session {
-  private static final int CODE_BOUNDARY = 0xFFFF;
+  private static final int CODE_BOUNDARY_EXCLUDED = 0x10000;
 
   public enum State {
     OPEN, CLOSED_TO_NEW_ONES, CLOSED
@@ -35,7 +35,7 @@ public class Session {
    * @return A String containing the randomly generated session code
    */
   public static String createSessionCode() {
-    Integer rand = new Random().nextInt(CODE_BOUNDARY);
+    Integer rand = new Random().nextInt(CODE_BOUNDARY_EXCLUDED);
     return "0x" + Integer.toHexString(rand);
   }
 
