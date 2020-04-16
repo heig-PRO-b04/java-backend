@@ -17,6 +17,7 @@ import lombok.EqualsAndHashCode;
 import lombok.EqualsAndHashCode.Exclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @NoArgsConstructor
@@ -26,6 +27,10 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class Session {
   private static final int CODE_BOUNDARY = 0xFFFF;
+
+  public enum SessionState {
+    OPEN, CLOSED_TO_NEW_ONES, CLOSED
+  }
 
   /**
    * Creates a new sessionCode in hexadecimal format.
@@ -67,6 +72,7 @@ public class Session {
   @Setter
   @Column(unique = true)
   private String code;
+  @Setter
   @Getter
   private SessionState state;
 

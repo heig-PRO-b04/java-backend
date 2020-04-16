@@ -29,7 +29,7 @@ public class SessionController {
       throws SessionNotAvailableException, ResourceNotFoundException {
     Optional<Session> resp = repository.findByCode(codeReceived.getHexadecimal());
 
-    if (resp.orElseThrow(ResourceNotFoundException::new).getState() != SessionState.OPEN) {
+    if (resp.orElseThrow(ResourceNotFoundException::new).getState() != Session.SessionState.OPEN) {
       throw new SessionNotAvailableException();
     }
 

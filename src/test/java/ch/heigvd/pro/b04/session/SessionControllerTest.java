@@ -28,7 +28,7 @@ public class SessionControllerTest {
         String code = "0x123F";
         Session currentSession = new Session(123);
         currentSession.setCode(code);
-        currentSession.setState(SessionState.CLOSED);
+        currentSession.setState(Session.SessionState.CLOSED);
 
         SessionCode sessionCode = SessionCode.builder().hexadecimal(code).build();
         when(repository.findByCode(code)).thenReturn(Optional.of(currentSession));
@@ -41,7 +41,7 @@ public class SessionControllerTest {
         String code = "0x123F";
         Session currentSession = new Session(123);
         currentSession.setCode(code);
-        currentSession.setState(SessionState.CLOSED_TO_NEW_ONES);
+        currentSession.setState(Session.SessionState.CLOSED_TO_NEW_ONES);
 
         SessionCode sessionCode = SessionCode.builder().hexadecimal(code).build();
         when(repository.findByCode(code)).thenReturn(Optional.of(currentSession));
