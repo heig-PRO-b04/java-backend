@@ -50,7 +50,7 @@ public class ServerPoll implements Serializable {
       ServerPoll poll,
       String token,
       ModeratorRepository repository) {
-    return repository.findBySecret(token)
+    return repository.findByToken(token)
         .map(moderator -> Objects.equals(moderator, poll.idPoll.getIdxModerator()))
         .orElse(false);
   }

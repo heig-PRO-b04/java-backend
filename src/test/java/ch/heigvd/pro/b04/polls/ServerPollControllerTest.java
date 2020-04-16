@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ch.heigvd.pro.b04.auth.Utils;
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.messages.ServerMessage;
@@ -43,13 +42,13 @@ public class ServerPollControllerTest {
     Moderator moderator = Moderator.builder()
         .idModerator(1)
         .username("username")
-        .secret("secret")
+        .token("secret")
         .build();
 
     List<ServerPoll> expected = List.of(new ServerPoll());
 
     when(moderators.findById(1)).thenReturn(Optional.of(moderator));
-    when(moderators.findBySecret("secret")).thenReturn(Optional.of(moderator));
+    when(moderators.findByToken("secret")).thenReturn(Optional.of(moderator));
     when(polls.findAllByModerator(moderator)).thenReturn(expected);
 
     assertDoesNotThrow(() -> {
@@ -63,11 +62,11 @@ public class ServerPollControllerTest {
     Moderator existingModerator = Moderator.builder()
         .idModerator(42)
         .username("username")
-        .secret("secret")
+        .token("secret")
         .build();
 
     when(moderators.findById(1)).thenReturn(Optional.empty());
-    when(moderators.findBySecret("secret")).thenReturn(Optional.of(existingModerator));
+    when(moderators.findByToken("secret")).thenReturn(Optional.of(existingModerator));
 
     assertThrows(WrongCredentialsException.class, () -> controller.all("secret", 1));
   }
@@ -77,11 +76,11 @@ public class ServerPollControllerTest {
     Moderator existingModerator = Moderator.builder()
         .idModerator(42)
         .username("username")
-        .secret("secret")
+        .token("secret")
         .build();
 
     when(moderators.findById(42)).thenReturn(Optional.of(existingModerator));
-    when(moderators.findBySecret("top secret")).thenReturn(Optional.empty());
+    when(moderators.findByToken("top secret")).thenReturn(Optional.empty());
 
     assertThrows(WrongCredentialsException.class, () -> controller.all("top secret", 42));
   }
@@ -92,10 +91,10 @@ public class ServerPollControllerTest {
     Moderator moderator = Moderator.builder()
         .idModerator(1)
         .username("username")
-        .secret(Utils.hash("secret"))
+        .token("token")
         .build();
 
-    when(moderators.findBySecret(Utils.hash("secret"))).thenReturn(Optional.of(moderator));
+    when(moderators.findByToken("token")).thenReturn(Optional.of(moderator));
     when(moderators.findById(1)).thenReturn(Optional.of(moderator));
     when(polls.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -103,7 +102,7 @@ public class ServerPollControllerTest {
         .title("Sample title")
         .build();
 
-    ServerPoll response = controller.insert(Utils.hash("secret"), 1, request);
+    ServerPoll response = controller.insert("token", 1, request);
 
     assertEquals(response.getTitle(), request.getTitle());
     assertEquals(response.getIdPoll().getIdxModerator().getIdModerator(), 1);
@@ -115,18 +114,18 @@ public class ServerPollControllerTest {
     Moderator moderator = Moderator.builder()
         .idModerator(1)
         .username("username")
-        .secret(Utils.hash("secret"))
+        .token("token")
         .build();
 
     when(moderators.findById(1)).thenReturn(Optional.of(moderator));
-    when(moderators.findBySecret(Utils.hash("top secret"))).thenReturn(Optional.empty());
+    when(moderators.findByToken("top token")).thenReturn(Optional.empty());
 
     ClientPoll request = ClientPoll.builder()
         .title("Sample title")
         .build();
 
     assertThrows(WrongCredentialsException.class, () -> {
-      controller.insert(Utils.hash("top secret"), 1, request);
+      controller.insert("top token", 1, request);
     });
   }
 
@@ -136,7 +135,7 @@ public class ServerPollControllerTest {
     Moderator moderator = Moderator.builder()
         .idModerator(1)
         .username("username")
-        .secret(Utils.hash("secret"))
+        .token("token")
         .build();
 
     ServerPollIdentifier identifier = ServerPollIdentifier.builder()
@@ -149,11 +148,11 @@ public class ServerPollControllerTest {
         .title("Hello there")
         .build();
 
-    when(moderators.findBySecret(Utils.hash("secret"))).thenReturn(Optional.of(moderator));
+    when(moderators.findByToken("token")).thenReturn(Optional.of(moderator));
     when(polls.findById(identifier)).thenReturn(Optional.of(deleted));
 
     assertDoesNotThrow(() -> {
-      ServerMessage message = controller.delete(Utils.hash("secret"), 1, 1);
+      ServerMessage message = controller.delete("token", 1, 1);
       assertEquals("Poll deleted", message.getMessage());
       verify(polls, times(1)).delete(deleted);
     });
@@ -165,7 +164,7 @@ public class ServerPollControllerTest {
     Moderator moderator = Moderator.builder()
         .idModerator(1)
         .username("username")
-        .secret(Utils.hash("secret"))
+        .token("token")
         .build();
 
     ServerPollIdentifier identifier = ServerPollIdentifier.builder()
@@ -173,21 +172,21 @@ public class ServerPollControllerTest {
         .idPoll(1)
         .build();
 
-    when(moderators.findBySecret(Utils.hash("secret"))).thenReturn(Optional.of(moderator));
+    when(moderators.findByToken("token")).thenReturn(Optional.of(moderator));
     when(polls.findById(identifier)).thenReturn(Optional.empty());
 
     assertThrows(ResourceNotFoundException.class, () -> {
-      controller.delete(Utils.hash("secret"), 1, 1);
+      controller.delete("token", 1, 1);
     });
   }
 
   @Test
   public void testDeleteExistingPollWithIncorrectTokenDoesNotWork() {
 
-    when(moderators.findBySecret(Utils.hash("top secret"))).thenReturn(Optional.empty());
+    when(moderators.findByToken("top secret")).thenReturn(Optional.empty());
 
     assertThrows(WrongCredentialsException.class, () -> {
-      controller.delete(Utils.hash("top secret"), 1, 1);
+      controller.delete("top secret", 1, 1);
     });
   }
 
@@ -197,13 +196,13 @@ public class ServerPollControllerTest {
     Moderator alice = Moderator.builder()
         .idModerator(1)
         .username("alice")
-        .secret(Utils.hash("aliceSecret"))
+        .token("aliceSecret")
         .build();
 
     Moderator mallory = Moderator.builder()
         .idModerator(2)
         .username("mallory")
-        .secret(Utils.hash("mallorySecret"))
+        .token("mallorySecret")
         .build();
 
     ServerPollIdentifier identifier = ServerPollIdentifier.builder()
@@ -216,14 +215,14 @@ public class ServerPollControllerTest {
         .title("Hello there")
         .build();
 
-    lenient().when(moderators.findBySecret(Utils.hash("aliceSecret")))
+    lenient().when(moderators.findByToken("aliceSecret"))
         .thenReturn(Optional.of(alice));
-    lenient().when(moderators.findBySecret(Utils.hash("mallorySecret")))
+    lenient().when(moderators.findByToken("mallorySecret"))
         .thenReturn(Optional.of(mallory));
     lenient().when(polls.findById(identifier)).thenReturn(Optional.of(alicePoll));
 
     assertThrows(WrongCredentialsException.class, () -> {
-      controller.delete(Utils.hash("mallorySecret"), 1, 1);
+      controller.delete("mallorySecret", 1, 1);
     });
   }
 

@@ -48,7 +48,7 @@ public class PollController {
       @PathVariable(name = "idModerator") Integer idModerator
   ) throws WrongCredentialsException {
     Optional<Moderator> moderatorForId = moderators.findById(idModerator);
-    Optional<Moderator> moderatorForSecret = moderators.findBySecret(token);
+    Optional<Moderator> moderatorForSecret = moderators.findByToken(token);
 
     if (!moderatorForId.equals(moderatorForSecret)) {
       throw new WrongCredentialsException();
@@ -75,7 +75,7 @@ public class PollController {
       @RequestBody ClientPoll clientPoll)
       throws WrongCredentialsException {
     Optional<Moderator> moderatorForId = moderators.findById(idModerator);
-    Optional<Moderator> moderatorForSecret = moderators.findBySecret(token);
+    Optional<Moderator> moderatorForSecret = moderators.findByToken(token);
 
     if (!moderatorForId.equals(moderatorForSecret)) {
       throw new WrongCredentialsException();
@@ -136,7 +136,7 @@ public class PollController {
       @PathVariable(name = "idPoll") Integer idPoll
   ) throws WrongCredentialsException, ResourceNotFoundException {
 
-    ServerPollIdentifier identifier = moderators.findBySecret(token)
+    ServerPollIdentifier identifier = moderators.findByToken(token)
         .filter(moderator -> moderator.getIdModerator() == idModerator)
         .map(moderator -> moderator.getPollIdentifier(idPoll))
         .orElseThrow(WrongCredentialsException::new);
