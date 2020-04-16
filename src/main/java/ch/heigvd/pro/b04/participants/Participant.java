@@ -34,6 +34,7 @@ public class Participant {
   private ParticipantIdentifier idParticipant;
 
   @Column(unique = true)
+  @Getter
   private String token;
 
   public Participant(long id, UserToken token) {

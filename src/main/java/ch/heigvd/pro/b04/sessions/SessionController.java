@@ -1,6 +1,10 @@
 package ch.heigvd.pro.b04.sessions;
 
+import ch.heigvd.pro.b04.auth.TokenUtils;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+import ch.heigvd.pro.b04.participants.Participant;
+import ch.heigvd.pro.b04.participants.ParticipantIdentifier;
+import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import java.util.Optional;
@@ -12,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SessionController {
 
-  private SessionRepository repository;
+  private SessionRepository sessionRepository;
+  private ParticipantRepository participantRepository;
 
-  public SessionController(SessionRepository repo) {
-    repository = repo;
+  public SessionController(SessionRepository repo, ParticipantRepository participantRepository) {
+    this.sessionRepository = repo;
+    this.participantRepository = participantRepository;
   }
 
   /**
@@ -35,12 +41,27 @@ public class SessionController {
       throw new SessionCodeNotHexadecimalException();
     }
 
-    Optional<Session> resp = repository.findByCode(codeReceived.getHexadecimal());
+    Optional<Session> resp = sessionRepository.findByCode(codeReceived.getHexadecimal());
 
     if (resp.orElseThrow(ResourceNotFoundException::new).getState() != Session.SessionState.OPEN) {
       throw new SessionNotAvailableException();
     }
 
-    return null;
+    String token;
+    do {
+      token = TokenUtils.generateRandomToken().toString();
+    } while (participantRepository.findByToken(token).isPresent());
+
+    Participant participant = new Participant().builder()
+        .idParticipant(ParticipantIdentifier.builder()
+            .idParticipant(Participant.getNewIdentifier(participantRepository))
+            .idxSession(resp.get())
+            .build())
+        .token(token)
+        .build();
+
+    participantRepository.saveAndFlush(participant);
+
+    return new UserToken(token);
   }
 }

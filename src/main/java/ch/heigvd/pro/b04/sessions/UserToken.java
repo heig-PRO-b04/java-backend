@@ -4,15 +4,17 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.boot.jackson.JsonComponent;
 
 /**
- * A class representing a Token, concerning users
+ * A class representing a Token, concerning users.
  */
 @Builder
 @Data
+@AllArgsConstructor
 public class UserToken {
   private String token;
 
@@ -22,9 +24,9 @@ public class UserToken {
 
     @Override
     public void serialize(
-          UserToken userToken
-        , JsonGenerator jsonGenerator
-        , SerializerProvider serializerProvider
+        UserToken userToken,
+        JsonGenerator jsonGenerator,
+        SerializerProvider serializerProvider
     ) throws IOException {
       jsonGenerator.writeStartObject();
       jsonGenerator.writeStringField("token", userToken.token);
