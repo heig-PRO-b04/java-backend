@@ -50,6 +50,20 @@ public class Moderator {
   private Set<ServerPoll> pollSet;
 
   /**
+   * Returns the {@link ServerPollIdentifier} for this instance of {@link Moderator} and a certain
+   * poll disambiguator.
+   *
+   * @param disambiguator The (moderator-)unique identifier for the poll we're creating.
+   * @return The newly created {@link ServerPollIdentifier}.
+   */
+  public ServerPollIdentifier getPollIdentifier(int disambiguator) {
+    return ServerPollIdentifier.builder()
+        .idxModerator(this)
+        .idPoll(disambiguator)
+        .build();
+  }
+
+  /**
    * Inserts a new poll in the provided {@link ServerPollRepository} for the current {@link
    * Moderator} instance.
    *

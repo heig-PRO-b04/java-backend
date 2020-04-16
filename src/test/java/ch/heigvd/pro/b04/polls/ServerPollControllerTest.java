@@ -18,8 +18,10 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -221,6 +223,66 @@ public class ServerPollControllerTest {
 
     assertThrows(WrongCredentialsException.class, () -> {
       controller.delete("mallorySecret", 1, 1);
+    });
+  }
+
+  @Test
+  public void testUpdateExistingPollWithCorrectTokenWorks() {
+    Moderator alice = Moderator.builder()
+        .idModerator(1)
+        .username("alice")
+        .token("bunny")
+        .build();
+    ServerPollIdentifier pollIdentifier = ServerPollIdentifier.builder()
+        .idxModerator(alice)
+        .idPoll(1)
+        .build();
+    ServerPoll poll = ServerPoll.builder()
+        .idPoll(pollIdentifier)
+        .title("Super Poll")
+        .build();
+
+    when(moderators.findByToken("bunny")).thenReturn(Optional.of(alice));
+    when(polls.findById(pollIdentifier)).thenReturn(Optional.of(poll));
+    when(polls.update(any(), any())).thenReturn(1);
+
+    assertDoesNotThrow(() -> {
+      ClientPoll update = ClientPoll.builder().title("Hyper Poll").build();
+      ServerPoll response = controller.update("bunny", 1, 1, update);
+      assertEquals(pollIdentifier, response.getIdPoll());
+      verify(polls, times(1)).update(pollIdentifier, "Hyper Poll");
+    });
+  }
+
+  @Test
+  public void testUpdateExistingPollWithIncorrectTokenDoesNotWork() {
+    when(moderators.findByToken("bunny")).thenReturn(Optional.empty());
+
+    assertThrows(WrongCredentialsException.class, () -> {
+      ClientPoll update = ClientPoll.builder().title("Hyper Poll").build();
+      controller.update("bunny", 1, 1, update);
+    });
+  }
+
+  @Test
+  public void testUpdateMissingPollWithKnownTokenDoesNotWork() {
+    Moderator alice = Moderator.builder()
+        .idModerator(1)
+        .username("alice")
+        .secret("bunny")
+        .build();
+    ServerPollIdentifier pollIdentifier = ServerPollIdentifier.builder()
+        .idxModerator(alice)
+        .idPoll(1)
+        .build();
+
+    when(moderators.findByToken("bunny")).thenReturn(Optional.of(alice));
+    lenient().when(polls.update(any(), any())).thenReturn(0);
+    lenient().when(polls.findById(pollIdentifier)).thenReturn(Optional.empty());
+
+    assertThrows(ResourceNotFoundException.class, () -> {
+      ClientPoll update = ClientPoll.builder().title("Hyper Poll").build();
+      controller.update("bunny", 1, 1, update);
     });
   }
 }
