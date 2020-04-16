@@ -52,8 +52,6 @@ public class SessionControllerTest {
 
     @Test
     public void testIfSessionCodeIsHexadecimal() {
-        Session currentSession = new Session(123);
-
         SessionCode code = SessionCode.builder().hexadecimal("abwz").build();
 
         assertThrows(SessionCodeNotHexadecimalException.class, () -> session.byCode(code));
@@ -61,8 +59,6 @@ public class SessionControllerTest {
 
     @Test
     public void testIfSessionCodeBeginsWith0x() {
-        Session currentSession = new Session(123);
-
         SessionCode code = SessionCode.builder().hexadecimal("11FE").build();
 
         assertThrows(SessionCodeNotHexadecimalException.class, () -> session.byCode(code));
