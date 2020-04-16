@@ -1,6 +1,5 @@
 package ch.heigvd.pro.b04.participants;
 
-import ch.heigvd.pro.b04.sessions.UserToken;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -36,9 +35,4 @@ public class Participant {
   @Column(unique = true)
   @Getter
   private String token;
-
-  public Participant(long id, UserToken token) {
-    idParticipant = new ParticipantIdentifier(id);
-    this.token = token.getToken();
-  }
 }
