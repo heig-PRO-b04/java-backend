@@ -245,6 +245,7 @@ public class ServerPollControllerTest {
 
     when(moderators.findBySecret(Utils.hash("bunny"))).thenReturn(Optional.of(alice));
     when(polls.findById(pollIdentifier)).thenReturn(Optional.of(poll));
+    when(polls.update(any(), any())).thenReturn(1);
 
     assertDoesNotThrow(() -> {
       ClientPoll update = ClientPoll.builder().title("Hyper Poll").build();
@@ -277,7 +278,8 @@ public class ServerPollControllerTest {
         .build();
 
     when(moderators.findBySecret(Utils.hash("bunny"))).thenReturn(Optional.of(alice));
-    when(polls.findById(pollIdentifier)).thenReturn(Optional.empty());
+    lenient().when(polls.update(any(), any())).thenReturn(0);
+    lenient().when(polls.findById(pollIdentifier)).thenReturn(Optional.empty());
 
     assertThrows(ResourceNotFoundException.class, () -> {
       ClientPoll update = ClientPoll.builder().title("Hyper Poll").build();

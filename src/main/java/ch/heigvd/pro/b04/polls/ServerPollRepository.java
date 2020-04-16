@@ -15,5 +15,5 @@ public interface ServerPollRepository extends JpaRepository<ServerPoll, ServerPo
   @Transactional
   @Modifying
   @Query("UPDATE ServerPoll p SET p.title = :title WHERE p.idPoll = :id")
-  void update(ServerPollIdentifier id, String title);
+  int update(ServerPollIdentifier id, String title);
 }

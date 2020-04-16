@@ -113,7 +113,9 @@ public class PollController {
             .build())
         .orElseThrow(WrongCredentialsException::new);
 
-    polls.update(identifier, clientPoll.getTitle());
+    int changed = polls.update(identifier, clientPoll.getTitle());
+
+    if (changed != 1) throw new ResourceNotFoundException();
 
     return polls.findById(identifier).orElseThrow(ResourceNotFoundException::new);
   }
