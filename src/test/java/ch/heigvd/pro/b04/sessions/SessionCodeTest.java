@@ -1,12 +1,12 @@
-package ch.heigvd.pro.b04.session;
+package ch.heigvd.pro.b04.sessions;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ch.heigvd.pro.b04.sessions.SessionCode;
 import org.junit.jupiter.api.Test;
 
 public class SessionCodeTest {
+
   @Test
   public void testFormatNotHexadecimal() {
     SessionCode code = SessionCode.builder().hexadecimal("wzx").build();

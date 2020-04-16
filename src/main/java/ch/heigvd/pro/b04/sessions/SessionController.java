@@ -5,6 +5,7 @@ import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.participants.ParticipantIdentifier;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;
+import ch.heigvd.pro.b04.sessions.Session.State;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class SessionController {
 
     Optional<Session> resp = sessionRepository.findByCode(codeReceived.getHexadecimal());
 
-    if (resp.orElseThrow(ResourceNotFoundException::new).getState() != Session.SessionState.OPEN) {
+    if (resp.orElseThrow(ResourceNotFoundException::new).getState() != State.OPEN) {
       throw new SessionNotAvailableException();
     }
 

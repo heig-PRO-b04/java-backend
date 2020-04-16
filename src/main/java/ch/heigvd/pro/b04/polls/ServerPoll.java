@@ -3,6 +3,7 @@ package ch.heigvd.pro.b04.polls;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.questions.Question;
 import ch.heigvd.pro.b04.sessions.Session;
+import ch.heigvd.pro.b04.sessions.Session.State;
 import ch.heigvd.pro.b04.sessions.SessionIdentifier;
 import ch.heigvd.pro.b04.sessions.SessionRepository;
 import java.io.Serializable;
@@ -89,7 +90,7 @@ public class ServerPoll implements Serializable {
     Session newSession = Session.builder()
         .idSession(new SessionIdentifier(identifier))
         .code(sessionCode)
-        .state(Session.SessionState.CLOSED)
+        .state(State.CLOSED)
         .build();
 
     return repository.saveAndFlush(newSession);

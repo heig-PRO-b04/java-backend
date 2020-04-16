@@ -1,12 +1,9 @@
-package ch.heigvd.pro.b04.session;
+package ch.heigvd.pro.b04.sessions;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import ch.heigvd.pro.b04.sessions.Session;
-import ch.heigvd.pro.b04.sessions.SessionCode;
-import ch.heigvd.pro.b04.sessions.SessionController;
-import ch.heigvd.pro.b04.sessions.SessionRepository;
+import ch.heigvd.pro.b04.sessions.Session.State;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import java.util.Optional;
@@ -18,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class SessionControllerTest {
+
     @InjectMocks
     SessionController session;
 
@@ -29,7 +27,7 @@ public class SessionControllerTest {
         String code = "0x123F";
         Session currentSession = new Session(123);
         currentSession.setCode(code);
-        currentSession.setState(Session.SessionState.CLOSED);
+        currentSession.setState(State.CLOSED);
 
         SessionCode sessionCode = SessionCode.builder().hexadecimal(code).build();
         when(repository.findByCode(code)).thenReturn(Optional.of(currentSession));
@@ -42,7 +40,7 @@ public class SessionControllerTest {
         String code = "0x123F";
         Session currentSession = new Session(123);
         currentSession.setCode(code);
-        currentSession.setState(Session.SessionState.CLOSED_TO_NEW_ONES);
+        currentSession.setState(State.CLOSED_TO_NEW_ONES);
 
         SessionCode sessionCode = SessionCode.builder().hexadecimal(code).build();
         when(repository.findByCode(code)).thenReturn(Optional.of(currentSession));

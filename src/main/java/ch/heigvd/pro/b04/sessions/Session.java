@@ -26,7 +26,7 @@ import lombok.Setter;
 public class Session {
   private static final int CODE_BOUNDARY = 0xFFFF;
 
-  public enum SessionState {
+  public enum State {
     OPEN, CLOSED_TO_NEW_ONES, CLOSED
   }
 
@@ -72,7 +72,7 @@ public class Session {
   private String code;
   @Setter
   @Getter
-  private SessionState state;
+  private State state;
 
   /**
    * Constructor of a new {@link Session}.
@@ -81,7 +81,7 @@ public class Session {
    */
   public Session(long id) {
     idSession = new SessionIdentifier(id);
-    state = SessionState.CLOSED;
+    state = State.CLOSED;
     code = createSessionCode();
   }
 }
