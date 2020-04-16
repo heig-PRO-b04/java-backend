@@ -31,8 +31,7 @@ public class TokenUtils {
   /**
    * Returns some cryptographically secure token, that can be used to authenticate users.
    */
-  /* package */
-  static byte[] generateRandomToken() {
+  public static byte[] generateRandomToken() {
     byte[] values = new byte[TOKEN_LENGTH];
     sRandom.nextBytes(values);
     return values;
