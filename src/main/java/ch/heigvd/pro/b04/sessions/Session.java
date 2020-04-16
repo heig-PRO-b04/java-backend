@@ -4,8 +4,6 @@ import ch.heigvd.pro.b04.participants.Participant;
 import java.sql.Timestamp;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -85,19 +83,5 @@ public class Session {
     idSession = new SessionIdentifier(id);
     state = SessionState.CLOSED;
     code = createSessionCode();
-  }
-
-  /**
-   * Add a new {@link Participant} to current Session.
-   *
-   * @param newP participant to add
-   */
-  public void addParticipant(Participant newP) {
-    newP.getIdParticipant().setIdxSession(this);
-    if (participantSet == null) {
-      participantSet = Stream.of(newP).collect(Collectors.toSet());
-    } else {
-      participantSet.add(newP);
-    }
   }
 }
