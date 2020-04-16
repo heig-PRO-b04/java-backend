@@ -3,6 +3,9 @@ package ch.heigvd.pro.b04.polls;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.questions.Question;
 import ch.heigvd.pro.b04.sessions.Session;
+import ch.heigvd.pro.b04.sessions.SessionIdentifier;
+import ch.heigvd.pro.b04.sessions.SessionRepository;
+import ch.heigvd.pro.b04.sessions.SessionState;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
@@ -70,16 +73,25 @@ public class ServerPoll implements Serializable {
   }
 
   /**
-   * Add a new {@link Session} to this {@link ServerPoll} instance.
-   *
-   * @param newSession session to add
+   * Creates a new Session and inserts it in the database.
+   * @param repository The repository containing the new Session
    */
-  public void addSession(Session newSession) {
-    newSession.getIdSession().setIdxPoll(this);
-    if (sessionSet == null) {
-      sessionSet = Stream.of(newSession).collect(Collectors.toSet());
-    } else {
-      sessionSet.add(newSession);
-    }
+  public void createSession(SessionRepository repository) {
+    Long identifier = Session.getNewIdentifier(repository);
+    String sessionCode;
+
+    // Make sure that we do not trigger the unique clause for a session code
+    do {
+      sessionCode = Session.createSessionCode();
+    } while (repository.findByCode(sessionCode).isPresent());
+
+    Session newSession = Session.builder()
+        .idSession(new SessionIdentifier(identifier))
+        .code(sessionCode)
+        .state(SessionState.CLOSED)
+        .build();
+
+    repository.saveAndFlush(newSession);
+    sessionSet.add(newSession);
   }
 }
