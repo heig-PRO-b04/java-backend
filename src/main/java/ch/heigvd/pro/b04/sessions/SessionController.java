@@ -1,6 +1,7 @@
 package ch.heigvd.pro.b04.sessions;
 
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,14 @@ public class SessionController {
    */
   @RequestMapping(value = "/connect", method = RequestMethod.POST)
   public UserToken byCode(@RequestBody SessionCode codeReceived)
-      throws SessionNotAvailableException, ResourceNotFoundException {
+      throws SessionNotAvailableException,
+             ResourceNotFoundException,
+             SessionCodeNotHexadecimalException {
+
+    if (! SessionCode.conformsToFormat(codeReceived)) {
+      throw new SessionCodeNotHexadecimalException();
+    }
+
     Optional<Session> resp = repository.findByCode(codeReceived.getHexadecimal());
 
     if (resp.orElseThrow(ResourceNotFoundException::new).getState() != Session.SessionState.OPEN) {
