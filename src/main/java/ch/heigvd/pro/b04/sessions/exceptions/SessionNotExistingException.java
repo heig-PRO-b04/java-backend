@@ -1,4 +1,4 @@
-package ch.heigvd.pro.b04.auth.exceptions;
+package ch.heigvd.pro.b04.sessions.exceptions;
 
 public class SessionNotExistingException extends Exception {
 

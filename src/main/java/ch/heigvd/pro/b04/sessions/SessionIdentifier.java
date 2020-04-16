@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -14,6 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SessionIdentifier implements Serializable {
 
+  @Getter
   @Column
   private long idSession;
 
