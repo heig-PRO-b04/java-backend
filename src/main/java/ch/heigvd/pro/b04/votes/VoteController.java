@@ -28,11 +28,11 @@ public class VoteController {
   /**
    * Create and store a new {@link Vote}.
    *
-   * @param token voter's token
-   * @param chekced if this answer is choosed or not
-   * @param idAnswer answer concerned by vote
+   * @param token       voter's token
+   * @param chekced     if this answer is choosed or not
+   * @param idAnswer    answer concerned by vote
    * @param sessionCode code of the session
-   * @throws ResourceNotFoundException if Participant or Answer doesn't exist
+   * @throws ResourceNotFoundException    if Participant or Answer doesn't exist
    * @throws SessionNotAvailableException if Session is in state Closed
    */
   @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/session/{sessionCode}"
@@ -44,7 +44,8 @@ public class VoteController {
       throws ResourceNotFoundException, SessionNotAvailableException {
     Optional<Participant> voter = participantRepository.findByToken(token);
     Optional<Answer> answerChanged = answerRepository.findById(idAnswer);
-    Optional<Session> session = sessionRepository.findByCode(sessionCode);
+    Optional<Session> session = sessionRepository.findById
+        (voter.get().getIdParticipant().getIdxSession().getIdSession());
 
     if (voter.isEmpty() || answerChanged.isEmpty() || session.isEmpty()) {
       throw new ResourceNotFoundException();
