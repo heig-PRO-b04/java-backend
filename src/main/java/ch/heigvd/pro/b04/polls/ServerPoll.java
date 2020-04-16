@@ -14,6 +14,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -75,6 +76,7 @@ public class ServerPoll implements Serializable {
    * Creates a new Session and inserts it in the database.
    * @param repository The repository containing the new Session
    */
+  @Transactional
   public Session newSession(SessionRepository repository) {
     Long identifier = Session.getNewIdentifier(repository);
     String sessionCode;
