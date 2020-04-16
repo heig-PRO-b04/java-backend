@@ -23,4 +23,15 @@ public class SessionConnectionExceptionHandler extends ResponseEntityExceptionHa
         HttpStatus.FORBIDDEN
     );
   }
+
+  /**
+   * Returns an {@link ErrorResponse} if a duplicate username exception is triggered.
+   */
+  @ExceptionHandler(SessionCodeNotHexadecimalException.class)
+  public ResponseEntity<ErrorResponse> sessiontNotHexadecimal() {
+    return new ResponseEntity<>(
+        ErrorResponse.from("The given code does not respect defined format."),
+        HttpStatus.BAD_REQUEST
+    );
+  }
 }
