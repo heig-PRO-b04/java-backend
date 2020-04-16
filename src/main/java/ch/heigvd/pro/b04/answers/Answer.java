@@ -1,6 +1,5 @@
 package ch.heigvd.pro.b04.answers;
 
-import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.votes.Vote;
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -4,10 +4,12 @@ import ch.heigvd.pro.b04.answers.Answer;
 import ch.heigvd.pro.b04.participants.Participant;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Builder
 @Entity
 @NoArgsConstructor
 public class Vote {
