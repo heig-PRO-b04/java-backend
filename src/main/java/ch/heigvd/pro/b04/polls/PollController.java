@@ -107,15 +107,14 @@ public class PollController {
 
     ServerPollIdentifier identifier = moderators.findBySecret(token)
         .filter(moderator -> moderator.getIdModerator() == idModerator)
-        .map(moderator -> ServerPollIdentifier.builder()
-            .idxModerator(moderator)
-            .idPoll(idPoll)
-            .build())
+        .map(moderator -> moderator.getPollIdentifier(idPoll))
         .orElseThrow(WrongCredentialsException::new);
 
     int changed = polls.update(identifier, clientPoll.getTitle());
 
-    if (changed != 1) throw new ResourceNotFoundException();
+    if (changed != 1) {
+      throw new ResourceNotFoundException();
+    }
 
     return polls.findById(identifier).orElseThrow(ResourceNotFoundException::new);
   }
@@ -139,11 +138,7 @@ public class PollController {
 
     ServerPollIdentifier identifier = moderators.findBySecret(token)
         .filter(moderator -> moderator.getIdModerator() == idModerator)
-        .map(moderator -> ServerPollIdentifier.builder()
-            .idxModerator(moderator)
-            .idPoll(idPoll)
-            .build()
-        )
+        .map(moderator -> moderator.getPollIdentifier(idPoll))
         .orElseThrow(WrongCredentialsException::new);
 
     ServerPoll poll = polls.findById(identifier)
