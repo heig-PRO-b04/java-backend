@@ -39,9 +39,29 @@ public class Moderator {
   @Getter
   private String secret;
 
+  @Getter
+  private String salt;
+
+  @Getter
+  private String token;
+
   @OneToMany(mappedBy = "idPoll.idxModerator", cascade = CascadeType.ALL)
   @Exclude
   private Set<ServerPoll> pollSet;
+
+  /**
+   * Returns the {@link ServerPollIdentifier} for this instance of {@link Moderator} and a certain
+   * poll disambiguator.
+   *
+   * @param disambiguator The (moderator-)unique identifier for the poll we're creating.
+   * @return The newly created {@link ServerPollIdentifier}.
+   */
+  public ServerPollIdentifier getPollIdentifier(int disambiguator) {
+    return ServerPollIdentifier.builder()
+        .idxModerator(this)
+        .idPoll(disambiguator)
+        .build();
+  }
 
   /**
    * Inserts a new poll in the provided {@link ServerPollRepository} for the current {@link

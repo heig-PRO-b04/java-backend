@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,7 +48,7 @@ public class PollController {
       @PathVariable(name = "idModerator") Integer idModerator
   ) throws WrongCredentialsException {
     Optional<Moderator> moderatorForId = moderators.findById(idModerator);
-    Optional<Moderator> moderatorForSecret = moderators.findBySecret(token);
+    Optional<Moderator> moderatorForSecret = moderators.findByToken(token);
 
     if (!moderatorForId.equals(moderatorForSecret)) {
       throw new WrongCredentialsException();
@@ -74,7 +75,7 @@ public class PollController {
       @RequestBody ClientPoll clientPoll)
       throws WrongCredentialsException {
     Optional<Moderator> moderatorForId = moderators.findById(idModerator);
-    Optional<Moderator> moderatorForSecret = moderators.findBySecret(token);
+    Optional<Moderator> moderatorForSecret = moderators.findByToken(token);
 
     if (!moderatorForId.equals(moderatorForSecret)) {
       throw new WrongCredentialsException();
@@ -83,6 +84,39 @@ public class PollController {
     return moderatorForId
         .map(moderator -> moderator.newPoll(polls, clientPoll))
         .orElseThrow(WrongCredentialsException::new);
+  }
+
+  /**
+   * Updates an existing poll with some new information.
+   *
+   * @param token       The authentication token for the user.
+   * @param idModerator The identifier of the moderator who is updating the poll.
+   * @param idPoll      The identifier of the poll to update.
+   * @param clientPoll  The data with which the poll should be updated.
+   * @return The updated poll.
+   * @throws WrongCredentialsException If the moderator is invalid, or the credentials incorrect.
+   * @throws ResourceNotFoundException If the poll that we're trying to update does not exist.
+   */
+  @PutMapping("/mod/{idModerator}/poll/{idPoll}")
+  public ServerPoll update(
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") Integer idModerator,
+      @PathVariable(name = "idPoll") Integer idPoll,
+      @RequestBody ClientPoll clientPoll
+  ) throws WrongCredentialsException, ResourceNotFoundException {
+
+    ServerPollIdentifier identifier = moderators.findByToken(token)
+        .filter(moderator -> moderator.getIdModerator() == idModerator)
+        .map(moderator -> moderator.getPollIdentifier(idPoll))
+        .orElseThrow(WrongCredentialsException::new);
+
+    int changed = polls.update(identifier, clientPoll.getTitle());
+
+    if (changed != 1) {
+      throw new ResourceNotFoundException();
+    }
+
+    return polls.findById(identifier).orElseThrow(ResourceNotFoundException::new);
   }
 
   /**
@@ -102,13 +136,9 @@ public class PollController {
       @PathVariable(name = "idPoll") Integer idPoll
   ) throws WrongCredentialsException, ResourceNotFoundException {
 
-    ServerPollIdentifier identifier = moderators.findBySecret(token)
+    ServerPollIdentifier identifier = moderators.findByToken(token)
         .filter(moderator -> moderator.getIdModerator() == idModerator)
-        .map(moderator -> ServerPollIdentifier.builder()
-            .idxModerator(moderator)
-            .idPoll(idPoll)
-            .build()
-        )
+        .map(moderator -> moderator.getPollIdentifier(idPoll))
         .orElseThrow(WrongCredentialsException::new);
 
     ServerPoll poll = polls.findById(identifier)
