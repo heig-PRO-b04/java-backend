@@ -8,7 +8,6 @@ import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.sessions.Session.State;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
-import ch.heigvd.pro.b04.sessions.exceptions.SessionNotExistingException;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,11 +36,18 @@ public class SessionController {
    */
   @Transactional
   @RequestMapping(value = "/connect", method = RequestMethod.POST)
-  UserToken byCode(@RequestBody SessionCode codeReceived)
-      throws SessionNotAvailableException, SessionNotExistingException {
+  public UserToken byCode(@RequestBody SessionCode codeReceived)
+      throws SessionNotAvailableException,
+      ResourceNotFoundException,
+      SessionCodeNotHexadecimalException {
+
+    if (!SessionCode.conformsToFormat(codeReceived)) {
+      throw new SessionCodeNotHexadecimalException();
+    }
+
     Optional<Session> resp = sessionRepository.findByCode(codeReceived.getHexadecimal());
 
-    if (resp.orElseThrow(SessionNotExistingException::new).getState() != State.OPEN) {
+    if (resp.orElseThrow(ResourceNotFoundException::new).getState() != State.OPEN) {
       throw new SessionNotAvailableException();
     }
 
