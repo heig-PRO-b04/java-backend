@@ -1,4 +1,4 @@
-package ch.heigvd.pro.b04.auth.exceptions;
+package ch.heigvd.pro.b04.sessions.exceptions;
 
 import ch.heigvd.pro.b04.error.exceptions.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -21,6 +21,17 @@ public class SessionConnectionExceptionHandler extends ResponseEntityExceptionHa
     return new ResponseEntity<>(
         ErrorResponse.from("This code does not exist"),
         HttpStatus.FORBIDDEN
+    );
+  }
+
+  /**
+   * Returns an {@link ErrorResponse} if a duplicate username exception is triggered.
+   */
+  @ExceptionHandler(SessionCodeNotHexadecimalException.class)
+  public ResponseEntity<ErrorResponse> sessiontNotHexadecimal() {
+    return new ResponseEntity<>(
+        ErrorResponse.from("The given code does not respect defined format."),
+        HttpStatus.BAD_REQUEST
     );
   }
 }

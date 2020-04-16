@@ -9,16 +9,21 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Builder
+@NoArgsConstructor
 @Data
 @Embeddable
 public class VoteIdentifier implements Serializable {
 
   @Column
-  private Timestamp timeVote;
+  private final Timestamp timeVote = new Timestamp(System.currentTimeMillis());
 
   @ManyToOne
   @PrimaryKeyJoinColumn
@@ -32,10 +37,9 @@ public class VoteIdentifier implements Serializable {
    * VoteIdentifier constructor.
    *
    * @param participant idxParticipant
-   * @param answer idxAnswer
+   * @param answer      idxAnswer
    */
   public VoteIdentifier(Participant participant, Answer answer) {
-    timeVote = new Timestamp(System.currentTimeMillis());
     this.idxParticipant = participant;
     this.idxAnswer = answer;
   }
