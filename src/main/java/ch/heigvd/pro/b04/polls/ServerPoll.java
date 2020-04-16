@@ -75,7 +75,7 @@ public class ServerPoll implements Serializable {
    * Creates a new Session and inserts it in the database.
    * @param repository The repository containing the new Session
    */
-  public void createSession(SessionRepository repository) {
+  public Session newSession(SessionRepository repository) {
     Long identifier = Session.getNewIdentifier(repository);
     String sessionCode;
 
@@ -90,7 +90,6 @@ public class ServerPoll implements Serializable {
         .state(Session.SessionState.CLOSED)
         .build();
 
-    repository.saveAndFlush(newSession);
-    sessionSet.add(newSession);
+    return repository.saveAndFlush(newSession);
   }
 }
