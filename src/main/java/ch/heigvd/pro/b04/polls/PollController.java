@@ -105,7 +105,7 @@ public class PollController {
       @RequestBody ClientPoll clientPoll
   ) throws WrongCredentialsException, ResourceNotFoundException {
 
-    ServerPollIdentifier identifier = moderators.findBySecret(token)
+    ServerPollIdentifier identifier = moderators.findByToken(token)
         .filter(moderator -> moderator.getIdModerator() == idModerator)
         .map(moderator -> moderator.getPollIdentifier(idPoll))
         .orElseThrow(WrongCredentialsException::new);

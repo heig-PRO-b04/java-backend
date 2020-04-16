@@ -231,7 +231,7 @@ public class ServerPollControllerTest {
     Moderator alice = Moderator.builder()
         .idModerator(1)
         .username("alice")
-        .secret(Utils.hash("bunny"))
+        .token("bunny")
         .build();
     ServerPollIdentifier pollIdentifier = ServerPollIdentifier.builder()
         .idxModerator(alice)
@@ -242,13 +242,13 @@ public class ServerPollControllerTest {
         .title("Super Poll")
         .build();
 
-    when(moderators.findBySecret(Utils.hash("bunny"))).thenReturn(Optional.of(alice));
+    when(moderators.findByToken("bunny")).thenReturn(Optional.of(alice));
     when(polls.findById(pollIdentifier)).thenReturn(Optional.of(poll));
     when(polls.update(any(), any())).thenReturn(1);
 
     assertDoesNotThrow(() -> {
       ClientPoll update = ClientPoll.builder().title("Hyper Poll").build();
-      ServerPoll response = controller.update(Utils.hash("bunny"), 1, 1, update);
+      ServerPoll response = controller.update("bunny", 1, 1, update);
       assertEquals(pollIdentifier, response.getIdPoll());
       verify(polls, times(1)).update(pollIdentifier, "Hyper Poll");
     });
@@ -256,11 +256,11 @@ public class ServerPollControllerTest {
 
   @Test
   public void testUpdateExistingPollWithIncorrectTokenDoesNotWork() {
-    when(moderators.findBySecret(Utils.hash("correct"))).thenReturn(Optional.empty());
+    when(moderators.findByToken("bunny")).thenReturn(Optional.empty());
 
     assertThrows(WrongCredentialsException.class, () -> {
       ClientPoll update = ClientPoll.builder().title("Hyper Poll").build();
-      controller.update(Utils.hash("correct"), 1, 1, update);
+      controller.update("bunny", 1, 1, update);
     });
   }
 
@@ -269,20 +269,20 @@ public class ServerPollControllerTest {
     Moderator alice = Moderator.builder()
         .idModerator(1)
         .username("alice")
-        .secret(Utils.hash("bunny"))
+        .secret("bunny")
         .build();
     ServerPollIdentifier pollIdentifier = ServerPollIdentifier.builder()
         .idxModerator(alice)
         .idPoll(1)
         .build();
 
-    when(moderators.findBySecret(Utils.hash("bunny"))).thenReturn(Optional.of(alice));
+    when(moderators.findByToken("bunny")).thenReturn(Optional.of(alice));
     lenient().when(polls.update(any(), any())).thenReturn(0);
     lenient().when(polls.findById(pollIdentifier)).thenReturn(Optional.empty());
 
     assertThrows(ResourceNotFoundException.class, () -> {
       ClientPoll update = ClientPoll.builder().title("Hyper Poll").build();
-      controller.update(Utils.hash("bunny"), 1, 1, update);
+      controller.update("bunny", 1, 1, update);
     });
   }
 }
