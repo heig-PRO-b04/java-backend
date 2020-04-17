@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import ch.heigvd.pro.b04.auth.exceptions.InvalidCredentialsException;
+import ch.heigvd.pro.b04.auth.exceptions.CredentialsTooShortException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import java.util.Optional;
@@ -59,7 +59,7 @@ public class RegistrationControllerTest {
         .password("password")
         .build();
 
-    assertThrows(InvalidCredentialsException.class,
+    assertThrows(CredentialsTooShortException.class,
         () -> registrationController.register(credentials));
   }
 
@@ -71,7 +71,7 @@ public class RegistrationControllerTest {
         .password("")
         .build();
 
-    assertThrows(InvalidCredentialsException.class,
+    assertThrows(CredentialsTooShortException.class,
         () -> registrationController.register(credentials));
   }
 

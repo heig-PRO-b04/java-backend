@@ -5,8 +5,8 @@ import static ch.heigvd.pro.b04.auth.TokenUtils.generateRandomSalt;
 import static ch.heigvd.pro.b04.auth.TokenUtils.generateRandomToken;
 import static ch.heigvd.pro.b04.auth.TokenUtils.getSecret;
 
+import ch.heigvd.pro.b04.auth.exceptions.CredentialsTooShortException;
 import ch.heigvd.pro.b04.auth.exceptions.DuplicateUsernameException;
-import ch.heigvd.pro.b04.auth.exceptions.InvalidCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import javax.transaction.Transactional;
@@ -33,11 +33,11 @@ public class RegistrationController {
   @RequestMapping(value = "register", method = RequestMethod.POST)
   @Transactional
   public TokenCredentials register(@RequestBody UserCredentials credentials)
-      throws DuplicateUsernameException, InvalidCredentialsException {
+      throws DuplicateUsernameException, CredentialsTooShortException {
 
     // Ensure that the username has a proper length.
     if (credentials.getUsername().length() < 4 || credentials.getPassword().length() < 4) {
-      throw new InvalidCredentialsException();
+      throw new CredentialsTooShortException();
     }
 
     // Does this username already exist ?
