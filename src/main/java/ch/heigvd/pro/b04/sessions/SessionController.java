@@ -28,19 +28,20 @@ public class SessionController {
 
   /**
    * Connects a new User to a Session.
+   *
    * @param codeReceived The code of the session
    * @return The token associated with the newly connected user
    * @throws SessionNotAvailableException If the session is closed or closed to newcomers
-   * @throws ResourceNotFoundException If the session does not exist
+   * @throws ResourceNotFoundException    If the session does not exist
    */
   @Transactional
   @RequestMapping(value = "/connect", method = RequestMethod.POST)
   public UserToken byCode(@RequestBody SessionCode codeReceived)
       throws SessionNotAvailableException,
-             ResourceNotFoundException,
-             SessionCodeNotHexadecimalException {
+      ResourceNotFoundException,
+      SessionCodeNotHexadecimalException {
 
-    if (! SessionCode.conformsToFormat(codeReceived)) {
+    if (!SessionCode.conformsToFormat(codeReceived)) {
       throw new SessionCodeNotHexadecimalException();
     }
 
