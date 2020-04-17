@@ -1,6 +1,5 @@
 package ch.heigvd.pro.b04.error;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,6 +10,6 @@ public class PollClientExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(PollClientException.class)
   public ResponseEntity<PollClientException> handlePollClientException(PollClientException e) {
-    return new ResponseEntity<>(e, HttpStatus.valueOf(e.getCode()));
+    return new ResponseEntity<>(e, e.getStatus());
   }
 }
