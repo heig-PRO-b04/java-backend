@@ -1,4 +1,6 @@
 package ch.heigvd.pro.b04.auth.exceptions;
 
-public class WrongCredentialsException extends RuntimeException {
+import ch.heigvd.pro.b04.error.exceptions.ForbiddenException;
+
+public class WrongCredentialsException extends ForbiddenException {
 }

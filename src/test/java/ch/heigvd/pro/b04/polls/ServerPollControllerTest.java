@@ -18,10 +18,8 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,10 +100,12 @@ public class ServerPollControllerTest {
         .title("Sample title")
         .build();
 
-    ServerPoll response = controller.insert("token", 1, request);
+    assertDoesNotThrow(() -> {
+      ServerPoll response = controller.insert("token", 1, request);
 
-    assertEquals(response.getTitle(), request.getTitle());
-    assertEquals(response.getIdPoll().getIdxModerator().getIdModerator(), 1);
+      assertEquals(response.getTitle(), request.getTitle());
+      assertEquals(response.getIdPoll().getIdxModerator().getIdModerator(), 1);
+    });
   }
 
   @Test
