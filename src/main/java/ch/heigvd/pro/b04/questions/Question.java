@@ -9,21 +9,36 @@ import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 public class Question {
 
+  @Getter
   @EmbeddedId
   private QuestionIdentifier idQuestion;
 
   @OneToMany(mappedBy = "idAnswer.idxQuestion", cascade = CascadeType.ALL)
   private Set<Answer> answersToQuestion;
 
+  @Getter
+  @Setter
   private double indexInPoll;
+  @Getter
+  @Setter
   private String title;
+  @Getter
+  @Setter
   private String details;
+  @Getter
+  @Setter
   private QuestionVisibility visibility;
+  @Getter
+  @Setter
   private short answersMin;
+  @Getter
+  @Setter
   private short answersMax;
 
   public Question() {
@@ -54,10 +69,6 @@ public class Question {
     visibility = visible;
     this.answersMax = max;
     this.answersMin = min;
-  }
-
-  public QuestionIdentifier getIdQuestion() {
-    return idQuestion;
   }
 
   /**
