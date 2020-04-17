@@ -10,6 +10,6 @@ public class CorsConfiguration implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     // We're an open API.
-    registry.addMapping("/**");
+    registry.addMapping("/**").allowedMethods("DELETE", "GET", "POST", "PUT");
   }
 }
