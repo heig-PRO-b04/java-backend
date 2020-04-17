@@ -13,6 +13,7 @@ import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,9 +60,23 @@ public class QuestionController {
   }
 
   @RequestMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}", method = RequestMethod.GET)
-  Question byId(@PathVariable(name = "idQuestion") QuestionIdentifier idQ,
-      @PathVariable(name = "idPoll") ServerPollIdentifier idPoll) {
-    return null;
+  Question byId(@RequestParam(name = "token") String token,
+      @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
+      @PathVariable(name = "idQuestion") QuestionIdentifier maggieQ) throws ResourceNotFoundException {
+    Optional<Participant> pollT = participantRepository.findByToken(token);
+    if (pollT.isEmpty()) {
+      throw new ResourceNotFoundException();
+    }
+    ServerPoll pA = pollT.get().getIdParticipant().getIdxSession().getIdSession().getIdxPoll();
+
+    Optional<ServerPoll> pollConcerned = pollRepository.findById(idPoll);
+    if (pollConcerned.isEmpty()) {
+      throw new ResourceNotFoundException();
+    } else if (!(pA.equals(pollConcerned.get()))) {
+      throw new WrongCredentialsException();
+    }
+
+    return repository.findById(maggieQ).orElseThrow(ResourceNotFoundException::new);
   }
 
   @PostMapping(value = "/mod/{idModerator}/poll/{idPoll}/question")
@@ -95,6 +110,23 @@ public class QuestionController {
     upQ.get().setAnswersMin(question.getAnswersMin());
     upQ.get().setVisibility(question.getVisibility());
     upQ.get().setIndexInPoll(question.getIndexInPoll());
+  }
+
+  @DeleteMapping(value = "DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
+  public void DeleteQuestion(@RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") int idModo,
+      @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
+      @PathVariable(name = "idQuestion") QuestionIdentifier maggieQ)
+      throws ResourceNotFoundException {
+    testModeratorRight(idModo, idPoll, token);
+
+    ServerPoll pollTest=pollRepository.findById(idPoll).get();
+    Optional<Question> upQ = repository.findById(maggieQ);
+    if (upQ.isEmpty() || !(pollTest.equals(maggieQ.getIdxPoll()))) {
+      throw new ResourceNotFoundException();
+    }
+
+    repository.delete(upQ.get());
   }
 
   private boolean testModeratorRight(int idModerator, ServerPollIdentifier idPoll, String token)
