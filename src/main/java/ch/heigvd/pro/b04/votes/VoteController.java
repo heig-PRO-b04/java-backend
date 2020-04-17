@@ -10,6 +10,7 @@ import ch.heigvd.pro.b04.sessions.Session;
 import ch.heigvd.pro.b04.sessions.Session.State;
 import ch.heigvd.pro.b04.sessions.SessionRepository;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
+import ch.heigvd.pro.b04.sessions.exceptions.SessionNotExistingException;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +30,7 @@ public class VoteController {
    * Create and store a new {@link Vote}.
    *
    * @param token    voter's token
-   * @param chekced  if this answer is choosed or not
+   * @param checked  if this answer is chosen or not
    * @param idAnswer answer concerned by vote
    * @throws ResourceNotFoundException    if Participant or Answer doesn't exist
    * @throws SessionNotAvailableException if Session is in state Closed
@@ -37,9 +38,9 @@ public class VoteController {
   @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}"
       + "/question/{idQuestion}/answer/{idAnswer}/vote")
   public void newVote(@RequestParam(name = "token") String token,
-      @RequestBody boolean chekced,
+      @RequestBody boolean checked,
       @PathVariable(name = "idAnswer") AnswerIdentifier idAnswer)
-      throws ResourceNotFoundException, SessionNotAvailableException {
+      throws ResourceNotFoundException, SessionNotAvailableException, SessionNotExistingException {
 
     Optional<Participant> voter = participantRepository.findByToken(token);
     Optional<Answer> answerChanged = answerRepository.findById(idAnswer);
@@ -50,7 +51,9 @@ public class VoteController {
 
     Optional<Session> session = sessionRepository.findById(
         voter.get().getIdParticipant().getIdxSession().getIdSession());
-    if (session.isEmpty() || session.get().getState() == State.CLOSED) {
+    if (session.isEmpty()) {
+      throw new SessionNotExistingException();
+    } else if (session.get().getState() == State.CLOSED) {
       throw new SessionNotAvailableException();
     }
 
@@ -59,7 +62,7 @@ public class VoteController {
             .idxParticipant(voter.get())
             .idxAnswer(answerChanged.get())
             .build())
-        .answerChecked(chekced)
+        .answerChecked(checked)
         .build();
 
     voteRepository.saveAndFlush(newVote);

@@ -46,22 +46,4 @@ public class Participant {
 
   @OneToMany(mappedBy = "idVote.idxParticipant", cascade = CascadeType.ALL)
   private Set<Vote> voteSet;
-
-  public Participant(long id) {
-    idParticipant = new ParticipantIdentifier(id);
-  }
-
-  /**
-   * add a {@link Vote} to the current {@link Participant}.
-   *
-   * @param newVote vote to add
-   */
-  public void addVote(Vote newVote) {
-    newVote.getIdVote().setIdxParticipant(this);
-    if (voteSet == null) {
-      voteSet = Stream.of(newVote).collect(Collectors.toSet());
-    } else {
-      voteSet.add(newVote);
-    }
-  }
 }

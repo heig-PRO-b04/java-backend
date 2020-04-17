@@ -37,18 +37,4 @@ public class Answer {
     this.text = title;
     this.description = description;
   }
-
-  /**
-   * add a {@link Vote} to the current {@link Answer}.
-   *
-   * @param newVote vote to add
-   */
-  public void addVote(Vote newVote) {
-    newVote.getIdVote().setIdxAnswer(this);
-    if (voteSet == null) {
-      voteSet = Stream.of(newVote).collect(Collectors.toSet());
-    } else {
-      voteSet.add(newVote);
-    }
-  }
 }

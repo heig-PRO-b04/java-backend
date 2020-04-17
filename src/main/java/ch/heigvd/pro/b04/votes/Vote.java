@@ -23,9 +23,4 @@ public class Vote {
   @Getter
   @Setter
   private boolean answerChecked;
-
-  public Vote(Participant participant, Answer answer) {
-    idVote = new VoteIdentifier(participant, answer);
-    answerChecked = false;
-  }
 }

@@ -18,6 +18,7 @@ import lombok.Setter;
 
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Embeddable
 public class VoteIdentifier implements Serializable {
@@ -32,16 +33,4 @@ public class VoteIdentifier implements Serializable {
   @ManyToOne
   @PrimaryKeyJoinColumn
   private Answer idxAnswer;
-
-  /**
-   * VoteIdentifier constructor.
-   *
-   * @param participant idxParticipant
-   * @param answer      idxAnswer
-   */
-  public VoteIdentifier(Participant participant, Answer answer) {
-    this.idxParticipant = participant;
-    this.idxAnswer = answer;
-  }
-
 }
