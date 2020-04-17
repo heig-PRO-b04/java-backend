@@ -87,10 +87,10 @@ public class QuestionController {
   /**
    * Insert a new {@link Question} in a {@link ServerPoll}.
    *
-   * @param token sender's token
-   * @param question question to add
+   * @param token       sender's token
+   * @param question    question to add
    * @param idModerator moderator who should be the sender of the request
-   * @param idPoll poll to add question in
+   * @param idPoll      poll to add question in
    * @return question added
    * @throws ResourceNotFoundException if one parameter is broken
    */
@@ -109,11 +109,11 @@ public class QuestionController {
   /**
    * Update a {@link Question} in a {@link ServerPoll}.
    *
-   * @param token sender's token
+   * @param token    sender's token
    * @param question new version of the question
-   * @param idModo moderator who should be the sender of the request
-   * @param idPoll poll to add question in
-   * @param maggieQ id of question to update
+   * @param idModo   moderator who should be the sender of the request
+   * @param idPoll   poll to add question in
+   * @param maggieQ  id of question to update
    * @throws ResourceNotFoundException if one parameter is broken
    */
   @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
@@ -141,9 +141,9 @@ public class QuestionController {
   /**
    * Delete a {@link Question} in a {@link ServerPoll}.
    *
-   * @param token sender's token
-   * @param idModo moderator who should be the sender of the request
-   * @param idPoll poll to delete question in
+   * @param token   sender's token
+   * @param idModo  moderator who should be the sender of the request
+   * @param idPoll  poll to delete question in
    * @param maggieQ id of question to delete
    * @throws ResourceNotFoundException if one parameter is broken
    */
@@ -165,12 +165,12 @@ public class QuestionController {
   }
 
   /**
-   * Test if a token belongs to a {@link Moderator}, and if a {@link ServerPoll}
-   * belongs to this Moderator.
+   * Test if a token belongs to a {@link Moderator}, and if a {@link ServerPoll} belongs to this
+   * Moderator.
    *
    * @param idModerator id of the modo to test
-   * @param idPoll id of the poll
-   * @param token token of the moderator
+   * @param idPoll      id of the poll
+   * @param token       token of the moderator
    * @return true it test is correct
    * @throws ResourceNotFoundException throws exceptions otherwise
    */

@@ -2,6 +2,8 @@ package ch.heigvd.pro.b04.polls;
 
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.questions.Question;
+import ch.heigvd.pro.b04.questions.QuestionIdentifier;
+import ch.heigvd.pro.b04.questions.QuestionRepository;
 import ch.heigvd.pro.b04.sessions.Session;
 import ch.heigvd.pro.b04.sessions.Session.State;
 import ch.heigvd.pro.b04.sessions.SessionIdentifier;
@@ -61,21 +63,36 @@ public class ServerPoll implements Serializable {
   }
 
   /**
+   * Creates a new unique identifier for a {@link Question}.
+   *
+   * @param repository The repository to which we will add a new Session to
+   * @return A new unique identifier
+   */
+  public static Long getNewIdentifier(QuestionRepository repository) {
+    Long identifier = repository.findAll().stream()
+        .map(Question::getIdQuestion)
+        .map(QuestionIdentifier::getIdQuestion)
+        .max(Long::compareTo)
+        .map(id -> id + 1)
+        .orElse(1L);
+    return identifier;
+  }
+
+  /**
    * Add a new {@link Question} to this {@link ServerPoll} instance.
    *
    * @param newQuestion The question to be added.
    */
-  public void addQuestion(Question newQuestion) {
+  @Transactional
+  public Question newQuestion(QuestionRepository repoQ, Question newQuestion) {
     newQuestion.getIdQuestion().setIdxPoll(this);
-    if (pollQuestions == null) {
-      pollQuestions = Stream.of(newQuestion).collect(Collectors.toSet());
-    } else {
-      pollQuestions.add(newQuestion);
-    }
+    return repoQ.save(newQuestion);
   }
+
 
   /**
    * Creates a new Session and inserts it in the database.
+   *
    * @param repository The repository containing the new Session
    */
   @Transactional
