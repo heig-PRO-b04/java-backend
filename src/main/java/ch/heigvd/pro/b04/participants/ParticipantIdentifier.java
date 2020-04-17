@@ -22,6 +22,7 @@ public class ParticipantIdentifier implements Serializable {
   @Getter
   private long idParticipant;
 
+  @Getter
   @Setter
   @ManyToOne
   @PrimaryKeyJoinColumn
