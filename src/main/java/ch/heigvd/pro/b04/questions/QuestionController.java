@@ -42,7 +42,8 @@ public class QuestionController {
 
   @RequestMapping(value = "/mod/{idModerator}/poll/{idPoll}/question", method = RequestMethod.GET)
   List<Question> all(@PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
-      @RequestParam(name = "token") String token) throws ResourceNotFoundException {
+      @RequestParam(name = "token") String token)
+      throws ResourceNotFoundException, WrongCredentialsException {
 
     Optional<Participant> pollT = participantRepository.findByToken(token);
     if (pollT.isEmpty()) {
@@ -65,7 +66,7 @@ public class QuestionController {
   Question byId(@RequestParam(name = "token") String token,
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
       @PathVariable(name = "idQuestion") QuestionIdentifier maggieQ)
-      throws ResourceNotFoundException {
+      throws ResourceNotFoundException, WrongCredentialsException {
     Optional<Participant> pollT = participantRepository.findByToken(token);
     if (pollT.isEmpty()) {
       throw new ResourceNotFoundException();
@@ -97,7 +98,8 @@ public class QuestionController {
   public Question insertQuestion(@RequestParam(name = "token") String token,
       @RequestBody Question question,
       @PathVariable(name = "idModerator") int idModerator,
-      @PathVariable(name = "idPoll") ServerPollIdentifier idPoll) throws ResourceNotFoundException {
+      @PathVariable(name = "idPoll") ServerPollIdentifier idPoll)
+      throws ResourceNotFoundException, WrongCredentialsException {
 
     testModeratorRight(idModerator, idPoll, token);
 
@@ -120,7 +122,7 @@ public class QuestionController {
       @PathVariable(name = "idModerator") int idModo,
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
       @PathVariable(name = "idQuestion") QuestionIdentifier maggieQ)
-      throws ResourceNotFoundException {
+      throws ResourceNotFoundException, WrongCredentialsException {
     testModeratorRight(idModo, idPoll, token);
     ServerPoll pollTest = pollRepository.findById(idPoll).get();
     Optional<Question> upQ = repository.findById(maggieQ);
@@ -150,7 +152,7 @@ public class QuestionController {
       @PathVariable(name = "idModerator") int idModo,
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
       @PathVariable(name = "idQuestion") QuestionIdentifier maggieQ)
-      throws ResourceNotFoundException {
+      throws ResourceNotFoundException, WrongCredentialsException {
     testModeratorRight(idModo, idPoll, token);
 
     ServerPoll pollTest = pollRepository.findById(idPoll).get();
@@ -173,7 +175,7 @@ public class QuestionController {
    * @throws ResourceNotFoundException throws exceptions otherwise
    */
   private boolean testModeratorRight(int idModerator, ServerPollIdentifier idPoll, String token)
-      throws ResourceNotFoundException {
+      throws ResourceNotFoundException, WrongCredentialsException {
     Optional<ServerPoll> pollPo = pollRepository.findById(idPoll);
     Optional<Moderator> poster = moderatorRepository.findById(idModerator);
     Optional<Moderator> test = moderatorRepository.findByToken(token);
