@@ -32,6 +32,7 @@ public class ServerPoll implements Serializable {
   @Getter
   private ServerPollIdentifier idPoll;
 
+  @Getter
   @OneToMany(mappedBy = "idQuestion.idxPoll", cascade = CascadeType.ALL)
   private Set<Question> pollQuestions;
 
