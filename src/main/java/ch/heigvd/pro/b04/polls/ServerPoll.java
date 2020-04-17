@@ -83,14 +83,14 @@ public class ServerPoll implements Serializable {
    *
    * @param newQuestion The question to be added.
    */
-  public Question newQuestion(QuestionRepository repoQ, Question newQuestion)
-  {
-      newQuestion.getIdQuestion().setIdxPoll(this);
-      return repoQ.save(newQuestion);
+  public Question newQuestion(QuestionRepository repoQ, Question newQuestion) {
+    newQuestion.getIdQuestion().setIdxPoll(this);
+    return repoQ.save(newQuestion);
   }
 
   /**
    * Creates a new Session and inserts it in the database.
+   *
    * @param repository The repository containing the new Session
    */
   @Transactional

@@ -1,11 +1,11 @@
 package ch.heigvd.pro.b04.participants;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
 import ch.heigvd.pro.b04.votes.Vote;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
