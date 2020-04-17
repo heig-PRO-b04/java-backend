@@ -28,28 +28,29 @@ public class VoteController {
   /**
    * Create and store a new {@link Vote}.
    *
-   * @param token       voter's token
-   * @param chekced     if this answer is choosed or not
-   * @param idAnswer    answer concerned by vote
-   * @param sessionCode code of the session
+   * @param token    voter's token
+   * @param chekced  if this answer is choosed or not
+   * @param idAnswer answer concerned by vote
    * @throws ResourceNotFoundException    if Participant or Answer doesn't exist
    * @throws SessionNotAvailableException if Session is in state Closed
    */
-  @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/session/{sessionCode}"
+  @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}"
       + "/question/{idQuestion}/answer/{idAnswer}/vote")
   public void newVote(@RequestParam(name = "token") String token,
       @RequestBody boolean chekced,
-      @PathVariable(name = "idAnswer") AnswerIdentifier idAnswer,
-      @PathVariable(name = "sessionCode") String sessionCode)
+      @PathVariable(name = "idAnswer") AnswerIdentifier idAnswer)
       throws ResourceNotFoundException, SessionNotAvailableException {
+
     Optional<Participant> voter = participantRepository.findByToken(token);
     Optional<Answer> answerChanged = answerRepository.findById(idAnswer);
+
+    if (voter.isEmpty() || answerChanged.isEmpty()) {
+      throw new ResourceNotFoundException();
+    }
+    
     Optional<Session> session = sessionRepository.findById
         (voter.get().getIdParticipant().getIdxSession().getIdSession());
-
-    if (voter.isEmpty() || answerChanged.isEmpty() || session.isEmpty()) {
-      throw new ResourceNotFoundException();
-    } else if (session.get().getState() == State.CLOSED) {
+    if (session.isEmpty() || session.get().getState() == State.CLOSED) {
       throw new SessionNotAvailableException();
     }
 
