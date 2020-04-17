@@ -152,10 +152,14 @@ A token is needed
 ### `GET /mod/{idModerator}/poll/{idPoll}/question`
 Get all questions forming a poll.
 
+A token is needed.
+
 On success, a list of questions will be returned.
 
 ### `GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`
 Get question with id `idQuestion`
+
+A token is needed.
 
 On success, the question will be returned.
 
@@ -184,10 +188,14 @@ On success, this message is returned by the server:
 ### `GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer`
 Get answers forming a question.
 
+A token is needed.
+
 On success, a list of answers will be returned.
 
 ### `GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`
 Get the answer with id `idAnswer`
+
+A token is needed.
 
 On success, the answer will be returned.
 
