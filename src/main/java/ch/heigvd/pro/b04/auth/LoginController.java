@@ -5,6 +5,7 @@ import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.utils.Utils;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,24 +30,22 @@ public class LoginController {
    */
   @RequestMapping(value = "auth", method = RequestMethod.POST)
   @ResponseBody
+  @Transactional
   public TokenCredentials login(@RequestBody UserCredentials credentials)
       throws UnknownUserCredentialsException {
-    // FIXME : Use proper token-based authentication, rather than returning the password of the
-    //         user.
+
     Optional<Moderator> moderator = moderators.findByUsername(credentials.getUsername());
-    String hashed = Utils.hash(credentials.getPassword());
-    Optional<TokenCredentials> response = moderator.flatMap(m -> {
-      if (m.getSecret().equals(hashed)) {
-        return Optional.of(
-            TokenCredentials.builder()
-                .token(m.getSecret())
-                .idModerator(m.getIdModerator())
-                .build()
-        );
-      } else {
-        return Optional.empty();
-      }
-    });
-    return response.orElseThrow(UnknownUserCredentialsException::new);
+    Optional<String> actualSecret = moderator.map(Moderator::getSalt)
+        .map(TokenUtils::base64Decode)
+        .map(salt -> TokenUtils.getSecret(credentials.getPassword(), salt));
+
+    if (moderator.isPresent() && moderator.map(Moderator::getSecret).equals(actualSecret)) {
+      return TokenCredentials.builder()
+          .token(moderator.get().getToken())
+          .idModerator(moderator.get().getIdModerator())
+          .build();
+    } else {
+      throw new UnknownUserCredentialsException();
+    }
   }
 }

@@ -6,23 +6,25 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Builder
 @Embeddable
-public class PollIdentifier implements Serializable {
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+public class ServerPollIdentifier implements Serializable {
 
   @Column
+  @Getter
   private long idPoll;
 
   @ManyToOne
+  @Getter
   @PrimaryKeyJoinColumn
   private Moderator idxModerator;
-
-  public PollIdentifier() {
-  }
-
-  public PollIdentifier(long id) {
-    this.idPoll = id;
-  }
 }

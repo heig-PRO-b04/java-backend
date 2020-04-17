@@ -1,9 +1,10 @@
 package ch.heigvd.pro.b04.auth;
 
+import static ch.heigvd.pro.b04.auth.TokenUtils.base64Decode;
+import static ch.heigvd.pro.b04.auth.TokenUtils.getSecret;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import ch.heigvd.pro.b04.auth.exceptions.UnknownUserCredentialsException;
@@ -50,7 +51,9 @@ public class LoginControllerTest {
     when(moderatorRepository.findByUsername("sample"))
         .thenReturn(Optional.of(Moderator.builder()
             .username("sample")
-            .secret(Utils.hash("password"))
+            .secret(getSecret("password", base64Decode("salt")))
+            .salt("salt")
+            .token("token")
             .idModerator(moderatorId)
             .build())
         );
@@ -58,6 +61,7 @@ public class LoginControllerTest {
     assertDoesNotThrow(() -> {
       TokenCredentials response = loginController.login(credentials);
       assertEquals(moderatorId, response.getIdModerator());
+      assertEquals("token", response.getToken());
     });
   }
 
@@ -72,44 +76,12 @@ public class LoginControllerTest {
     when(moderatorRepository.findByUsername("sample"))
         .thenReturn(Optional.of(Moderator.builder()
             .username("sample")
-            .secret("another password")
+            .secret(getSecret("another password", base64Decode("salt")))
+            .salt("salt")
+            .token("token")
             .build())
         );
 
     assertThrows(UnknownUserCredentialsException.class, () -> loginController.login(credentials));
-  }
-
-  @Test
-  public void testLoginFindsTwoModeratorsWithSameTokenHash() {
-
-    UserCredentials loggedIn = UserCredentials.builder()
-        .username("u1")
-        .password("password")
-        .build();
-
-    Moderator first = Moderator.builder()
-        .idModerator(1)
-        .username("u1")
-        .secret(Utils.hash("password"))
-        .build();
-
-    Moderator second = Moderator.builder()
-        .idModerator(2)
-        .username("u2")
-        .secret(Utils.hash("password"))
-        .build();
-
-    lenient().when(moderatorRepository.findByUsername("u1"))
-        .thenReturn(Optional.of(first));
-
-    lenient().when(moderatorRepository.findByUsername("u2"))
-        .thenReturn(Optional.of(second));
-
-    // Find the second user.
-    lenient().when(moderatorRepository.findBySecret(Utils.hash("password")))
-        .thenReturn(Optional.of(second));
-
-    TokenCredentials credentials = loginController.login(loggedIn);
-    assertEquals(1, credentials.getIdModerator());
   }
 }

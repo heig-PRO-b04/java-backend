@@ -7,11 +7,11 @@ import java.io.IOException;
 import org.springframework.boot.jackson.JsonComponent;
 
 @JsonComponent
-public class PollJsonSerializer extends JsonSerializer<Poll> {
+public class ServerPollJsonSerializer extends JsonSerializer<ServerPoll> {
 
   @Override
   public void serialize(
-      Poll poll,
+      ServerPoll poll,
       JsonGenerator jsonGenerator,
       SerializerProvider serializerProvider
   ) throws IOException {
