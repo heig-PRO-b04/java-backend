@@ -47,9 +47,9 @@ public class VoteController {
     if (voter.isEmpty() || answerChanged.isEmpty()) {
       throw new ResourceNotFoundException();
     }
-    
-    Optional<Session> session = sessionRepository.findById
-        (voter.get().getIdParticipant().getIdxSession().getIdSession());
+
+    Optional<Session> session = sessionRepository.findById(
+        voter.get().getIdParticipant().getIdxSession().getIdSession());
     if (session.isEmpty() || session.get().getState() == State.CLOSED) {
       throw new SessionNotAvailableException();
     }
