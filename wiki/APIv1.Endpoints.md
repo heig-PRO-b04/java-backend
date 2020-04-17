@@ -10,6 +10,7 @@
         - [`POST /connect`](#post-connect)
     - [Poll](#poll)
         - [`GET /mod/{idModerator}/poll`](#get-modidmoderatorpoll)
+        - [`GET /mod/{idModerator}/poll/{idPoll}`](#get-modidmoderatorpollidpoll)
         - [`POST /mod/{idModerator}/poll`](#post-modidmoderatorpoll)
         - [`PUT /mod/{idModerator}/poll/{idPoll}`](#put-modidmoderatorpollidpoll)
         - [`DELETE  /mod/{idModerator}/poll/{idPoll}`](#delete--modidmoderatorpollidpoll)
@@ -19,11 +20,13 @@
         - [`PUT /mod/{idModerator}/poll/{ídPoll}/session`](#put-modidmoderatorpollídpollsession)
     - [Question](#question)
         - [`GET /mod/{idModerator}/poll/{idPoll}/question`](#get-modidmoderatorpollidpollquestion)
+        - [`GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`](#get-modidmoderatorpollidpollquestionidquestion)
         - [`POST /mod/{idModerator}/poll/{idPoll}/question`](#post-modidmoderatorpollidpollquestion)
         - [`PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`](#put-modidmoderatorpollidpollquestionidquestion)
         - [`DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`](#delete-modidmoderatorpollidpollquestionidquestion)
     - [Answer](#answer)
         - [`GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer`](#get-modidmoderatorpollidpollquestionidquestionanswer)
+        - [`GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`](#get-modidmoderatorpollidpollquestionidquestionansweridanswer)
         - [`POST /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer`](#post-modidmoderatorpollidpollquestionidquestionanswer)
         - [`PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`](#put-modidmoderatorpollidpollquestionidquestionansweridanswer)
         - [`DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`](#delete-modidmoderatorpollidpollquestionidquestionansweridanswer)
@@ -60,7 +63,8 @@ Requests a token for a user connecting to a specified poll.
 
 On success, the server will send a token associated to the user making the request.
 
-The `code` consists of a 4-letter-long sequence of hexadecimal digits, prefixed by the "0x" sequence. Codes must use only capital letters.
+The `code` consists of a 4-letter-long sequence of hexadecimal digits, prefixed by the "0x"
+sequence. Codes must use only capital letters.
 
 The emoji mapping table is as follows :
 
@@ -91,6 +95,13 @@ A token is needed.
 
 On success, a list of polls will be returned.
 
+### `GET /mod/{idModerator}/poll/{idPoll}`
+Get poll with id `idPoll`.
+
+A token is needed.
+
+On success, the poll will be returned.
+
 ### `POST /mod/{idModerator}/poll`
 Creates a new poll.
 
@@ -119,7 +130,7 @@ On success, this message is returned by the server:
 
 ## Session
 ### `GET /session`
-Get the correct session coresponding with the given token.
+Get the correct session corresponding with the given token.
 
 A token is needed.
 
@@ -139,9 +150,14 @@ A token is needed
 
 ## Question
 ### `GET /mod/{idModerator}/poll/{idPoll}/question`
-Get questions forming a poll.
+Get all questions forming a poll.
 
 On success, a list of questions will be returned.
+
+### `GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`
+Get question with id `idQuestion`
+
+On success, the question will be returned.
 
 ### `POST /mod/{idModerator}/poll/{idPoll}/question`
 Creates a new question.
@@ -169,6 +185,11 @@ On success, this message is returned by the server:
 Get answers forming a question.
 
 On success, a list of answers will be returned.
+
+### `GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`
+Get the answer with id `idAnswer`
+
+On success, the answer will be returned.
 
 ### `POST /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer`
 Creates a new answer.
