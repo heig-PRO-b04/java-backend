@@ -1,5 +1,7 @@
 package ch.heigvd.pro.b04.auth.exceptions;
 
-public class InvalidCredentialsException extends Exception {
+import ch.heigvd.pro.b04.error.exceptions.ForbiddenException;
+
+public class InvalidCredentialsException extends ForbiddenException {
 
 }

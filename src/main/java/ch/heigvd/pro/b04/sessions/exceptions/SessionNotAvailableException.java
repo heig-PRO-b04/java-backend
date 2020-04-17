@@ -1,5 +1,7 @@
 package ch.heigvd.pro.b04.sessions.exceptions;
 
-public class SessionNotAvailableException extends Exception{
+import ch.heigvd.pro.b04.error.exceptions.ForbiddenException;
+
+public class SessionNotAvailableException extends ForbiddenException {
 
 }

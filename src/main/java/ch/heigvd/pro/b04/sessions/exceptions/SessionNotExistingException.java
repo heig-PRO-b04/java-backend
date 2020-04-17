@@ -1,5 +1,7 @@
 package ch.heigvd.pro.b04.sessions.exceptions;
 
-public class SessionNotExistingException extends Exception {
+import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+
+public class SessionNotExistingException extends ResourceNotFoundException {
 
 }
