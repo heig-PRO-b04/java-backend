@@ -42,7 +42,8 @@ public class QuestionController {
 
   @RequestMapping(value = "/mod/{idModerator}/poll/{idPoll}/question", method = RequestMethod.GET)
   List<Question> all(@PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
-      @RequestParam(name = "token") String token)
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") int idModo)
       throws ResourceNotFoundException, WrongCredentialsException {
 
     Optional<Participant> pollT = participantRepository.findByToken(token);
