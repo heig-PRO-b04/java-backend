@@ -40,11 +40,23 @@ public class QuestionController {
       throws ResourceNotFoundException, WrongCredentialsException {
 
     Optional<Participant> pollT = participantRepository.findByToken(token);
+    ServerPoll pollTest;
     if (pollT.isEmpty()) {
-      throw new ResourceNotFoundException();
+      Optional<Moderator> pollM=moderatorRepository.findByToken(token);
+      if(pollM.isEmpty())
+      {
+        throw new ResourceNotFoundException();
+      }
+      else
+      {
+        pollTest=pollM.get().searchPoll(idPoll);
+      }
     }
-    ServerPoll pollTest = pollT.get().getIdParticipant()
-        .getIdxSession().getIdSession().getIdxPoll();
+    else
+    {
+      pollTest = pollT.get().getIdParticipant()
+          .getIdxSession().getIdSession().getIdxPoll();
+    }
 
     Optional<ServerPoll> pollConcerned = pollRepository.findById(idPoll);
     if (pollConcerned.isEmpty()) {
@@ -59,14 +71,26 @@ public class QuestionController {
   @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
   Question byId(@RequestParam(name = "token") String token,
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
-      @PathVariable(name = "idQuestion") QuestionIdentifier maggieQ)
+      @PathVariable(name = "idQuestion") QuestionIdentifier idQuestion)
       throws ResourceNotFoundException, WrongCredentialsException {
     Optional<Participant> pollT = participantRepository.findByToken(token);
+    ServerPoll pollTest;
     if (pollT.isEmpty()) {
-      throw new ResourceNotFoundException();
+      Optional<Moderator> pollM=moderatorRepository.findByToken(token);
+      if(pollM.isEmpty())
+      {
+        throw new ResourceNotFoundException();
+      }
+      else
+      {
+        pollTest=pollM.get().searchPoll(idPoll);
+      }
     }
-    ServerPoll pollTest = pollT.get().getIdParticipant()
-        .getIdxSession().getIdSession().getIdxPoll();
+    else
+    {
+      pollTest = pollT.get().getIdParticipant()
+          .getIdxSession().getIdSession().getIdxPoll();
+    }
 
     Optional<ServerPoll> pollConcerned = pollRepository.findById(idPoll);
     if (pollConcerned.isEmpty()) {
@@ -75,7 +99,7 @@ public class QuestionController {
       throw new WrongCredentialsException();
     }
 
-    return repository.findById(maggieQ).orElseThrow(ResourceNotFoundException::new);
+    return repository.findById(idQuestion).orElseThrow(ResourceNotFoundException::new);
   }
 
   /**
@@ -87,6 +111,7 @@ public class QuestionController {
    * @param idPoll      poll to add question in
    * @return question added
    * @throws ResourceNotFoundException if one parameter is broken
+   * @throws WrongCredentialsException if there is a credentials problem
    */
   @PostMapping(value = "/mod/{idModerator}/poll/{idPoll}/question")
   public Question insertQuestion(@RequestParam(name = "token") String token,
@@ -109,6 +134,7 @@ public class QuestionController {
    * @param idPoll   poll to add question in
    * @param maggieQ  id of question to update
    * @throws ResourceNotFoundException if one parameter is broken
+   * @throws WrongCredentialsException if there is a credentials problem
    */
   @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
   public void updateQuestion(@RequestParam(name = "token") String token,

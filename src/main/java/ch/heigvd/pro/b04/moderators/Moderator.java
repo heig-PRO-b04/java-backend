@@ -1,5 +1,6 @@
 package ch.heigvd.pro.b04.moderators;
 
+import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.polls.ClientPoll;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
@@ -88,5 +89,14 @@ public class Moderator {
             .build())
         .title(poll.getTitle())
         .build());
+  }
+
+  public ServerPoll searchPoll(ServerPollIdentifier idPoll) throws ResourceNotFoundException {
+    for (ServerPoll p : pollSet) {
+      if (p.getIdPoll().equals(idPoll)) {
+        return p;
+      }
+    }
+    throw new ResourceNotFoundException();
   }
 }
