@@ -3,6 +3,7 @@ package ch.heigvd.pro.b04.sessions;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
@@ -93,6 +94,21 @@ public class SessionControllerTest {
             .thenReturn(new ArrayList<>());
 
         assertThrows(PollNotExistingException.class,
+            () -> sessionController.putSession(idMod, idPoll, token, clientSession));
+    }
+
+    @Test
+    public void testThrowsIfBadToken() {
+        int idMod = 1;
+        int idPoll = 5;
+        String token = "habababa";
+        Moderator moderator = new Moderator();
+        ClientSession clientSession = ClientSession.builder().build();
+
+        when(moderatorRepository.findById(idMod)).thenReturn(Optional.of(moderator));
+        when(moderatorRepository.findByToken(token)).thenReturn(Optional.empty());
+
+        assertThrows(WrongCredentialsException.class,
             () -> sessionController.putSession(idMod, idPoll, token, clientSession));
     }
 }
