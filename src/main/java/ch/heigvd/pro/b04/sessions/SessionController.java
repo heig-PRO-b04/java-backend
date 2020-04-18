@@ -13,8 +13,11 @@ import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
+import ch.heigvd.pro.b04.sessions.exceptions.IllegalSessionStateException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
+import ch.heigvd.pro.b04.sessions.exceptions.SessionStateMustBeClosedFirstException;
+import ch.heigvd.pro.b04.sessions.exceptions.SessionStateMustBeOpenedFirstException;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -114,7 +117,9 @@ public class SessionController {
       @RequestParam(name = "token") String token,
       @RequestBody ClientSession clientSession)
       throws WrongCredentialsException,
-      PollNotExistingException {
+      PollNotExistingException,
+      SessionStateMustBeOpenedFirstException,
+      SessionStateMustBeClosedFirstException {
 
     // 1. Authenticate moderator
     Optional<Moderator> modFromId = moderatorRepository.findById(idModerator);
@@ -128,18 +133,59 @@ public class SessionController {
       throw new PollNotExistingException();
     }
 
-    // 3. Get the session or create one
     ServerPoll poll = pollList.get(0);
-    List<ServerSession> sessionList = sessionRepository.findByModAndPoll(modFromId.get(), poll);
 
-    ServerSession session = sessionList.isEmpty() ? poll.newSession(sessionRepository)
-                                                  : sessionList.get(0);
+    Optional<ServerSession> last = poll.getLatestSession(sessionRepository);
+    ServerSession session;
 
-    // 4. Update the session
-    session.setState(clientSession.getState());
+    SessionState askedState = clientSession.getState();
 
-    sessionRepository.saveAndFlush(session);
+    if (last.isEmpty()) {
+      if (! askedState.equals(SessionState.OPEN)) {
+        throw new SessionStateMustBeOpenedFirstException();
+      } else {
+        session = poll.newSession(sessionRepository);
+      }
+    } else {
+      session = last.get();
+      if (session.getState().equals(SessionState.OPEN)) {
+        switch (askedState) {
+          case OPEN:
+            throw new SessionStateMustBeClosedFirstException();
+          case QUARANTINED:
+            session.setState(askedState);
+            break;
+          case CLOSED:
+            session.close();
+            break;
+          default:
+            throw new IllegalSessionStateException();
+        }
+      } else if (session.getState().equals(SessionState.QUARANTINED)) {
+        switch (askedState) {
+          case OPEN:
+          case QUARANTINED:
+            throw new SessionStateMustBeClosedFirstException();
+          case CLOSED:
+            session.close();
+            break;
+          default:
+            throw new IllegalSessionStateException();
+        }
+      } else if (session.getState().equals(SessionState.CLOSED)) {
+        switch (askedState) {
+          case OPEN:
+            session = poll.newSession(sessionRepository);
+            break;
+          case QUARANTINED:
+          case CLOSED:
+            throw new SessionStateMustBeOpenedFirstException();
+          default:
+            throw new IllegalSessionStateException();
+        }
+      }
+    }
 
-    return session;
+    return sessionRepository.saveAndFlush(session);
   }
 }
