@@ -23,12 +23,8 @@ import lombok.Setter;
 @Builder
 @Entity
 @EqualsAndHashCode
-public class Session {
+public class ServerSession {
   private static final int CODE_BOUNDARY_EXCLUDED = 0x10000;
-
-  public enum State {
-    OPEN, CLOSED_TO_NEW_ONES, CLOSED
-  }
 
   /**
    * Creates a new sessionCode in hexadecimal format.
@@ -59,7 +55,7 @@ public class Session {
   private SessionIdentifier idSession;
 
   @Exclude
-  @OneToMany(mappedBy = "idParticipant.idxSession", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "idParticipant.idxServerSession", cascade = CascadeType.ALL)
   private Set<Participant> participantSet;
 
   @Getter
@@ -72,16 +68,5 @@ public class Session {
   private String code;
   @Setter
   @Getter
-  private State state;
-
-  /**
-   * Constructor of a new {@link Session}.
-   *
-   * @param id PK to assign to this Session
-   */
-  public Session(long id) {
-    idSession = new SessionIdentifier(id);
-    state = State.CLOSED;
-    code = createSessionCode();
-  }
+  private SessionState state;
 }
