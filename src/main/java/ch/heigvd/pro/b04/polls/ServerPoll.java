@@ -2,10 +2,10 @@ package ch.heigvd.pro.b04.polls;
 
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.questions.Question;
-import ch.heigvd.pro.b04.sessions.Session;
-import ch.heigvd.pro.b04.sessions.Session.State;
+import ch.heigvd.pro.b04.sessions.ServerSession;
 import ch.heigvd.pro.b04.sessions.SessionIdentifier;
 import ch.heigvd.pro.b04.sessions.SessionRepository;
+import ch.heigvd.pro.b04.sessions.SessionState;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
@@ -36,7 +36,7 @@ public class ServerPoll implements Serializable {
   private Set<Question> pollQuestions;
 
   @OneToMany(mappedBy = "idSession.idxPoll", cascade = CascadeType.ALL)
-  private Set<Session> sessionSet;
+  private Set<ServerSession> serverSessionSet;
 
   @Getter
   private String title;
@@ -78,21 +78,23 @@ public class ServerPoll implements Serializable {
    * @param repository The repository containing the new Session
    */
   @Transactional
-  public Session newSession(SessionRepository repository) {
-    Long identifier = Session.getNewIdentifier(repository);
-    String sessionCode;
-
+  public ServerSession newSession(SessionRepository repository) {
     // Make sure that we do not trigger the unique clause for a session code
+    String sessionCode;
     do {
-      sessionCode = Session.createSessionCode();
+      sessionCode = ServerSession.createSessionCode();
     } while (repository.findByCode(sessionCode).isPresent());
 
-    Session newSession = Session.builder()
-        .idSession(new SessionIdentifier(identifier))
+    ServerSession newServerSession = ServerSession.builder()
+        .idSession(SessionIdentifier.builder()
+            .idSession(SessionIdentifier.getNewIdentifier(repository))
+            .idxModerator(idPoll.getIdxModerator())
+            .idxPoll(this)
+            .build())
         .code(sessionCode)
-        .state(State.CLOSED)
+        .state(SessionState.CLOSED)
         .build();
 
-    return repository.saveAndFlush(newSession);
+    return repository.saveAndFlush(newServerSession);
   }
 }

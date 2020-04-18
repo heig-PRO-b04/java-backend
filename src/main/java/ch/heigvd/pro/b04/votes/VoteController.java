@@ -6,9 +6,9 @@ import ch.heigvd.pro.b04.answers.AnswerRepository;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;
-import ch.heigvd.pro.b04.sessions.Session;
-import ch.heigvd.pro.b04.sessions.Session.State;
+import ch.heigvd.pro.b04.sessions.ServerSession;
 import ch.heigvd.pro.b04.sessions.SessionRepository;
+import ch.heigvd.pro.b04.sessions.SessionState;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotExistingException;
 import java.util.Optional;
@@ -49,11 +49,11 @@ public class VoteController {
       throw new ResourceNotFoundException();
     }
 
-    Optional<Session> session = sessionRepository.findById(
-        voter.get().getIdParticipant().getIdxSession().getIdSession());
+    Optional<ServerSession> session = sessionRepository.findById(
+        voter.get().getIdParticipant().getIdxServerSession().getIdSession());
     if (session.isEmpty()) {
       throw new SessionNotExistingException();
-    } else if (session.get().getState() == State.CLOSED) {
+    } else if (session.get().getState() == SessionState.CLOSED) {
       throw new SessionNotAvailableException();
     }
 
