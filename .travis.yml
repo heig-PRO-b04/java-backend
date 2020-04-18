@@ -5,7 +5,7 @@ branches:
     - master
 
 script:
-  - mvn clean install
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn clean install; fi'
 
 deploy:
   provider: heroku
