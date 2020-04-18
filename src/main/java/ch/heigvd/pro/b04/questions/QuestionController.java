@@ -11,6 +11,7 @@ import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import java.util.List;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,20 +25,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@AllArgsConstructor
 public class QuestionController {
 
-  @Autowired
   private final QuestionRepository repository;
-  @Autowired
-  private ServerPollRepository pollRepository;
-  @Autowired
-  private ParticipantRepository participantRepository;
-  @Autowired
-  private ModeratorRepository moderatorRepository;
-
-  public QuestionController(QuestionRepository repo) {
-    repository = repo;
-  }
+  private final ServerPollRepository pollRepository;
+  private final ParticipantRepository participantRepository;
+  private final ModeratorRepository moderatorRepository;
 
   @RequestMapping(value = "/mod/{idModerator}/poll/{idPoll}/question", method = RequestMethod.GET)
   List<Question> all(@PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
@@ -147,7 +141,7 @@ public class QuestionController {
    * @param maggieQ id of question to delete
    * @throws ResourceNotFoundException if one parameter is broken
    */
-  @DeleteMapping(value = "DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
+  @DeleteMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
   public void deleteQuestion(@RequestParam(name = "token") String token,
       @PathVariable(name = "idModerator") int idModo,
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
@@ -172,7 +166,8 @@ public class QuestionController {
    * @param idPoll      id of the poll
    * @param token       token of the moderator
    * @return true it test is correct
-   * @throws ResourceNotFoundException throws exceptions otherwise
+   * @throws ResourceNotFoundException if one of the parameters is not found
+   * @throws WrongCredentialsException if the tests fails, there is a credentials problem
    */
   private boolean testModeratorRight(int idModerator, ServerPollIdentifier idPoll, String token)
       throws ResourceNotFoundException, WrongCredentialsException {
