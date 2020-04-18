@@ -99,9 +99,11 @@ public class Moderator {
    * @throws ResourceNotFoundException if poll is not found
    */
   public ServerPoll searchPoll(ServerPollIdentifier idPoll) throws ResourceNotFoundException {
-    for (ServerPoll p : pollSet) {
-      if (p.getIdPoll().equals(idPoll)) {
-        return p;
+    if (!pollSet.isEmpty()) {
+      for (ServerPoll p : pollSet) {
+        if (p.getIdPoll().equals(idPoll)) {
+          return p;
+        }
       }
     }
     throw new ResourceNotFoundException();

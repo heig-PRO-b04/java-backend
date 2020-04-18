@@ -1,6 +1,6 @@
 package ch.heigvd.pro.b04.answers;
 
-import ch.heigvd.pro.b04.questions.Question;
+import ch.heigvd.pro.b04.questions.ServerQuestion;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -17,7 +17,7 @@ public class AnswerIdentifier implements Serializable {
 
   @ManyToOne
   @PrimaryKeyJoinColumn
-  private Question idxQuestion;
+  private ServerQuestion idxServerQuestion;
 
   public AnswerIdentifier() {
   }

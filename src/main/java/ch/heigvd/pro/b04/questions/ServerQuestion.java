@@ -8,43 +8,27 @@ import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
+@Builder
+@AllArgsConstructor
 @Entity
-public class Question {
+public class ServerQuestion extends BBQuestion {
 
+  @Getter
   @EmbeddedId
-  private QuestionIdentifier idQuestion;
+  private ServerQuestionIdentifier idServerQuestion;
 
-  @OneToMany(mappedBy = "idAnswer.idxQuestion", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "idAnswer.idxServerQuestion", cascade = CascadeType.ALL)
   private Set<Answer> answersToQuestion;
 
-
-  @Getter
-  @Setter
-  private double indexInPoll;
-  @Getter
-  @Setter
-  private String title;
-  @Getter
-  @Setter
-  private String details;
-  @Getter
-  @Setter
-  private QuestionVisibility visibility;
-  @Getter
-  @Setter
-  private short answersMin;
-  @Getter
-  @Setter
-  private short answersMax;
-
-  public Question() {
+  public ServerQuestion() {
   }
 
   /**
-   * Creates a new {@link Question}.
+   * Creates a new {@link ServerQuestion}.
    *
    * @param id      The question identifier.
    * @param index   The question index.
@@ -54,14 +38,14 @@ public class Question {
    * @param min     The lower bound for the number of required answers.
    * @param max     The upper bound for the number of required answers.
    */
-  public Question(long id,
+  public ServerQuestion(long id,
       double index,
       String title,
       String details,
       QuestionVisibility visible,
       short min,
       short max) {
-    this.idQuestion = new QuestionIdentifier(id);
+    this.idServerQuestion = new ServerQuestionIdentifier(id);
     this.indexInPoll = index;
     this.title = title;
     this.details = details;
@@ -70,17 +54,13 @@ public class Question {
     this.answersMin = min;
   }
 
-  public QuestionIdentifier getIdQuestion() {
-    return idQuestion;
-  }
-
   /**
-   * Add a new answer to this {@link Question}.
+   * Add a new answer to this {@link ServerQuestion}.
    *
    * @param newAnswer The {@link Answer} to add.
    */
   public void addAnswer(Answer newAnswer) {
-    newAnswer.getIdAnswer().setIdxQuestion(this);
+    newAnswer.getIdAnswer().setIdxServerQuestion(this);
     if (answersToQuestion == null) {
       answersToQuestion = Stream.of(newAnswer).collect(Collectors.toSet());
     } else {

@@ -1,8 +1,9 @@
 package ch.heigvd.pro.b04.polls;
 
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
-import ch.heigvd.pro.b04.questions.Question;
-import ch.heigvd.pro.b04.questions.QuestionIdentifier;
+import ch.heigvd.pro.b04.questions.ClientQuestion;
+import ch.heigvd.pro.b04.questions.ServerQuestion;
+import ch.heigvd.pro.b04.questions.ServerQuestionIdentifier;
 import ch.heigvd.pro.b04.questions.QuestionRepository;
 import ch.heigvd.pro.b04.sessions.Session;
 import ch.heigvd.pro.b04.sessions.Session.State;
@@ -11,8 +12,6 @@ import ch.heigvd.pro.b04.sessions.SessionRepository;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -35,8 +34,8 @@ public class ServerPoll implements Serializable {
   private ServerPollIdentifier idPoll;
 
   @Getter
-  @OneToMany(mappedBy = "idQuestion.idxPoll", cascade = CascadeType.ALL)
-  private Set<Question> pollQuestions;
+  @OneToMany(mappedBy = "idServerQuestion.idxPoll", cascade = CascadeType.ALL)
+  private Set<ServerQuestion> pollServerQuestions;
 
   @OneToMany(mappedBy = "idSession.idxPoll", cascade = CascadeType.ALL)
   private Set<Session> sessionSet;
@@ -63,15 +62,15 @@ public class ServerPoll implements Serializable {
   }
 
   /**
-   * Creates a new unique identifier for a {@link Question}.
+   * Creates a new unique identifier for a {@link ServerQuestion}.
    *
    * @param repository The repository to which we will add a new Session to
    * @return A new unique identifier
    */
   public static Long getNewIdentifier(QuestionRepository repository) {
     Long identifier = repository.findAll().stream()
-        .map(Question::getIdQuestion)
-        .map(QuestionIdentifier::getIdQuestion)
+        .map(ServerQuestion::getIdServerQuestion)
+        .map(ServerQuestionIdentifier::getIdServerQuestion)
         .max(Long::compareTo)
         .map(id -> id + 1)
         .orElse(1L);
@@ -79,14 +78,18 @@ public class ServerPoll implements Serializable {
   }
 
   /**
-   * Add a new {@link Question} to this {@link ServerPoll} instance.
+   * Add a new {@link ServerQuestion} to this {@link ServerPoll} instance.
    *
    * @param newQuestion The question to be added.
    */
   @Transactional
-  public Question newQuestion(QuestionRepository repoQ, Question newQuestion) {
-    newQuestion.getIdQuestion().setIdxPoll(this);
-    return repoQ.save(newQuestion);
+  public ServerQuestion newQuestion(QuestionRepository repoQ, ClientQuestion newQuestion) {
+  //using builder bothers all and never compiles. It is probably because inheritance
+
+    ServerQuestion qqW = new ServerQuestion(getNewIdentifier(repoQ), newQuestion.getIndexInPoll()
+        , newQuestion.getTitle(), newQuestion.getDetails(), newQuestion.getVisibility()
+        , newQuestion.getAnswersMin(), newQuestion.getAnswersMax());
+    return repoQ.save(qqW);
   }
 
 
