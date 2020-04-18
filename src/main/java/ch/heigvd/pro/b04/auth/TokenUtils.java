@@ -43,8 +43,7 @@ public class TokenUtils {
    * @param source The source to encode.
    * @return The encoded String.
    */
-  /* package */
-  static String base64Encode(byte[] source) {
+  public static String base64Encode(byte[] source) {
     return Base64.getUrlEncoder().encodeToString(source);
   }
 
@@ -54,8 +53,7 @@ public class TokenUtils {
    * @param source The source to decode.
    * @return The decoded byte array.
    */
-  /* package */
-  static byte[] base64Decode(String source) {
+  public static byte[] base64Decode(String source) {
     return Base64.getUrlDecoder().decode(source);
   }
 
