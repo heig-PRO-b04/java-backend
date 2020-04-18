@@ -56,4 +56,14 @@ public class ServerSession {
   @Setter
   @Getter
   private SessionState state;
+
+  /**
+   * Closes the session and sets the end timestamp.
+   *
+   * <p>Note: this doesn't save to database</p>
+   */
+  public void close() {
+    setState(SessionState.CLOSED);
+    setTimestampEnd(new Timestamp(System.currentTimeMillis()));
+  }
 }
