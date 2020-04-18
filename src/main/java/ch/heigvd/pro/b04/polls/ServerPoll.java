@@ -102,4 +102,16 @@ public class ServerPoll implements Serializable {
 
     return repository.saveAndFlush(newServerSession);
   }
+
+  /** Returns the latest session made in this poll.
+   *
+   * @param repository The session repository
+   * @return An Optional of serversession. If set, it contains the last session made in this poll
+   */
+  public Optional<ServerSession> getLatestSession(SessionRepository repository) {
+    List<ServerSession> allSessions =
+        repository.findByModAndPoll(idPoll.getIdxModerator(), this);
+
+    return allSessions.stream().max(Comparator.comparing(ServerSession::getTimestampStart));
+  }
 }
