@@ -7,7 +7,11 @@ import ch.heigvd.pro.b04.sessions.SessionIdentifier;
 import ch.heigvd.pro.b04.sessions.SessionRepository;
 import ch.heigvd.pro.b04.sessions.SessionState;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -92,9 +96,22 @@ public class ServerPoll implements Serializable {
             .idxPoll(this)
             .build())
         .code(sessionCode)
-        .state(SessionState.CLOSED)
+        .state(SessionState.OPEN)
+        .timestampStart(new Timestamp(System.currentTimeMillis()))
         .build();
 
     return repository.saveAndFlush(newServerSession);
+  }
+
+  /** Returns the latest session made in this poll.
+   *
+   * @param repository The session repository
+   * @return An Optional of serversession. If set, it contains the last session made in this poll
+   */
+  public Optional<ServerSession> getLatestSession(SessionRepository repository) {
+    List<ServerSession> allSessions =
+        repository.findByModAndPoll(idPoll.getIdxModerator(), this);
+
+    return allSessions.stream().max(Comparator.comparing(ServerSession::getTimestampStart));
   }
 }
