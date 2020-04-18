@@ -155,8 +155,8 @@ public class QuestionController {
    * @param idModo  moderator who should be the sender of the request
    * @param idPoll  poll to delete question in
    * @param maggieQ id of question to delete
-   * @throws ResourceNotFoundException if one parameter is broken
    * @return message to confirm deletion succeeded
+   * @throws ResourceNotFoundException if one parameter is broken
    */
   @DeleteMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
   public ServerMessage deleteQuestion(@RequestParam(name = "token") String token,
@@ -187,7 +187,8 @@ public class QuestionController {
    * @throws ResourceNotFoundException if one of the parameters is not found
    * @throws WrongCredentialsException if the tests fails, there is a credentials problem
    */
-  private boolean controlModeratorAccessToPoll(int idModerator, ServerPollIdentifier idPoll, String token)
+  private boolean controlModeratorAccessToPoll(int idModerator,
+      ServerPollIdentifier idPoll, String token)
       throws ResourceNotFoundException, WrongCredentialsException {
     Optional<ServerPoll> pollPo = pollRepository.findById(idPoll);
     Optional<Moderator> poster = moderatorRepository.findById(idModerator);
