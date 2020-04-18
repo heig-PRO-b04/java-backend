@@ -1,7 +1,11 @@
 package ch.heigvd.pro.b04.sessions;
 
-import ch.heigvd.pro.b04.auth.TokenUtils;
+import static ch.heigvd.pro.b04.auth.TokenUtils.base64Encode;
+import static ch.heigvd.pro.b04.auth.TokenUtils.generateRandomToken;
+
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+import ch.heigvd.pro.b04.moderators.Moderator;
+import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.participants.ParticipantIdentifier;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;
@@ -45,21 +49,21 @@ public class SessionController {
       throw new SessionCodeNotHexadecimalException();
     }
 
-    Optional<Session> resp = sessionRepository.findByCode(codeReceived.getHexadecimal());
+    Optional<ServerSession> resp = sessionRepository.findByCode(codeReceived.getHexadecimal());
 
-    if (resp.orElseThrow(ResourceNotFoundException::new).getState() != State.OPEN) {
+    if (resp.orElseThrow(ResourceNotFoundException::new).getState() != SessionState.OPEN) {
       throw new SessionNotAvailableException();
     }
 
     String token;
     do {
-      token = TokenUtils.generateRandomToken().toString();
+      token = base64Encode(generateRandomToken());
     } while (participantRepository.findByToken(token).isPresent());
 
     Participant participant = new Participant().builder()
         .idParticipant(ParticipantIdentifier.builder()
             .idParticipant(Participant.getNewIdentifier(participantRepository))
-            .idxSession(resp.get())
+            .idxServerSession(resp.get())
             .build())
         .token(token)
         .build();
