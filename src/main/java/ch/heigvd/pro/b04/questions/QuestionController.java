@@ -31,6 +31,14 @@ public class QuestionController {
   private final ParticipantRepository participantRepository;
   private final ModeratorRepository moderatorRepository;
 
+  /**
+   * Standard constructor.
+   *
+   * @param repository repository for {@link ServerQuestion}
+   * @param pollRepository repository for {@link ServerPoll}
+   * @param participantRepository repository for {@link Participant}
+   * @param moderatorRepository repository for {@link Moderator}
+   */
   public QuestionController(QuestionRepository repository,
       ServerPollRepository pollRepository,
       ParticipantRepository participantRepository,

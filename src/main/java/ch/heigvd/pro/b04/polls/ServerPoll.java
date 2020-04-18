@@ -2,9 +2,9 @@ package ch.heigvd.pro.b04.polls;
 
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.questions.ClientQuestion;
+import ch.heigvd.pro.b04.questions.QuestionRepository;
 import ch.heigvd.pro.b04.questions.ServerQuestion;
 import ch.heigvd.pro.b04.questions.ServerQuestionIdentifier;
-import ch.heigvd.pro.b04.questions.QuestionRepository;
 import ch.heigvd.pro.b04.sessions.Session;
 import ch.heigvd.pro.b04.sessions.Session.State;
 import ch.heigvd.pro.b04.sessions.SessionIdentifier;
@@ -84,11 +84,10 @@ public class ServerPoll implements Serializable {
    */
   @Transactional
   public ServerQuestion newQuestion(QuestionRepository repoQ, ClientQuestion newQuestion) {
-  //using builder bothers all and never compiles. It is probably because inheritance
-
-    ServerQuestion qqW = new ServerQuestion(getNewIdentifier(repoQ), newQuestion.getIndexInPoll()
-        , newQuestion.getTitle(), newQuestion.getDetails(), newQuestion.getVisibility()
-        , newQuestion.getAnswersMin(), newQuestion.getAnswersMax());
+    //using builder bothers all and never compiles. It is probably because inheritance
+    ServerQuestion qqW = new ServerQuestion(getNewIdentifier(repoQ), newQuestion.getIndexInPoll(),
+        newQuestion.getTitle(), newQuestion.getDetails(), newQuestion.getVisibility(),
+        newQuestion.getAnswersMin(), newQuestion.getAnswersMax());
     return repoQ.save(qqW);
   }
 

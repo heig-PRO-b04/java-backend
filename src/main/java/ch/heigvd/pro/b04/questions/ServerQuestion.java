@@ -15,7 +15,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 @Entity
-public class ServerQuestion extends BBQuestion {
+public class ServerQuestion extends Question {
 
   @Getter
   @EmbeddedId

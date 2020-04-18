@@ -1,12 +1,9 @@
 package ch.heigvd.pro.b04.questions;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-public abstract class BBQuestion {
+public abstract class Question {
   @Getter
   @Setter
   protected double indexInPoll;
