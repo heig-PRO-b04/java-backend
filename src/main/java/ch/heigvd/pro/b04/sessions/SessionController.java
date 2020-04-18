@@ -107,6 +107,7 @@ public class SessionController {
    * @throws PollNotExistingException will be thrown if the poll given in arugment doesn't exist
    */
   @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/session")
+  @Transactional
   public ServerSession putSession(
       @PathVariable(name = "idModerator") Integer idModerator,
       @PathVariable(name = "idPoll") Integer idPoll,
