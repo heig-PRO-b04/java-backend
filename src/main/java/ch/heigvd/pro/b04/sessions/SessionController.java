@@ -3,30 +3,53 @@ package ch.heigvd.pro.b04.sessions;
 import static ch.heigvd.pro.b04.auth.TokenUtils.base64Encode;
 import static ch.heigvd.pro.b04.auth.TokenUtils.generateRandomToken;
 
+import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.participants.ParticipantIdentifier;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;
-import ch.heigvd.pro.b04.sessions.Session.State;
+import ch.heigvd.pro.b04.polls.ServerPoll;
+import ch.heigvd.pro.b04.polls.ServerPollRepository;
+import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
+import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class SessionController {
 
-  private SessionRepository sessionRepository;
-  private ParticipantRepository participantRepository;
+  private final SessionRepository sessionRepository;
+  private final ModeratorRepository moderatorRepository;
+  private final ServerPollRepository serverPollRepository;
+  private final ParticipantRepository participantRepository;
 
-  public SessionController(SessionRepository repo, ParticipantRepository participantRepository) {
-    this.sessionRepository = repo;
+  /** SessionController constructor.
+   *
+   * @param sessionRepository The session repository
+   * @param moderatorRepository The moderator repository
+   * @param serverPollRepository The serverPoll repository
+   * @param participantRepository The participant repository
+   */
+  public SessionController(
+      SessionRepository sessionRepository,
+      ModeratorRepository moderatorRepository,
+      ServerPollRepository serverPollRepository,
+      ParticipantRepository participantRepository
+  ) {
+    this.sessionRepository = sessionRepository;
+    this.moderatorRepository = moderatorRepository;
+    this.serverPollRepository = serverPollRepository;
     this.participantRepository = participantRepository;
   }
 
@@ -71,5 +94,51 @@ public class SessionController {
     participantRepository.saveAndFlush(participant);
 
     return new UserToken(token);
+  }
+
+  /** This method/endpoint is used to update/create a session, particularly it's state.
+   *
+   * @param idModerator The moderator's id
+   * @param idPoll The poll's id
+   * @param token The moderators'token
+   * @param clientSession The state to update to
+   * @return Returns a serverSession, updated as demanded.
+   * @throws WrongCredentialsException will be thrown if the credentials are wrong
+   * @throws PollNotExistingException will be thrown if the poll given in arugment doesn't exist
+   */
+  @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/session")
+  public ServerSession putSession(
+      @PathVariable(name = "idModerator") Integer idModerator,
+      @PathVariable(name = "idPoll") Integer idPoll,
+      @RequestParam(name = "token") String token,
+      @RequestBody ClientSession clientSession)
+      throws WrongCredentialsException,
+      PollNotExistingException {
+
+    // 1. Authenticate moderator
+    Optional<Moderator> modFromId = moderatorRepository.findById(idModerator);
+    if (! modFromId.equals(moderatorRepository.findByToken(token))) {
+      throw new WrongCredentialsException();
+    }
+
+    // 2. Check that the poll exists and that we have access
+    List<ServerPoll> pollList = serverPollRepository.findByModeratorAndId(modFromId.get(), idPoll);
+    if (pollList.isEmpty()) {
+      throw new PollNotExistingException();
+    }
+
+    // 3. Get the session or create one
+    ServerPoll poll = pollList.get(0);
+    List<ServerSession> sessionList = sessionRepository.findByModAndPoll(modFromId.get(), poll);
+
+    ServerSession session = sessionList.isEmpty() ? poll.newSession(sessionRepository)
+                                                  : sessionList.get(0);
+
+    // 4. Update the session
+    session.setState(clientSession.getState());
+
+    sessionRepository.saveAndFlush(session);
+
+    return session;
   }
 }
