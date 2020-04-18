@@ -49,8 +49,18 @@ public class QuestionController {
     this.moderatorRepository = moderatorRepository;
   }
 
+  /**
+   * return all {@link ServerQuestion} of a {@link ServerPoll}.
+   *
+   * @param idPoll id of the poll containing question
+   * @param token token of the sender, moderator or participant
+   * @param idModo id of moderator owning the poll
+   * @return list of {@link ServerQuestion}
+   * @throws ResourceNotFoundException if sender or poll is not found
+   * @throws WrongCredentialsException if the sender cannot access this poll
+   */
   @RequestMapping(value = "/mod/{idModerator}/poll/{idPoll}/question", method = RequestMethod.GET)
-  List<ServerQuestion> all(@PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
+  public List<ServerQuestion> all(@PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
       @RequestParam(name = "token") String token,
       @PathVariable(name = "idModerator") int idModo)
       throws ResourceNotFoundException, WrongCredentialsException {
@@ -73,15 +83,25 @@ public class QuestionController {
 
     if (pollConcerned.isEmpty() || pollTest.isEmpty()) {
       throw new ResourceNotFoundException();
-    } else if (!(pollTest.equals(pollConcerned.get()))) {
+    } else if (!(pollTest.get().equals(pollConcerned.get()))) {
       throw new WrongCredentialsException();
     }
 
     return (List<ServerQuestion>) pollConcerned.get().getPollServerQuestions();
   }
 
+  /**
+   * return a chosen {@link ServerQuestion} of a {@link ServerPoll}.
+   *
+   * @param idPoll id of the poll containing question
+   * @param token token of the sender, moderator or participant
+   * @param idQuestion id of the Question to return
+   * @return {@link ServerQuestion} wanted
+   * @throws ResourceNotFoundException if sender or question or poll is not found
+   * @throws WrongCredentialsException if the sender cannot access this poll
+   */
   @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
-  ServerQuestion byId(@RequestParam(name = "token") String token,
+  public ServerQuestion byId(@RequestParam(name = "token") String token,
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
       @PathVariable(name = "idQuestion") ServerQuestionIdentifier idQuestion)
       throws ResourceNotFoundException, WrongCredentialsException {

@@ -84,7 +84,7 @@ public class ServerPoll implements Serializable {
    */
   @Transactional
   public ServerQuestion newQuestion(QuestionRepository repoQ, ClientQuestion newQuestion) {
-    ServerQuestion qqW=ServerQuestion.builder()
+    ServerQuestion qqW = ServerQuestion.builder()
         .id(getNewIdentifier(repoQ))
         .title(newQuestion.getTitle())
         .details(newQuestion.getDetails())
