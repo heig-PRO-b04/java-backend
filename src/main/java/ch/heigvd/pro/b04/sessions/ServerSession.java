@@ -35,21 +35,6 @@ public class ServerSession {
     return "0x" + Integer.toHexString(rand);
   }
 
-  /**
-   * Creates a new unique identifier for a Session.
-   * @param repository The repository to which we will add a new Session to
-   * @return A new unique identifier
-   */
-  public static Long getNewIdentifier(SessionRepository repository) {
-    Long identifier = repository.findAll().stream()
-        .map(Session::getIdSession)
-        .map(SessionIdentifier::getIdSession)
-        .max(Long::compareTo)
-        .map(id -> id + 1)
-        .orElse(1L);
-    return identifier;
-  }
-
   @Getter
   @EmbeddedId
   private SessionIdentifier idSession;
@@ -59,8 +44,10 @@ public class ServerSession {
   private Set<Participant> participantSet;
 
   @Getter
+  @Setter
   private Timestamp timestampStart;
   @Getter
+  @Setter
   private Timestamp timestampEnd;
   @Getter
   @Setter
