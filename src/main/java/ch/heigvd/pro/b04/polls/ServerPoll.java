@@ -84,10 +84,14 @@ public class ServerPoll implements Serializable {
    */
   @Transactional
   public ServerQuestion newQuestion(QuestionRepository repoQ, ClientQuestion newQuestion) {
-    //using builder bothers all and never compiles. It is probably because inheritance
-    ServerQuestion qqW = new ServerQuestion(getNewIdentifier(repoQ), newQuestion.getIndexInPoll(),
-        newQuestion.getTitle(), newQuestion.getDetails(), newQuestion.getVisibility(),
-        newQuestion.getAnswersMin(), newQuestion.getAnswersMax());
+    ServerQuestion qqW=ServerQuestion.builder()
+        .id(getNewIdentifier(repoQ))
+        .title(newQuestion.getTitle())
+        .details(newQuestion.getDetails())
+        .visible(newQuestion.getVisibility())
+        .index(newQuestion.getIndexInPoll())
+        .max(newQuestion.getAnswersMax())
+        .min(newQuestion.getAnswersMin()).build();
     return repoQ.save(qqW);
   }
 

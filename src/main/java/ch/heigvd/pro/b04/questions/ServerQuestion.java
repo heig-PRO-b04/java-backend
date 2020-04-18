@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
 @AllArgsConstructor
 @Entity
 public class ServerQuestion extends Question {
@@ -38,6 +37,7 @@ public class ServerQuestion extends Question {
    * @param min     The lower bound for the number of required answers.
    * @param max     The upper bound for the number of required answers.
    */
+  @Builder
   public ServerQuestion(long id,
       double index,
       String title,
