@@ -5,7 +5,11 @@ import org.springframework.http.HttpStatus;
 
 public class ResourceNotFoundException extends PollClientException {
 
+  public ResourceNotFoundException(String message) {
+    super(message, HttpStatus.NOT_FOUND);
+  }
+
   public ResourceNotFoundException() {
-    super("The requested resource could not be found.", HttpStatus.NOT_FOUND);
+    this("The requested resource could not be found.");
   }
 }
