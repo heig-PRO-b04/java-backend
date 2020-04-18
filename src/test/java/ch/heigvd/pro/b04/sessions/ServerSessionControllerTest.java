@@ -3,7 +3,6 @@ package ch.heigvd.pro.b04.sessions;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import ch.heigvd.pro.b04.sessions.Session.State;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import java.util.Optional;
@@ -14,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class SessionControllerTest {
+public class ServerSessionControllerTest {
 
     @InjectMocks
     SessionController session;
@@ -25,12 +24,13 @@ public class SessionControllerTest {
     @Test
     public void testIfSessionIsClosed() {
         String code = "0x123F";
-        Session currentSession = new Session(123);
-        currentSession.setCode(code);
-        currentSession.setState(State.CLOSED);
+        ServerSession currentServerSession = ServerSession.builder()
+            .code(code)
+            .state(SessionState.CLOSED)
+            .build();
 
         SessionCode sessionCode = SessionCode.builder().hexadecimal(code).build();
-        when(repository.findByCode(code)).thenReturn(Optional.of(currentSession));
+        when(repository.findByCode(code)).thenReturn(Optional.of(currentServerSession));
 
         assertThrows(SessionNotAvailableException.class, () -> session.byCode(sessionCode));
     }
@@ -38,12 +38,13 @@ public class SessionControllerTest {
     @Test
     public void testIfSessionIsClosedToNewOnes() {
         String code = "0x123F";
-        Session currentSession = new Session(123);
-        currentSession.setCode(code);
-        currentSession.setState(State.CLOSED_TO_NEW_ONES);
+        ServerSession currentServerSession = ServerSession.builder()
+            .code(code)
+            .state(SessionState.QUARANTINED)
+            .build();
 
         SessionCode sessionCode = SessionCode.builder().hexadecimal(code).build();
-        when(repository.findByCode(code)).thenReturn(Optional.of(currentSession));
+        when(repository.findByCode(code)).thenReturn(Optional.of(currentServerSession));
 
         assertThrows(SessionNotAvailableException.class, () -> session.byCode(sessionCode));
     }
