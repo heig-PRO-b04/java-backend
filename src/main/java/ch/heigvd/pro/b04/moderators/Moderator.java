@@ -91,6 +91,13 @@ public class Moderator {
         .build());
   }
 
+  /**
+   * search for a {@link ServerPoll} in the pollset of this moderator.
+   *
+   * @param idPoll id of the poll to search
+   * @return {@link ServerPoll} found
+   * @throws ResourceNotFoundException if poll is not found
+   */
   public ServerPoll searchPoll(ServerPollIdentifier idPoll) throws ResourceNotFoundException {
     for (ServerPoll p : pollSet) {
       if (p.getIdPoll().equals(idPoll)) {

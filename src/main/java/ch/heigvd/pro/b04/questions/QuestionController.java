@@ -2,6 +2,7 @@ package ch.heigvd.pro.b04.questions;
 
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.participants.Participant;
@@ -12,7 +13,6 @@ import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,18 +42,13 @@ public class QuestionController {
     Optional<Participant> pollT = participantRepository.findByToken(token);
     ServerPoll pollTest;
     if (pollT.isEmpty()) {
-      Optional<Moderator> pollM=moderatorRepository.findByToken(token);
-      if(pollM.isEmpty())
-      {
+      Optional<Moderator> pollM = moderatorRepository.findByToken(token);
+      if (pollM.isEmpty()) {
         throw new ResourceNotFoundException();
+      } else {
+        pollTest = pollM.get().searchPoll(idPoll);
       }
-      else
-      {
-        pollTest=pollM.get().searchPoll(idPoll);
-      }
-    }
-    else
-    {
+    } else {
       pollTest = pollT.get().getIdParticipant()
           .getIdxSession().getIdSession().getIdxPoll();
     }
@@ -76,18 +71,13 @@ public class QuestionController {
     Optional<Participant> pollT = participantRepository.findByToken(token);
     ServerPoll pollTest;
     if (pollT.isEmpty()) {
-      Optional<Moderator> pollM=moderatorRepository.findByToken(token);
-      if(pollM.isEmpty())
-      {
+      Optional<Moderator> pollM = moderatorRepository.findByToken(token);
+      if (pollM.isEmpty()) {
         throw new ResourceNotFoundException();
+      } else {
+        pollTest = pollM.get().searchPoll(idPoll);
       }
-      else
-      {
-        pollTest=pollM.get().searchPoll(idPoll);
-      }
-    }
-    else
-    {
+    } else {
       pollTest = pollT.get().getIdParticipant()
           .getIdxSession().getIdSession().getIdxPoll();
     }
@@ -120,7 +110,7 @@ public class QuestionController {
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll)
       throws ResourceNotFoundException, WrongCredentialsException {
 
-    testModeratorRight(idModerator, idPoll, token);
+    controlModeratorAccessToPoll(idModerator, idPoll, token);
 
     return pollRepository.findById(idPoll).get().newQuestion(repository, question);
   }
@@ -143,7 +133,7 @@ public class QuestionController {
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
       @PathVariable(name = "idQuestion") QuestionIdentifier maggieQ)
       throws ResourceNotFoundException, WrongCredentialsException {
-    testModeratorRight(idModo, idPoll, token);
+    controlModeratorAccessToPoll(idModo, idPoll, token);
     ServerPoll pollTest = pollRepository.findById(idPoll).get();
     Optional<Question> upQ = repository.findById(maggieQ);
     if (upQ.isEmpty() || !(pollTest.equals(maggieQ.getIdxPoll()))) {
@@ -166,14 +156,15 @@ public class QuestionController {
    * @param idPoll  poll to delete question in
    * @param maggieQ id of question to delete
    * @throws ResourceNotFoundException if one parameter is broken
+   * @return message to confirm deletion succeeded
    */
   @DeleteMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
-  public void deleteQuestion(@RequestParam(name = "token") String token,
+  public ServerMessage deleteQuestion(@RequestParam(name = "token") String token,
       @PathVariable(name = "idModerator") int idModo,
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
       @PathVariable(name = "idQuestion") QuestionIdentifier maggieQ)
       throws ResourceNotFoundException, WrongCredentialsException {
-    testModeratorRight(idModo, idPoll, token);
+    controlModeratorAccessToPoll(idModo, idPoll, token);
 
     ServerPoll pollTest = pollRepository.findById(idPoll).get();
     Optional<Question> upQ = repository.findById(maggieQ);
@@ -182,6 +173,7 @@ public class QuestionController {
     }
 
     repository.delete(upQ.get());
+    return ServerMessage.builder().message("Question deleted").build();
   }
 
   /**
@@ -195,7 +187,7 @@ public class QuestionController {
    * @throws ResourceNotFoundException if one of the parameters is not found
    * @throws WrongCredentialsException if the tests fails, there is a credentials problem
    */
-  private boolean testModeratorRight(int idModerator, ServerPollIdentifier idPoll, String token)
+  private boolean controlModeratorAccessToPoll(int idModerator, ServerPollIdentifier idPoll, String token)
       throws ResourceNotFoundException, WrongCredentialsException {
     Optional<ServerPoll> pollPo = pollRepository.findById(idPoll);
     Optional<Moderator> poster = moderatorRepository.findById(idModerator);
