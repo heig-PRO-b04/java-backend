@@ -1,16 +1,25 @@
 package ch.heigvd.pro.b04.sessions;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
+import ch.heigvd.pro.b04.polls.ServerPoll;
+import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
+import ch.heigvd.pro.b04.sessions.exceptions.SessionNotExistingException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -123,5 +132,112 @@ public class SessionControllerTest {
 
         assertThrows(WrongCredentialsException.class,
             () -> sessionController.putSession(idMod, idPoll, token, clientSession));
+    }
+
+    @Test
+    public void testGetLastActiveSessionThrowsIfNoSession() {
+        int idMod = 1;
+        int idPoll = 5;
+        String token = "habababa";
+        Moderator moderator = Moderator.builder()
+            .idModerator(idMod)
+            .build();
+
+        ServerPoll serverPoll = ServerPoll.builder()
+            .idPoll(ServerPollIdentifier.builder()
+                .idPoll(idPoll)
+                .idxModerator(moderator)
+                .build())
+            .title("My poll")
+            .build();
+
+        when(moderatorRepository.findById(idMod)).thenReturn(Optional.of(moderator));
+        when(moderatorRepository.findByToken(token)).thenReturn(Optional.of(moderator));
+        when(serverPollRepository.findByModeratorAndId(moderator, idPoll)).thenReturn(
+            Collections.singletonList(serverPoll)
+        );
+
+        assertThrows(SessionNotExistingException.class,
+            () -> sessionController.getLastActiveSession(idMod, idPoll, token));
+    }
+
+    @Test
+    public void testGetLastActiveSessionWithOneSessionReturnsCorrectSession()
+        throws WrongCredentialsException, SessionNotExistingException, PollNotExistingException {
+        int idMod = 1;
+        int idPoll = 5;
+        String token = "habababa";
+        Moderator moderator = Moderator.builder()
+            .idModerator(idMod)
+            .build();
+
+        ServerPoll serverPoll = ServerPoll.builder()
+            .idPoll(ServerPollIdentifier.builder()
+                .idPoll(idPoll)
+                .idxModerator(moderator)
+                .build())
+            .title("My poll")
+            .build();
+
+        ServerSession serverSession = ServerSession.builder().build();
+
+        when(moderatorRepository.findById(idMod)).thenReturn(Optional.of(moderator));
+        when(moderatorRepository.findByToken(token)).thenReturn(Optional.of(moderator));
+        when(serverPollRepository.findByModeratorAndId(moderator, idPoll)).thenReturn(
+            Collections.singletonList(serverPoll)
+        );
+        when(sessionRepository.findByModAndPoll(moderator, serverPoll)).thenReturn(
+            Collections.singletonList(serverSession)
+        );
+
+        assertEquals(serverSession, sessionController.getLastActiveSession(idMod, idPoll, token));
+    }
+
+    @Test
+    public void testGetLastActiveSessionWithMultipleSessionsReturnsCorrectSession()
+        throws WrongCredentialsException, SessionNotExistingException, PollNotExistingException, ParseException {
+        int idMod = 1;
+        int idPoll = 5;
+        String token = "habababa";
+        Moderator moderator = Moderator.builder()
+            .idModerator(idMod)
+            .build();
+
+        ServerPoll serverPoll = ServerPoll.builder()
+            .idPoll(ServerPollIdentifier.builder()
+                .idPoll(idPoll)
+                .idxModerator(moderator)
+                .build())
+            .title("My poll")
+            .build();
+
+        ServerSession oldSession = ServerSession.builder()
+            .state(SessionState.CLOSED)
+            .timestampStart(
+                new Timestamp(new SimpleDateFormat("dd-MM-yyyy")
+                        .parse("01-01-1990")
+                        .getTime()
+                ))
+            .timestampEnd(
+                new Timestamp(new SimpleDateFormat("dd-MM-yyyy")
+                        .parse("02-01-1990")
+                        .getTime()
+                ))
+            .build();
+        ServerSession serverSession = ServerSession.builder()
+            .state(SessionState.OPEN)
+            .timestampStart(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        when(moderatorRepository.findById(idMod)).thenReturn(Optional.of(moderator));
+        when(moderatorRepository.findByToken(token)).thenReturn(Optional.of(moderator));
+        when(serverPollRepository.findByModeratorAndId(moderator, idPoll)).thenReturn(
+            Collections.singletonList(serverPoll)
+        );
+        when(sessionRepository.findByModAndPoll(moderator, serverPoll)).thenReturn(
+            Arrays.asList(oldSession, serverSession)
+        );
+
+        assertEquals(serverSession, sessionController.getLastActiveSession(idMod, idPoll, token));
     }
 }
