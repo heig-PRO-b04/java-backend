@@ -122,14 +122,10 @@ public class SessionController {
       SessionStateMustBeOpenedFirstException,
       SessionStateMustBeClosedFirstException {
 
-    // 1. Authenticate moderator
-    Optional<Moderator> modFromId = moderatorRepository.findById(idModerator);
-    if (! modFromId.equals(moderatorRepository.findByToken(token))) {
-      throw new WrongCredentialsException();
-    }
+    Moderator moderator = Moderator.verifyModeratorWith(moderatorRepository, idModerator, token);
 
     // 2. Check that the poll exists and that we have access
-    List<ServerPoll> pollList = serverPollRepository.findByModeratorAndId(modFromId.get(), idPoll);
+    List<ServerPoll> pollList = serverPollRepository.findByModeratorAndId(moderator, idPoll);
     if (pollList.isEmpty()) {
       throw new PollNotExistingException();
     }

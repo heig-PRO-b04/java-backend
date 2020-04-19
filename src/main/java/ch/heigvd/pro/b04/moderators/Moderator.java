@@ -1,9 +1,11 @@
 package ch.heigvd.pro.b04.moderators;
 
+import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.polls.ClientPoll;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
+import java.util.Optional;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -88,5 +90,27 @@ public class Moderator {
             .build())
         .title(poll.getTitle())
         .build());
+  }
+
+  /** Verifies that a given idModerator and token belong to the same moderator.
+   *
+   * @param moderatorRepository The moderator repository
+   * @param idModerator The given moderator id
+   * @param token The given token
+   * @return Returns a moderator if the token and the id match
+   * @throws WrongCredentialsException is thrown when the token and id don't match or if the
+   * moderator doesn't exist.
+   */
+  public static Moderator verifyModeratorWith(
+      ModeratorRepository moderatorRepository,
+      Integer idModerator,
+      String token) throws WrongCredentialsException {
+
+    Optional<Moderator> modFromId = moderatorRepository.findById(idModerator);
+    if ( modFromId.isEmpty() || ! modFromId.equals(moderatorRepository.findByToken(token))) {
+      throw new WrongCredentialsException();
+    }
+
+    return modFromId.get();
   }
 }
