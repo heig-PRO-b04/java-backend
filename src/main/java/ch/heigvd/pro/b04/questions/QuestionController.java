@@ -10,6 +10,7 @@ import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
+import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -63,7 +64,7 @@ public class QuestionController {
   public List<ServerQuestion> all(@PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
       @RequestParam(name = "token") String token,
       @PathVariable(name = "idModerator") int idModo)
-      throws ResourceNotFoundException, WrongCredentialsException {
+      throws ResourceNotFoundException, WrongCredentialsException, PollNotExistingException {
 
     ServerPoll pollTest = verifyModeratorOrParticipantAccess(
         participantRepository, moderatorRepository, idPoll, token);
@@ -93,7 +94,7 @@ public class QuestionController {
   public ServerQuestion byId(@RequestParam(name = "token") String token,
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
       @PathVariable(name = "idQuestion") ServerQuestionIdentifier idQuestion)
-      throws ResourceNotFoundException, WrongCredentialsException {
+      throws ResourceNotFoundException, WrongCredentialsException, PollNotExistingException {
     ServerPoll pollTest = verifyModeratorOrParticipantAccess(participantRepository,
         moderatorRepository, idPoll, token);
 
@@ -109,7 +110,7 @@ public class QuestionController {
 
   private ServerPoll verifyModeratorOrParticipantAccess(ParticipantRepository prpRepo,
       ModeratorRepository modoRepo, ServerPollIdentifier idPoll, String token)
-      throws ResourceNotFoundException {
+      throws ResourceNotFoundException, PollNotExistingException {
     ServerPoll pollTest;
     Optional<Participant> pollT = prpRepo.findByToken(token);
     //if token doesn't lead to a Participant...
