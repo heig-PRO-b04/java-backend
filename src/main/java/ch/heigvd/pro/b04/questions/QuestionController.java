@@ -13,6 +13,7 @@ import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,7 +78,7 @@ public class QuestionController {
       throw new WrongCredentialsException();
     }
 
-    return (List<ServerQuestion>) pollConcerned.get().getPollServerQuestions();
+    return pollConcerned.get().getPollServerQuestions().stream().collect(Collectors.toList());
   }
 
   /**
@@ -120,9 +121,11 @@ public class QuestionController {
       if (pollM.isEmpty()) {
         throw new ResourceNotFoundException();
       } else {
+        //poll inside pollSet of the modo
         pollTest = pollM.get().searchPoll(idPoll);
       }
     } else {
+      //poll of the session in which Participant is logged
       pollTest = pollT.get().getIdParticipant()
           .getIdxServerSession().getIdSession().getIdxPoll();
     }
