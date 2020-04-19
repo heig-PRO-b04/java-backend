@@ -1,6 +1,7 @@
 package ch.heigvd.pro.b04.moderators;
 
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
+import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.polls.ClientPoll;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
@@ -91,6 +92,24 @@ public class Moderator {
             .build())
         .title(poll.getTitle())
         .build());
+  }
+
+  /**
+   * search for a {@link ServerPoll} in the pollset of this moderator.
+   *
+   * @param idPoll id of the poll to search
+   * @return {@link ServerPoll} found
+   * @throws ResourceNotFoundException if poll is not found
+   */
+  public ServerPoll searchPoll(ServerPollIdentifier idPoll) throws PollNotExistingException {
+    if (!pollSet.isEmpty()) {
+      for (ServerPoll p : pollSet) {
+        if (p.getIdPoll().equals(idPoll)) {
+          return p;
+        }
+      }
+    }
+    throw new PollNotExistingException();
   }
 
   /** Verifies that a given moderator has access to a poll.
