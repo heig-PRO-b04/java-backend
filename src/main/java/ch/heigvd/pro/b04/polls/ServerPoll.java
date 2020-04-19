@@ -1,7 +1,10 @@
 package ch.heigvd.pro.b04.polls;
 
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
-import ch.heigvd.pro.b04.questions.Question;
+import ch.heigvd.pro.b04.questions.ClientQuestion;
+import ch.heigvd.pro.b04.questions.QuestionRepository;
+import ch.heigvd.pro.b04.questions.ServerQuestion;
+import ch.heigvd.pro.b04.questions.ServerQuestionIdentifier;
 import ch.heigvd.pro.b04.sessions.ServerSession;
 import ch.heigvd.pro.b04.sessions.SessionIdentifier;
 import ch.heigvd.pro.b04.sessions.SessionRepository;
@@ -13,8 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -36,8 +37,9 @@ public class ServerPoll implements Serializable {
   @Getter
   private ServerPollIdentifier idPoll;
 
-  @OneToMany(mappedBy = "idQuestion.idxPoll", cascade = CascadeType.ALL)
-  private Set<Question> pollQuestions;
+  @Getter
+  @OneToMany(mappedBy = "idServerQuestion.idxPoll", cascade = CascadeType.ALL)
+  private Set<ServerQuestion> pollServerQuestions;
 
   @OneToMany(mappedBy = "idSession.idxPoll", cascade = CascadeType.ALL)
   private Set<ServerSession> serverSessionSet;
@@ -64,21 +66,43 @@ public class ServerPoll implements Serializable {
   }
 
   /**
-   * Add a new {@link Question} to this {@link ServerPoll} instance.
+   * Creates a new unique identifier for a {@link ServerQuestion}.
    *
-   * @param newQuestion The question to be added.
+   * @param repository The repository to which we will add a new Session to
+   * @return A new unique identifier
    */
-  public void addQuestion(Question newQuestion) {
-    newQuestion.getIdQuestion().setIdxPoll(this);
-    if (pollQuestions == null) {
-      pollQuestions = Stream.of(newQuestion).collect(Collectors.toSet());
-    } else {
-      pollQuestions.add(newQuestion);
-    }
+  public static Long getNewIdentifier(QuestionRepository repository) {
+    Long identifier = repository.findAll().stream()
+        .map(ServerQuestion::getIdServerQuestion)
+        .map(ServerQuestionIdentifier::getIdServerQuestion)
+        .max(Long::compareTo)
+        .map(id -> id + 1)
+        .orElse(1L);
+    return identifier;
   }
 
   /**
+   * Add a new {@link ServerQuestion} to this {@link ServerPoll} instance.
+   *
+   * @param newQuestion The question to be added.
+   */
+  @Transactional
+  public ServerQuestion newQuestion(QuestionRepository repoQ, ClientQuestion newQuestion) {
+    ServerQuestion qqW = ServerQuestion.builder()
+        .id(getNewIdentifier(repoQ))
+        .title(newQuestion.getTitle())
+        .details(newQuestion.getDetails())
+        .visible(newQuestion.getVisibility())
+        .index(newQuestion.getIndexInPoll())
+        .max(newQuestion.getAnswersMax())
+        .min(newQuestion.getAnswersMin()).build();
+    return repoQ.save(qqW);
+  }
+
+
+  /**
    * Creates a new Session and inserts it in the database.
+   *
    * @param repository The repository containing the new Session
    */
   @Transactional

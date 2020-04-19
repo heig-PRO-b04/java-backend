@@ -7,23 +7,26 @@ import java.io.IOException;
 import org.springframework.boot.jackson.JsonComponent;
 
 @JsonComponent
-public class QuestionJsonSerializer extends JsonSerializer<Question> {
+public class QuestionJsonSerializer extends JsonSerializer<ServerQuestion> {
 
   @Override
   public void serialize(
-      Question question,
+      ServerQuestion question,
       JsonGenerator jsonGenerator,
       SerializerProvider serializerProvider
   ) throws IOException {
     jsonGenerator.writeStartObject();
-    jsonGenerator.writeNumberField("idModerator", question.getIdQuestion().getIdxPoll()
+    jsonGenerator.writeNumberField("idModerator",
+        question.getIdServerQuestion().getIdxPoll()
         .getIdPoll().getIdxModerator()
         .getIdModerator()
     );
-    jsonGenerator.writeNumberField("idPoll", question.getIdQuestion().getIdxPoll()
+    jsonGenerator.writeNumberField("idPoll",
+        question.getIdServerQuestion().getIdxPoll()
         .getIdPoll().getIdPoll()
     );
-    jsonGenerator.writeNumberField("idQuestion", question.getIdQuestion().getIdQuestion());
+    jsonGenerator.writeNumberField("idQuestion",
+        question.getIdServerQuestion().getIdServerQuestion());
     jsonGenerator.writeEndObject();
   }
 }
