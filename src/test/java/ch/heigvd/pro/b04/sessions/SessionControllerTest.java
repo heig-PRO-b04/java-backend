@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
+import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
@@ -36,6 +37,9 @@ public class SessionControllerTest {
 
     @Mock
     ModeratorRepository moderatorRepository;
+
+    @Mock
+    ParticipantRepository participantRepository;
 
     @Test
     public void testIfSessionIsClosed() {
@@ -186,5 +190,61 @@ public class SessionControllerTest {
         );
 
         assertEquals(serverSession, sessionController.getLastActiveSession(idMod, idPoll, token));
+    }
+
+    @Test
+    public void testGetUserSessionWithOpenSessionReturnsCorrectSession()
+        throws WrongCredentialsException, SessionNotAvailableException {
+        String token = "habababa";
+
+        ServerSession serverSession = ServerSession.builder()
+            .state(SessionState.OPEN)
+            .build();
+
+        when(participantRepository.getAssociatedSession(token)).thenReturn(
+            Optional.of(serverSession));
+
+        assertEquals(serverSession, sessionController.getUserSession(token));
+    }
+
+    @Test
+    public void testGetUserSessionWithClosedSessionThrows() {
+        String token = "habababa";
+
+        ServerSession serverSession = ServerSession.builder()
+            .state(SessionState.CLOSED)
+            .build();
+
+        when(participantRepository.getAssociatedSession(token)).thenReturn(
+            Optional.of(serverSession));
+
+        assertThrows(SessionNotAvailableException.class,
+            () -> sessionController.getUserSession(token));
+    }
+
+    @Test
+    public void testGetUserSessionWithQuarantinedSessionThrows() {
+        String token = "habababa";
+
+        ServerSession serverSession = ServerSession.builder()
+            .state(SessionState.QUARANTINED)
+            .build();
+
+        when(participantRepository.getAssociatedSession(token)).thenReturn(
+            Optional.of(serverSession));
+
+        assertThrows(SessionNotAvailableException.class,
+            () -> sessionController.getUserSession(token));
+    }
+
+    @Test
+    public void testGetUserSessionWithoutSessionThrows() {
+        String token = "habababa";
+
+        when(participantRepository.getAssociatedSession(token)).thenReturn(
+            Optional.empty());
+
+        assertThrows(WrongCredentialsException.class,
+            () -> sessionController.getUserSession(token));
     }
 }
