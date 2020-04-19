@@ -192,6 +192,7 @@ public class SessionController {
    * @throws SessionNotExistingException is thrown if the poll never had a session
    */
   @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/session")
+  @Transactional
   public ServerSession getLastActiveSession(
       @PathVariable(name = "idModerator") Integer idModerator,
       @PathVariable(name = "idPoll") Integer idPoll,
