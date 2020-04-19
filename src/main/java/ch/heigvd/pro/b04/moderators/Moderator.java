@@ -5,9 +5,7 @@ import ch.heigvd.pro.b04.polls.ClientPoll;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
-import ch.heigvd.pro.b04.polls.exceptions.IllegalPollStateException;
 import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -106,14 +104,12 @@ public class Moderator {
   public ServerPoll getPollWithId(ServerPollRepository serverPollRepository, Integer idPoll)
       throws PollNotExistingException {
 
-    List<ServerPoll> pollList = serverPollRepository.findByModeratorAndId(this, idPoll);
-    if (pollList.isEmpty()) {
+    Optional<ServerPoll> poll = serverPollRepository.findByModeratorAndId(this, idPoll);
+    if (poll.isEmpty()) {
       throw new PollNotExistingException();
-    } else if (pollList.size() > 1) {
-      throw new IllegalPollStateException();
     }
 
-    return pollList.get(0);
+    return poll.get();
   }
 
   /** Verifies that a given idModerator and token belong to the same moderator.

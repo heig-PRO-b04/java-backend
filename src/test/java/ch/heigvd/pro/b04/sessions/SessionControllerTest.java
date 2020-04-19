@@ -14,11 +14,6 @@ import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotExistingException;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -100,7 +95,7 @@ public class SessionControllerTest {
         when(moderatorRepository.findByToken(token)).thenReturn(Optional.of(moderator));
 
         when(serverPollRepository.findByModeratorAndId(moderator, idPoll))
-            .thenReturn(new ArrayList<>());
+            .thenReturn(Optional.empty());
 
         assertThrows(PollNotExistingException.class,
             () -> sessionController.putSession(idMod, idPoll, token, clientSession));
@@ -154,7 +149,7 @@ public class SessionControllerTest {
         when(moderatorRepository.findById(idMod)).thenReturn(Optional.of(moderator));
         when(moderatorRepository.findByToken(token)).thenReturn(Optional.of(moderator));
         when(serverPollRepository.findByModeratorAndId(moderator, idPoll)).thenReturn(
-            Collections.singletonList(serverPoll)
+            Optional.of(serverPoll)
         );
 
         assertThrows(SessionNotExistingException.class,
@@ -184,58 +179,10 @@ public class SessionControllerTest {
         when(moderatorRepository.findById(idMod)).thenReturn(Optional.of(moderator));
         when(moderatorRepository.findByToken(token)).thenReturn(Optional.of(moderator));
         when(serverPollRepository.findByModeratorAndId(moderator, idPoll)).thenReturn(
-            Collections.singletonList(serverPoll)
+            Optional.of(serverPoll)
         );
         when(sessionRepository.findByModAndPoll(moderator, serverPoll)).thenReturn(
             Collections.singletonList(serverSession)
-        );
-
-        assertEquals(serverSession, sessionController.getLastActiveSession(idMod, idPoll, token));
-    }
-
-    @Test
-    public void testGetLastActiveSessionWithMultipleSessionsReturnsCorrectSession()
-        throws WrongCredentialsException, SessionNotExistingException, PollNotExistingException, ParseException {
-        int idMod = 1;
-        int idPoll = 5;
-        String token = "habababa";
-        Moderator moderator = Moderator.builder()
-            .idModerator(idMod)
-            .build();
-
-        ServerPoll serverPoll = ServerPoll.builder()
-            .idPoll(ServerPollIdentifier.builder()
-                .idPoll(idPoll)
-                .idxModerator(moderator)
-                .build())
-            .title("My poll")
-            .build();
-
-        ServerSession oldSession = ServerSession.builder()
-            .state(SessionState.CLOSED)
-            .timestampStart(
-                new Timestamp(new SimpleDateFormat("dd-MM-yyyy")
-                        .parse("01-01-1990")
-                        .getTime()
-                ))
-            .timestampEnd(
-                new Timestamp(new SimpleDateFormat("dd-MM-yyyy")
-                        .parse("02-01-1990")
-                        .getTime()
-                ))
-            .build();
-        ServerSession serverSession = ServerSession.builder()
-            .state(SessionState.OPEN)
-            .timestampStart(new Timestamp(System.currentTimeMillis()))
-            .build();
-
-        when(moderatorRepository.findById(idMod)).thenReturn(Optional.of(moderator));
-        when(moderatorRepository.findByToken(token)).thenReturn(Optional.of(moderator));
-        when(serverPollRepository.findByModeratorAndId(moderator, idPoll)).thenReturn(
-            Collections.singletonList(serverPoll)
-        );
-        when(sessionRepository.findByModAndPoll(moderator, serverPoll)).thenReturn(
-            Arrays.asList(oldSession, serverSession)
         );
 
         assertEquals(serverSession, sessionController.getLastActiveSession(idMod, idPoll, token));
