@@ -1,9 +1,12 @@
 package ch.heigvd.pro.b04.moderators;
 
+import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.polls.ClientPoll;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
+import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
+import java.util.Optional;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -88,5 +91,46 @@ public class Moderator {
             .build())
         .title(poll.getTitle())
         .build());
+  }
+
+  /** Verifies that a given moderator has access to a poll.
+   *
+   * @param serverPollRepository The serverpoll repository
+   * @param idPoll The id of the poll
+   * @return The poll associated with idPoll if it belongs to the moderator
+   * @throws PollNotExistingException is thrown if the poll doesn't belong to the moderator or
+   *         doesn't exist
+   */
+  public ServerPoll getPollWithId(ServerPollRepository serverPollRepository, Integer idPoll)
+      throws PollNotExistingException {
+
+    Optional<ServerPoll> poll = serverPollRepository.findByModeratorAndId(this, idPoll);
+    if (poll.isEmpty()) {
+      throw new PollNotExistingException();
+    }
+
+    return poll.get();
+  }
+
+  /** Verifies that a given idModerator and token belong to the same moderator.
+   *
+   * @param moderatorRepository The moderator repository
+   * @param idModerator The given moderator id
+   * @param token The given token
+   * @return Returns a moderator if the token and the id match
+   * @throws WrongCredentialsException is thrown when the token and id don't match or if the
+   *         moderator doesn't exist.
+   */
+  public static Moderator verifyModeratorWith(
+      ModeratorRepository moderatorRepository,
+      Integer idModerator,
+      String token) throws WrongCredentialsException {
+
+    Optional<Moderator> modFromId = moderatorRepository.findById(idModerator);
+    if (modFromId.isEmpty() || ! modFromId.equals(moderatorRepository.findByToken(token))) {
+      throw new WrongCredentialsException();
+    }
+
+    return modFromId.get();
   }
 }
