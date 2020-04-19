@@ -1,6 +1,10 @@
 package ch.heigvd.pro.b04.sessions;
 
 import ch.heigvd.pro.b04.participants.Participant;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Random;
 import java.util.Set;
@@ -16,6 +20,7 @@ import lombok.EqualsAndHashCode.Exclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.boot.jackson.JsonComponent;
 
 
 @NoArgsConstructor
@@ -31,8 +36,8 @@ public class ServerSession {
    * @return A String containing the randomly generated session code
    */
   public static String createSessionCode() {
-    Integer rand = new Random().nextInt(CODE_BOUNDARY_EXCLUDED);
-    return "0x" + Integer.toHexString(rand);
+    int rand = new Random().nextInt(CODE_BOUNDARY_EXCLUDED);
+    return ("0x" + Integer.toHexString(rand).toUpperCase());
   }
 
   @Getter
@@ -65,5 +70,27 @@ public class ServerSession {
   public void close() {
     setState(SessionState.CLOSED);
     setTimestampEnd(new Timestamp(System.currentTimeMillis()));
+  }
+
+  @JsonComponent
+  public static class Serializer extends JsonSerializer<ServerSession> {
+
+    @Override
+    public void serialize(
+        ServerSession session,
+        JsonGenerator jsonGenerator,
+        SerializerProvider serializerProvider
+    ) throws IOException {
+      jsonGenerator.writeStartObject();
+      jsonGenerator.writeNumberField("idModerator",
+          session.idSession.getIdxModerator().getIdModerator());
+      jsonGenerator.writeNumberField("idPoll",
+          session.idSession.getIdxPoll().getIdPoll().getIdPoll());
+      jsonGenerator.writeNumberField("idSession",
+          session.idSession.getIdSession());
+      jsonGenerator.writeStringField("code", session.code);
+      jsonGenerator.writeStringField("status", session.state.toString().toLowerCase());
+      jsonGenerator.writeEndObject();
+    }
   }
 }

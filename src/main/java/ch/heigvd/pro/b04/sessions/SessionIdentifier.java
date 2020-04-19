@@ -38,6 +38,7 @@ public class SessionIdentifier implements Serializable {
   @Column
   private long idSession;
 
+  @Getter
   @ManyToOne
   @PrimaryKeyJoinColumn
   private Moderator idxModerator;

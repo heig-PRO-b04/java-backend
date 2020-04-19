@@ -101,6 +101,7 @@ When the server needs to send a session, it should be represented as so:
   "idModerator" : {idModerator},
   "idPoll"      : {idPoll},
   "idSession"   : {idSession},
+  "code"        : "0xABCD",
   "status"      : `open`
 }
 ```
