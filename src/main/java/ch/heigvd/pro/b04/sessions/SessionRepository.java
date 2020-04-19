@@ -13,5 +13,4 @@ public interface SessionRepository extends JpaRepository<ServerSession, SessionI
   @Query("SELECT s FROM ServerSession s"
       + " WHERE s.idSession.idxModerator = :moderator AND s.idSession.idxPoll = :poll")
   List<ServerSession> findByModAndPoll(Moderator moderator, ServerPoll poll);
-
 }

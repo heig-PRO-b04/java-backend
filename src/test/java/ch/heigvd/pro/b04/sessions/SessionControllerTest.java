@@ -1,5 +1,6 @@
 package ch.heigvd.pro.b04.sessions;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -7,6 +8,7 @@ import static org.mockito.Mockito.when;
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
+import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
@@ -36,6 +38,9 @@ public class SessionControllerTest {
 
     @Mock
     ModeratorRepository moderatorRepository;
+
+    @Mock
+    ParticipantRepository participantRepository;
 
     @Test
     public void testIfSessionIsClosed() {
@@ -157,8 +162,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void testGetLastActiveSessionWithOneSessionReturnsCorrectSession()
-        throws WrongCredentialsException, SessionNotExistingException, PollNotExistingException {
+    public void testGetLastActiveSessionWithOneSessionReturnsCorrectSession() {
         int idMod = 1;
         int idPoll = 5;
         String token = "habababa";
@@ -185,6 +189,66 @@ public class SessionControllerTest {
             Collections.singletonList(serverSession)
         );
 
-        assertEquals(serverSession, sessionController.getLastActiveSession(idMod, idPoll, token));
+        assertDoesNotThrow(() ->
+            assertEquals(serverSession,
+                sessionController.getLastActiveSession(idMod, idPoll, token))
+        );
+    }
+
+    @Test
+    public void testGetUserSessionWithOpenSessionReturnsCorrectSession() {
+        String token = "habababa";
+
+        ServerSession serverSession = ServerSession.builder()
+            .state(SessionState.OPEN)
+            .build();
+
+        when(participantRepository.getAssociatedSession(token)).thenReturn(
+            Optional.of(serverSession));
+
+        assertDoesNotThrow(() ->
+            assertEquals(serverSession, sessionController.getUserSession(token))
+        );
+    }
+
+    @Test
+    public void testGetUserSessionWithClosedSessionThrows() {
+        String token = "habababa";
+
+        ServerSession serverSession = ServerSession.builder()
+            .state(SessionState.CLOSED)
+            .build();
+
+        when(participantRepository.getAssociatedSession(token)).thenReturn(
+            Optional.of(serverSession));
+
+        assertThrows(SessionNotAvailableException.class,
+            () -> sessionController.getUserSession(token));
+    }
+
+    @Test
+    public void testGetUserSessionWithQuarantinedSessionThrows() {
+        String token = "habababa";
+
+        ServerSession serverSession = ServerSession.builder()
+            .state(SessionState.QUARANTINED)
+            .build();
+
+        when(participantRepository.getAssociatedSession(token)).thenReturn(
+            Optional.of(serverSession));
+
+        assertThrows(SessionNotAvailableException.class,
+            () -> sessionController.getUserSession(token));
+    }
+
+    @Test
+    public void testGetUserSessionWithoutSessionThrows() {
+        String token = "habababa";
+
+        when(participantRepository.getAssociatedSession(token)).thenReturn(
+            Optional.empty());
+
+        assertThrows(WrongCredentialsException.class,
+            () -> sessionController.getUserSession(token));
     }
 }

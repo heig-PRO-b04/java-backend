@@ -212,4 +212,25 @@ public class SessionController {
 
     return last.get();
   }
+
+  /** This method/endpoint returns the session associated with a user token.
+   *
+   * @param token The user token
+   * @return The session associated with the user token
+   * @throws WrongCredentialsException If there is no matching session
+   * @throws SessionNotAvailableException If the session is not open to new connections
+   */
+  @GetMapping(value = "/session")
+  @Transactional
+  public ServerSession getUserSession(@RequestParam(name = "token") String token)
+      throws WrongCredentialsException,SessionNotAvailableException {
+    ServerSession session = participantRepository.getAssociatedSession(token)
+        .orElseThrow(WrongCredentialsException::new);
+
+    if (! session.getState().equals(SessionState.OPEN)) {
+      throw new SessionNotAvailableException();
+    }
+
+    return session;
+  }
 }
