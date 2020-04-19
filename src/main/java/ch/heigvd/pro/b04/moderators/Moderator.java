@@ -5,6 +5,9 @@ import ch.heigvd.pro.b04.polls.ClientPoll;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
+import ch.heigvd.pro.b04.polls.exceptions.IllegalPollStateException;
+import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -90,6 +93,27 @@ public class Moderator {
             .build())
         .title(poll.getTitle())
         .build());
+  }
+
+  /** Verifies that a given moderator has access to a poll.
+   *
+   * @param serverPollRepository The serverpoll repository
+   * @param idPoll The id of the poll
+   * @return The poll associated with idPoll if it belongs to the moderator
+   * @throws PollNotExistingException is thrown if the poll doesn't belong to the moderator or
+   * doesn't exist
+   */
+  public ServerPoll getPollWithId(ServerPollRepository serverPollRepository, Integer idPoll)
+      throws PollNotExistingException {
+
+    List<ServerPoll> pollList = serverPollRepository.findByModeratorAndId(this, idPoll);
+    if (pollList.isEmpty()) {
+      throw new PollNotExistingException();
+    } else if (pollList.size() > 1) {
+      throw new IllegalPollStateException();
+    }
+
+    return pollList.get(0);
   }
 
   /** Verifies that a given idModerator and token belong to the same moderator.

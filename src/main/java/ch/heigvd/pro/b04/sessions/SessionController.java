@@ -123,14 +123,7 @@ public class SessionController {
       SessionStateMustBeClosedFirstException {
 
     Moderator moderator = Moderator.verifyModeratorWith(moderatorRepository, idModerator, token);
-
-    // 2. Check that the poll exists and that we have access
-    List<ServerPoll> pollList = serverPollRepository.findByModeratorAndId(moderator, idPoll);
-    if (pollList.isEmpty()) {
-      throw new PollNotExistingException();
-    }
-
-    ServerPoll poll = pollList.get(0);
+    ServerPoll poll = moderator.getPollWithId(serverPollRepository, idPoll);
 
     Optional<ServerSession> last = poll.getLatestSession(sessionRepository);
     ServerSession session;
