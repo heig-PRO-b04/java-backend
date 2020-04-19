@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,7 +66,7 @@ public class SessionController {
    * @throws ResourceNotFoundException    If the session does not exist
    */
   @Transactional
-  @RequestMapping(value = "/connect", method = RequestMethod.POST)
+  @PostMapping(value = "/connect")
   public UserToken byCode(@RequestBody SessionCode codeReceived)
       throws SessionNotAvailableException,
       ResourceNotFoundException,
@@ -188,4 +189,10 @@ public class SessionController {
 
     return sessionRepository.saveAndFlush(session);
   }
+
+  @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/session")
+  public ServerSession putSession() {
+
+  }
+
 }
