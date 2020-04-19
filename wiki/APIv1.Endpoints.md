@@ -168,10 +168,15 @@ Creates a new question.
 
 A token is needed. Send the json representation of the question in the request's body.
 
+On success, the created question will be returned.
+
 ### `PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`
 Updates a question.
 
 A token is needed. Send the json representation of the question in the request's body.
+
+On success, the modified question will be returned.
+
 ### `DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`
 Deletes a question.
 

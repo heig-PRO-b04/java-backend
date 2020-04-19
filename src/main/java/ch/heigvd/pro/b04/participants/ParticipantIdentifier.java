@@ -1,6 +1,6 @@
 package ch.heigvd.pro.b04.participants;
 
-import ch.heigvd.pro.b04.sessions.Session;
+import ch.heigvd.pro.b04.sessions.ServerSession;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -26,7 +26,7 @@ public class ParticipantIdentifier implements Serializable {
   @Setter
   @ManyToOne
   @PrimaryKeyJoinColumn
-  private Session idxSession;
+  private ServerSession idxServerSession;
 
   public ParticipantIdentifier(long id) {
     idParticipant = id;

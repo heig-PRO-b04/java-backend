@@ -5,12 +5,16 @@ import ch.heigvd.pro.b04.questions.ClientQuestion;
 import ch.heigvd.pro.b04.questions.QuestionRepository;
 import ch.heigvd.pro.b04.questions.ServerQuestion;
 import ch.heigvd.pro.b04.questions.ServerQuestionIdentifier;
-import ch.heigvd.pro.b04.sessions.Session;
-import ch.heigvd.pro.b04.sessions.Session.State;
+import ch.heigvd.pro.b04.sessions.ServerSession;
 import ch.heigvd.pro.b04.sessions.SessionIdentifier;
 import ch.heigvd.pro.b04.sessions.SessionRepository;
+import ch.heigvd.pro.b04.sessions.SessionState;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
@@ -38,7 +42,7 @@ public class ServerPoll implements Serializable {
   private Set<ServerQuestion> pollServerQuestions;
 
   @OneToMany(mappedBy = "idSession.idxPoll", cascade = CascadeType.ALL)
-  private Set<Session> sessionSet;
+  private Set<ServerSession> serverSessionSet;
 
   @Getter
   private String title;
@@ -102,21 +106,36 @@ public class ServerPoll implements Serializable {
    * @param repository The repository containing the new Session
    */
   @Transactional
-  public Session newSession(SessionRepository repository) {
-    Long identifier = Session.getNewIdentifier(repository);
-    String sessionCode;
-
+  public ServerSession newSession(SessionRepository repository) {
     // Make sure that we do not trigger the unique clause for a session code
+    String sessionCode;
     do {
-      sessionCode = Session.createSessionCode();
+      sessionCode = ServerSession.createSessionCode();
     } while (repository.findByCode(sessionCode).isPresent());
 
-    Session newSession = Session.builder()
-        .idSession(new SessionIdentifier(identifier))
+    ServerSession newServerSession = ServerSession.builder()
+        .idSession(SessionIdentifier.builder()
+            .idSession(SessionIdentifier.getNewIdentifier(repository))
+            .idxModerator(idPoll.getIdxModerator())
+            .idxPoll(this)
+            .build())
         .code(sessionCode)
-        .state(State.CLOSED)
+        .state(SessionState.OPEN)
+        .timestampStart(new Timestamp(System.currentTimeMillis()))
         .build();
 
-    return repository.saveAndFlush(newSession);
+    return repository.saveAndFlush(newServerSession);
+  }
+
+  /** Returns the latest session made in this poll.
+   *
+   * @param repository The session repository
+   * @return An Optional of serversession. If set, it contains the last session made in this poll
+   */
+  public Optional<ServerSession> getLatestSession(SessionRepository repository) {
+    List<ServerSession> allSessions =
+        repository.findByModAndPoll(idPoll.getIdxModerator(), this);
+
+    return allSessions.stream().max(Comparator.comparing(ServerSession::getTimestampStart));
   }
 }

@@ -34,10 +34,10 @@ public class QuestionController {
   /**
    * Standard constructor.
    *
-   * @param repository repository for {@link ServerQuestion}
-   * @param pollRepository repository for {@link ServerPoll}
+   * @param repository            repository for {@link ServerQuestion}
+   * @param pollRepository        repository for {@link ServerPoll}
    * @param participantRepository repository for {@link Participant}
-   * @param moderatorRepository repository for {@link Moderator}
+   * @param moderatorRepository   repository for {@link Moderator}
    */
   public QuestionController(QuestionRepository repository,
       ServerPollRepository pollRepository,
@@ -53,7 +53,7 @@ public class QuestionController {
    * return all {@link ServerQuestion} of a {@link ServerPoll}.
    *
    * @param idPoll id of the poll containing question
-   * @param token token of the sender, moderator or participant
+   * @param token  token of the sender, moderator or participant
    * @param idModo id of moderator owning the poll
    * @return list of {@link ServerQuestion}
    * @throws ResourceNotFoundException if sender or poll is not found
@@ -65,25 +65,14 @@ public class QuestionController {
       @PathVariable(name = "idModerator") int idModo)
       throws ResourceNotFoundException, WrongCredentialsException {
 
-    Optional<Participant> pollT = participantRepository.findByToken(token);
-    Optional<ServerPoll> pollTest;
-    if (pollT.isEmpty()) {
-      Optional<Moderator> pollM = moderatorRepository.findByToken(token);
-      if (pollM.isEmpty()) {
-        throw new ResourceNotFoundException();
-      } else {
-        pollTest = Optional.ofNullable(pollM.get().searchPoll(idPoll));
-      }
-    } else {
-      pollTest = Optional.ofNullable(pollT.get().getIdParticipant()
-          .getIdxSession().getIdSession().getIdxPoll());
-    }
+    ServerPoll pollTest = verifyModeratorOrParticipantAccess(
+        participantRepository, moderatorRepository, idPoll, token);
 
     Optional<ServerPoll> pollConcerned = pollRepository.findById(idPoll);
 
-    if (pollConcerned.isEmpty() || pollTest.isEmpty()) {
+    if (pollConcerned.isEmpty()) {
       throw new ResourceNotFoundException();
-    } else if (!(pollTest.get().equals(pollConcerned.get()))) {
+    } else if (!(pollTest.equals(pollConcerned.get()))) {
       throw new WrongCredentialsException();
     }
 
@@ -93,8 +82,8 @@ public class QuestionController {
   /**
    * return a chosen {@link ServerQuestion} of a {@link ServerPoll}.
    *
-   * @param idPoll id of the poll containing question
-   * @param token token of the sender, moderator or participant
+   * @param idPoll     id of the poll containing question
+   * @param token      token of the sender, moderator or participant
    * @param idQuestion id of the Question to return
    * @return {@link ServerQuestion} wanted
    * @throws ResourceNotFoundException if sender or question or poll is not found
@@ -105,19 +94,8 @@ public class QuestionController {
       @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
       @PathVariable(name = "idQuestion") ServerQuestionIdentifier idQuestion)
       throws ResourceNotFoundException, WrongCredentialsException {
-    Optional<Participant> pollT = participantRepository.findByToken(token);
-    ServerPoll pollTest;
-    if (pollT.isEmpty()) {
-      Optional<Moderator> pollM = moderatorRepository.findByToken(token);
-      if (pollM.isEmpty()) {
-        throw new ResourceNotFoundException();
-      } else {
-        pollTest = pollM.get().searchPoll(idPoll);
-      }
-    } else {
-      pollTest = pollT.get().getIdParticipant()
-          .getIdxSession().getIdSession().getIdxPoll();
-    }
+    ServerPoll pollTest = verifyModeratorOrParticipantAccess(participantRepository,
+        moderatorRepository, idPoll, token);
 
     Optional<ServerPoll> pollConcerned = pollRepository.findById(idPoll);
     if (pollConcerned.isEmpty()) {
@@ -127,6 +105,29 @@ public class QuestionController {
     }
 
     return repository.findById(idQuestion).orElseThrow(ResourceNotFoundException::new);
+  }
+
+  private ServerPoll verifyModeratorOrParticipantAccess(ParticipantRepository prpRepo,
+      ModeratorRepository modoRepo, ServerPollIdentifier idPoll, String token)
+      throws ResourceNotFoundException {
+    ServerPoll pollTest;
+    Optional<Participant> pollT = prpRepo.findByToken(token);
+    //if token doesn't lead to a Participant...
+    if (pollT.isEmpty()) {
+      //...it looks for a moderator
+      Optional<Moderator> pollM = modoRepo.findByToken(token);
+      if (pollM.isEmpty()) {
+        throw new ResourceNotFoundException();
+      } else {
+        pollTest = pollM.get().searchPoll(idPoll);
+      }
+    } else {
+      pollTest = pollT.get().getIdParticipant()
+          .getIdxServerSession().getIdSession().getIdxPoll();
+    }
+    //If a participant or a moderator with this token exists,
+    //the poll corresponding to idPoll is returned
+    return pollTest;
   }
 
   /**
