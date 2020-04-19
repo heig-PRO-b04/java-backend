@@ -1,5 +1,6 @@
 package ch.heigvd.pro.b04.sessions;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -161,8 +162,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void testGetLastActiveSessionWithOneSessionReturnsCorrectSession()
-        throws WrongCredentialsException, SessionNotExistingException, PollNotExistingException {
+    public void testGetLastActiveSessionWithOneSessionReturnsCorrectSession() {
         int idMod = 1;
         int idPoll = 5;
         String token = "habababa";
@@ -189,12 +189,14 @@ public class SessionControllerTest {
             Collections.singletonList(serverSession)
         );
 
-        assertEquals(serverSession, sessionController.getLastActiveSession(idMod, idPoll, token));
+        assertDoesNotThrow(() ->
+            assertEquals(serverSession,
+                sessionController.getLastActiveSession(idMod, idPoll, token))
+        );
     }
 
     @Test
-    public void testGetUserSessionWithOpenSessionReturnsCorrectSession()
-        throws WrongCredentialsException, SessionNotAvailableException {
+    public void testGetUserSessionWithOpenSessionReturnsCorrectSession() {
         String token = "habababa";
 
         ServerSession serverSession = ServerSession.builder()
@@ -204,7 +206,9 @@ public class SessionControllerTest {
         when(participantRepository.getAssociatedSession(token)).thenReturn(
             Optional.of(serverSession));
 
-        assertEquals(serverSession, sessionController.getUserSession(token));
+        assertDoesNotThrow(() ->
+            assertEquals(serverSession, sessionController.getUserSession(token))
+        );
     }
 
     @Test
