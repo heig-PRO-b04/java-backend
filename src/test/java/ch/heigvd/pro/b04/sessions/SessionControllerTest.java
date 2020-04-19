@@ -117,11 +117,9 @@ public class SessionControllerTest {
         int idMod = 1;
         int idPoll = 5;
         String token = "habababa";
-        Moderator moderator = new Moderator();
         ClientSession clientSession = ClientSession.builder().build();
 
         when(moderatorRepository.findById(idMod)).thenReturn(Optional.empty());
-        when(moderatorRepository.findByToken(token)).thenReturn(Optional.of(moderator));
 
         assertThrows(WrongCredentialsException.class,
             () -> sessionController.putSession(idMod, idPoll, token, clientSession));

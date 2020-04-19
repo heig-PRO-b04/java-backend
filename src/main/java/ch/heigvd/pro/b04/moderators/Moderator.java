@@ -101,7 +101,7 @@ public class Moderator {
    * @param idPoll The id of the poll
    * @return The poll associated with idPoll if it belongs to the moderator
    * @throws PollNotExistingException is thrown if the poll doesn't belong to the moderator or
-   * doesn't exist
+   *         doesn't exist
    */
   public ServerPoll getPollWithId(ServerPollRepository serverPollRepository, Integer idPoll)
       throws PollNotExistingException {
@@ -123,7 +123,7 @@ public class Moderator {
    * @param token The given token
    * @return Returns a moderator if the token and the id match
    * @throws WrongCredentialsException is thrown when the token and id don't match or if the
-   * moderator doesn't exist.
+   *         moderator doesn't exist.
    */
   public static Moderator verifyModeratorWith(
       ModeratorRepository moderatorRepository,
@@ -131,7 +131,7 @@ public class Moderator {
       String token) throws WrongCredentialsException {
 
     Optional<Moderator> modFromId = moderatorRepository.findById(idModerator);
-    if ( modFromId.isEmpty() || ! modFromId.equals(moderatorRepository.findByToken(token))) {
+    if (modFromId.isEmpty() || ! modFromId.equals(moderatorRepository.findByToken(token))) {
       throw new WrongCredentialsException();
     }
 

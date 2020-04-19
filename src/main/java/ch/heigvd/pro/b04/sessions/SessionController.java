@@ -16,17 +16,16 @@ import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import ch.heigvd.pro.b04.sessions.exceptions.IllegalSessionStateException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionCodeNotHexadecimalException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
+import ch.heigvd.pro.b04.sessions.exceptions.SessionNotExistingException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionStateMustBeClosedFirstException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionStateMustBeOpenedFirstException;
-import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -122,6 +121,7 @@ public class SessionController {
       SessionStateMustBeOpenedFirstException,
       SessionStateMustBeClosedFirstException {
 
+    // Verify moderator and poll
     Moderator moderator = Moderator.verifyModeratorWith(moderatorRepository, idModerator, token);
     ServerPoll poll = moderator.getPollWithId(serverPollRepository, idPoll);
 
@@ -179,9 +179,36 @@ public class SessionController {
     return sessionRepository.saveAndFlush(session);
   }
 
+  /** This method/endpoint returns the last session for a moderator and idPoll.
+   *
+   * @param idModerator The id of the moderator
+   * @param idPoll The id of the poll
+   * @param token The token of the moderator
+   * @return The last ServerSession
+   * @throws WrongCredentialsException is thrown if the moderator and the token don't match or if
+   *         the moderator doesn't exist
+   * @throws PollNotExistingException is thrown if the poll doesn't belong to the moderator or if
+   *         the poll doesn't exist
+   * @throws SessionNotExistingException is thrown if the poll never had a session
+   */
   @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/session")
-  public ServerSession putSession() {
+  public ServerSession getLastActiveSession(
+      @PathVariable(name = "idModerator") Integer idModerator,
+      @PathVariable(name = "idPoll") Integer idPoll,
+      @RequestParam(name = "token") String token)
+      throws WrongCredentialsException,
+      PollNotExistingException,
+      SessionNotExistingException {
 
+    Moderator moderator = Moderator.verifyModeratorWith(moderatorRepository, idModerator, token);
+    ServerPoll poll = moderator.getPollWithId(serverPollRepository, idPoll);
+
+    Optional<ServerSession> last = poll.getLatestSession(sessionRepository);
+
+    if (last.isEmpty()) {
+      throw new SessionNotExistingException();
+    }
+
+    return last.get();
   }
-
 }
