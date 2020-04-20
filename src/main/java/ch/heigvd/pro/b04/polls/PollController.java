@@ -5,9 +5,11 @@ import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
+import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -56,6 +58,31 @@ public class PollController {
 
     Optional<List<ServerPoll>> pollsForModerator = moderatorForId.map(polls::findAllByModerator);
     return pollsForModerator.orElseThrow(WrongCredentialsException::new);
+  }
+
+  /**
+   * Returns an existing poll and displays its information.
+   * @param token       The authentication token for the user.
+   * @param idModerator The identifier of the moderator who is updating the poll.
+   * @param idPoll      The identifier of the poll to update.
+   * @return The retrieved poll.
+   * @throws WrongCredentialsException If the moderator is invalid, or the credentials incorrect.
+   * @throws ResourceNotFoundException If the poll that we're trying to update does not exist.
+   */
+  @GetMapping("/mod/{idModerator}/poll/{idPoll}")
+  public ServerPoll get(
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") Integer idModerator,
+      @PathVariable(name = "idPoll") Integer idPoll
+  ) throws WrongCredentialsException, ResourceNotFoundException {
+
+    ServerPollIdentifier identifier = moderators.findByToken(token)
+        .filter(moderator -> moderator.getIdModerator() == idModerator)
+        .map(moderator -> moderator.getPollIdentifier(idPoll))
+        .orElseThrow(WrongCredentialsException::new);
+
+    return polls.findById(identifier)
+        .orElseThrow(ResourceNotFoundException::new);
   }
 
   /**
