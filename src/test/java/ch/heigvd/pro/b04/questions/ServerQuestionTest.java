@@ -3,7 +3,6 @@ package ch.heigvd.pro.b04.questions;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -17,18 +16,13 @@ import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,72 +46,91 @@ public class ServerQuestionTest {
   @Test
   public void testModeratorCannotAccessQuestionsOfOtherModerators() {
 
-    ServerPoll pollTemp = ServerPoll.builder()
-        .idPoll(ServerPollIdentifier.builder().idPoll(123).build())
-        .pollServerQuestions(Set.of()).build();
-    ServerPoll pollTemp2 = ServerPoll.builder()
-        .idPoll(ServerPollIdentifier.builder().idPoll(123).build())
-        .pollServerQuestions(Set.of()).build();
-
-    Moderator aloy = Moderator.builder()
+    Moderator alice = Moderator.builder()
         .idModerator(1)
-        .username("aloy")
-        .secret("chieftain")
-        .pollSet(Set.of(pollTemp))
+        .username("alice")
+        .token("aliceToken")
         .build();
 
-    Moderator ikrie = Moderator.builder()
+    Moderator mallory = Moderator.builder()
         .idModerator(2)
-        .username("ikrie")
-        .pollSet(Set.of(pollTemp2))
-        .secret("banuk").build();
+        .username("bob")
+        .token("malloryToken")
+        .build();
 
-    when(pollRepo.findById(pollTemp.getIdPoll())).thenReturn(Optional.of(pollTemp));
-    when(modoRepo.findByToken("t1")).thenReturn(Optional.of(aloy));
-    when(modoRepo.findByToken("t2")).thenReturn(Optional.of(ikrie));
-    when(participantRepository.findByToken("t1")).thenReturn(Optional.empty());
-    when(participantRepository.findByToken("t2")).thenReturn(Optional.empty());
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idxModerator(alice)
+        .idPoll(123)
+        .build();
 
-    assertDoesNotThrow(() -> cc.all(pollTemp.getIdPoll(), "t1", 1));
-    assertThrows(WrongCredentialsException.class, () -> cc.all(pollTemp.getIdPoll(), "t2", 2));
+    ServerPoll pollTemp = ServerPoll.builder()
+        .idPoll(identifier)
+        .build();
+
+    when(participantRepository.findByToken("malloryToken")).thenReturn(Optional.empty());
+    when(modoRepo.findByToken("malloryToken")).thenReturn(Optional.of(mallory));
+    lenient().when(pollRepo.findById(identifier)).thenReturn(Optional.of(pollTemp));
+
+    assertThrows(WrongCredentialsException.class, () -> cc.all("malloryToken", 1, 123));
   }
 
   @Test
-  public void testAllEndpointsReturnAllQuestions()
-      throws WrongCredentialsException, ResourceNotFoundException, PollNotExistingException {
-    ServerQuestion c1 = ServerQuestion.builder()
-        .title("Do you dream of Scorchers ?").build();
-    ServerQuestion c2 = ServerQuestion.builder()
-        .title("Do you love the Frostclaws ?").build();
+  public void testAllEndpointsReturnAllQuestions() {
 
-    ServerPoll pollTemp = ServerPoll.builder()
-        .idPoll(ServerPollIdentifier.builder().idPoll(123).build())
-        .pollServerQuestions(Set.of(c1, c2)).build();
-
-    Moderator aloy = Moderator.builder()
+    Moderator alice = Moderator.builder()
         .idModerator(1)
-        .username("aloy")
-        .secret("chieftain")
-        .pollSet(Set.of(pollTemp))
+        .username("alice")
+        .token("aliceToken")
         .build();
 
-    when(pollRepo.findById(pollTemp.getIdPoll())).thenReturn(Optional.of(pollTemp));
-    when(modoRepo.findByToken("t1")).thenReturn(Optional.of(aloy));
-    when(participantRepository.findByToken("t1")).thenReturn(Optional.empty());
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idxModerator(alice)
+        .idPoll(123)
+        .build();
 
-    assertEquals(2, cc.all(pollTemp.getIdPoll(), "t1", 1).size());
-    //with wrong token
-    assertThrows(ResourceNotFoundException.class, () -> cc.all(pollTemp.getIdPoll(), "t2", 1));
+    ServerPoll poll = ServerPoll.builder()
+        .idPoll(identifier)
+        .title("Hello world.")
+        .build();
+
+    ServerQuestionIdentifier qi1 = ServerQuestionIdentifier.builder()
+        .idServerQuestion(1)
+        .idxPoll(poll)
+        .build();
+
+    ServerQuestionIdentifier qi2 = ServerQuestionIdentifier.builder()
+        .idServerQuestion(2)
+        .idxPoll(poll)
+        .build();
+
+    ServerQuestion q1 = ServerQuestion.builder()
+        .identifier(qi1)
+        .title("Do you dream of Scorchers ?")
+        .build();
+
+    ServerQuestion q2 = ServerQuestion.builder()
+        .identifier(qi2)
+        .title("Do you love the Frostclaws ?")
+        .build();
+
+    // Data access.
+    when(modoRepo.findById(1)).thenReturn(Optional.of(alice));
+    when(pollRepo.findById(identifier)).thenReturn(Optional.of(poll));
+    when(repo.findAll()).thenReturn(List.of(q1, q2));
+
+    // Token management.
+    when(modoRepo.findByToken("aliceToken")).thenReturn(Optional.of(alice));
+    when(participantRepository.findByToken("aliceToken")).thenReturn(Optional.empty());
+
+    assertDoesNotThrow(() -> assertEquals(List.of(q1, q2), cc.all("aliceToken", 1, 123)));
   }
 
   @Test
   public void testByIdEndpointsReturnTheRightQuestions()
       throws WrongCredentialsException, ResourceNotFoundException, PollNotExistingException {
     ServerQuestion c1 = ServerQuestion.builder()
-        .id(1)
         .title("Do you dream of Scorchers ?").build();
     ServerQuestion c2 = ServerQuestion.builder()
-        .id(2)
         .title("Do you love the Frostclaws ?").build();
 
     ServerPoll pollTemp = ServerPoll.builder()
@@ -145,7 +158,6 @@ public class ServerQuestionTest {
   @Test
   public void testParticipantCannotInsertQuestion() {
     ServerQuestion c1 = ServerQuestion.builder()
-        .id(1)
         .title("Do you dream of Scorchers ?").build();
     ClientQuestion c2 = ClientQuestion.builder()
         .title("Do you love the Frostclaws ?").build();
