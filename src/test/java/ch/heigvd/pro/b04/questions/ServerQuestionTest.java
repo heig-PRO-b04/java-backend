@@ -12,20 +12,19 @@ import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.participants.Participant;
+import ch.heigvd.pro.b04.participants.ParticipantIdentifier;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import ch.heigvd.pro.b04.sessions.ServerSession;
+import ch.heigvd.pro.b04.sessions.SessionIdentifier;
+import ch.heigvd.pro.b04.sessions.SessionState;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -41,7 +40,7 @@ public class ServerQuestionTest {
   ServerPollRepository pollRepo;
 
   @Mock
-  QuestionRepository repo;
+  QuestionRepository questionRepository;
 
   @Mock
   ModeratorRepository modoRepo;
@@ -134,12 +133,50 @@ public class ServerQuestionTest {
     when(pollRepo.findById(pollTemp.getIdPoll())).thenReturn(Optional.of(pollTemp));
     when(modoRepo.findByToken("t1")).thenReturn(Optional.of(aloy));
     when(participantRepository.findByToken("t1")).thenReturn(Optional.empty());
-    when(repo.findById(new ServerQuestionIdentifier(1))).thenReturn(Optional.of(c1));
+    when(questionRepository.findById(new ServerQuestionIdentifier(1))).thenReturn(Optional.of(c1));
 
     assertEquals(c1, cc.byId("t1", pollTemp.getIdPoll(), new ServerQuestionIdentifier(1)));
     //with wrong idQuestion
     assertThrows(ResourceNotFoundException.class,
         () -> cc.byId("t1", pollTemp.getIdPoll(), new ServerQuestionIdentifier(3)));
+  }
+
+  @Test
+  public void testParticipantCanAlsoAccessQuestions()
+      throws WrongCredentialsException, ResourceNotFoundException, PollNotExistingException {
+    ServerQuestion c1 = ServerQuestion.builder()
+        .id(1).title("Do you dream of Scorchers ?").build();
+    ServerQuestion c2 = ServerQuestion.builder()
+        .id(2).title("Do you love the Frostclaws ?").build();
+
+    ServerPoll pollTemp = ServerPoll.builder()
+        .idPoll(ServerPollIdentifier.builder().idPoll(123).build())
+        .pollServerQuestions(Set.of(c1, c2)).build();
+
+    Moderator ikrie = Moderator.builder()
+        .idModerator(2)
+        .username("ikrie")
+        .pollSet(Set.of(pollTemp))
+        .secret("banuk").build();
+
+    ServerSession s2 = ServerSession.builder()
+        .idSession(SessionIdentifier.builder()
+            .idSession(1).idxPoll(pollTemp).idxModerator(ikrie).build())
+        .state(SessionState.OPEN).build();
+
+    Participant aloy = Participant.builder()
+        .idParticipant(ParticipantIdentifier.builder()
+            .idParticipant(1).idxServerSession(s2).build())
+        .token("t1").build();
+
+    when(pollRepo.findById(pollTemp.getIdPoll())).thenReturn(Optional.of(pollTemp));
+    lenient().when(modoRepo.findByToken("t2")).thenReturn(Optional.of(ikrie));
+    when(participantRepository.findByToken("t1")).thenReturn(Optional.of(aloy));
+    when(questionRepository.findById(new ServerQuestionIdentifier(1))).thenReturn(Optional.of(c1));
+
+    assertEquals(2, cc.all(pollTemp.getIdPoll(), aloy.getToken(), 1).size());
+    assertEquals(c1,
+        cc.byId(aloy.getToken(), pollTemp.getIdPoll(), new ServerQuestionIdentifier(1)));
   }
 
   @Test
