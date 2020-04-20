@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.springframework.boot.jackson.JsonComponent;
 
 @JsonComponent
-public class QuestionJsonSerializer extends JsonSerializer<ServerQuestion> {
+public class ServerQuestionJsonSerializer extends JsonSerializer<ServerQuestion> {
 
   @Override
   public void serialize(
@@ -18,15 +18,21 @@ public class QuestionJsonSerializer extends JsonSerializer<ServerQuestion> {
     jsonGenerator.writeStartObject();
     jsonGenerator.writeNumberField("idModerator",
         question.getIdServerQuestion().getIdxPoll()
-        .getIdPoll().getIdxModerator()
-        .getIdModerator()
+            .getIdPoll().getIdxModerator()
+            .getIdModerator()
     );
     jsonGenerator.writeNumberField("idPoll",
         question.getIdServerQuestion().getIdxPoll()
-        .getIdPoll().getIdPoll()
+            .getIdPoll().getIdPoll()
     );
     jsonGenerator.writeNumberField("idQuestion",
         question.getIdServerQuestion().getIdServerQuestion());
+    jsonGenerator.writeStringField("title", question.getTitle());
+    jsonGenerator.writeStringField("details", question.getDetails());
+    jsonGenerator.writeNumberField("answerMin", question.getAnswersMin());
+    jsonGenerator.writeNumberField("answerMax", question.getAnswersMax());
+    // TODO : Figure out why this does not work. Is the visibility null ?
+    // jsonGenerator.writeStringField("visibility", question.getVisibility().getRepresentation());
     jsonGenerator.writeEndObject();
   }
 }

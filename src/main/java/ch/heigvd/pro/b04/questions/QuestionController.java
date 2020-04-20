@@ -165,15 +165,27 @@ public class QuestionController {
    * @throws WrongCredentialsException if there is a credentials problem
    */
   @PostMapping(value = "/mod/{idModerator}/poll/{idPoll}/question")
-  public ServerQuestion insertQuestion(@RequestParam(name = "token") String token,
-      @RequestBody ClientQuestion question,
+  @Transactional
+  public ServerQuestion insert(
+      @RequestParam(name = "token") String token,
       @PathVariable(name = "idModerator") int idModerator,
-      @PathVariable(name = "idPoll") ServerPollIdentifier idPoll)
-      throws ResourceNotFoundException, WrongCredentialsException {
+      @PathVariable(name = "idPoll") int idPoll,
+      @RequestBody ClientQuestion question
+  ) throws ResourceNotFoundException, WrongCredentialsException {
 
-    controlModeratorAccessToPoll(idModerator, idPoll, token);
+    // Retrieve the associated moderator.
+    Moderator moderator = moderatorRepository.findByToken(token)
+        .filter(m -> m.getIdModerator() == idModerator)
+        .orElseThrow(WrongCredentialsException::new);
 
-    return pollRepository.findById(idPoll).get().newQuestion(repository, question);
+    // Retrieve the associated poll.
+    ServerPoll poll = pollRepository.findById(ServerPollIdentifier.builder()
+        .idxModerator(moderator)
+        .idPoll(idPoll)
+        .build())
+        .orElseThrow(ResourceNotFoundException::new);
+
+    return poll.newQuestion(repository, question);
   }
 
   /**

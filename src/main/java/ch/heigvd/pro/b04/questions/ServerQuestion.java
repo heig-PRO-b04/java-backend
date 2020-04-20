@@ -50,7 +50,7 @@ public class ServerQuestion extends Question {
     this.indexInPoll = index;
     this.title = title;
     this.details = details;
-    visibility = visible;
+    this.visibility = visible;
     this.answersMax = max;
     this.answersMin = min;
   }

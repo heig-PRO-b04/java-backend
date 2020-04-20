@@ -85,7 +85,6 @@ public class ServerPoll implements Serializable {
    *
    * @param newQuestion The question to be added.
    */
-  @Transactional
   public ServerQuestion newQuestion(QuestionRepository repoQ, ClientQuestion newQuestion) {
     ServerQuestion qqW = ServerQuestion.builder()
         .identifier(ServerQuestionIdentifier.builder()

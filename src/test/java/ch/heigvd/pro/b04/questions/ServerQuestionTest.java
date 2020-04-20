@@ -171,7 +171,6 @@ public class ServerQuestionTest {
     lenient().when(modoRepo.findByToken("t1")).thenReturn(Optional.empty());
     lenient().when(participantRepository.findByToken("t1")).thenReturn(Optional.of(aloy));
 
-    assertThrows(ResourceNotFoundException.class,
-        () -> cc.insertQuestion("t1", c2, 1, pollTemp.getIdPoll()));
+    assertThrows(WrongCredentialsException.class, () -> cc.insert("t1", 1, 123, c2));
   }
 }
