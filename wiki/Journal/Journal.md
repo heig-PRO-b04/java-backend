@@ -64,7 +64,7 @@ Que voulons nous montrer si on fait une démo:
 Le responsable du draft doit prévoir l'organisation de la présentation et la répartition du temps.
 Doit faire un "plan" et s'assurer qu'on répond aux buts de la présentation.
 
-**Responsable** du draft: Alaxandre
+**Responsable** du draft: Alexandre
 
 Aide au responsable: Matthieu
 
