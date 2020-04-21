@@ -9,6 +9,7 @@ import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
+import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -99,10 +100,10 @@ public class QuestionController {
   /**
    * gets a {@link ServerQuestion} by his id.
    *
-   * @param token token of the moderator or participant
+   * @param token       token of the moderator or participant
    * @param idModerator id of moderator owning the poll
-   * @param idPoll part of the {@link ServerPollIdentifier}
-   * @param idQuestion part of the {@link ServerQuestionIdentifier}
+   * @param idPoll      part of the {@link ServerPollIdentifier}
+   * @param idQuestion  part of the {@link ServerQuestionIdentifier}
    * @return {@link ServerQuestion} found
    * @throws ResourceNotFoundException if one of the parameters is broken
    * @throws WrongCredentialsException if there a credentials violation
@@ -114,7 +115,7 @@ public class QuestionController {
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
       @PathVariable(name = "idQuestion") int idQuestion)
-      throws ResourceNotFoundException, WrongCredentialsException {
+      throws ResourceNotFoundException, WrongCredentialsException, PollNotExistingException {
     ServerQuestionIdentifier idToFind = ServerQuestionIdentifier.builder()
         .idServerQuestion(idQuestion)
         .idxPoll(pollRepository.findById(ServerPollIdentifier.builder().idPoll(idPoll).idxModerator(
@@ -126,7 +127,8 @@ public class QuestionController {
     ServerQuestion questionWanted = repository.findById(idToFind)
         .orElseThrow(ResourceNotFoundException::new);
 
-    for (ServerQuestion q : this.all(token, idModerator, idPoll)) {
+    for (ServerQuestion q : verifyModeratorOrParticipantAccess(participantRepository,
+        moderatorRepository, idPoll, token).getPollServerQuestions()) {
       if (q.equals(questionWanted)) {
         return q;
       }
@@ -134,6 +136,31 @@ public class QuestionController {
     throw new ResourceNotFoundException();
   }
 
+  private ServerPoll verifyModeratorOrParticipantAccess(ParticipantRepository prpRepo,
+      ModeratorRepository modoRepo, int idPoll, String token)
+      throws ResourceNotFoundException, PollNotExistingException {
+    ServerPoll pollTest;
+    Optional<Participant> pollT = prpRepo.findByToken(token);
+    //if token doesn't lead to a Participant...
+    if (pollT.isEmpty()) {
+      //...it looks for a moderator
+      Optional<Moderator> pollM = modoRepo.findByToken(token);
+      if (pollM.isEmpty()) {
+        throw new ResourceNotFoundException();
+      } else {
+        //poll inside pollSet of the modo
+        pollTest = pollM.get().searchPoll(ServerPollIdentifier.builder()
+            .idPoll(idPoll).idxModerator(pollM.get()).build());
+      }
+    } else {
+      //poll of the session in which Participant is logged
+      pollTest = pollT.get().getIdParticipant()
+          .getIdxServerSession().getIdSession().getIdxPoll();
+    }
+    //If a participant or a moderator with this token exists,
+    //the poll corresponding to idPoll is returned
+    return pollTest;
+  }
 
   /**
    * Insert a new {@link ServerQuestion} in a {@link ServerPoll}.
