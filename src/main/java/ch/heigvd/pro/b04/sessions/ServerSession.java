@@ -83,7 +83,7 @@ public class ServerSession {
     ) throws IOException {
       jsonGenerator.writeStartObject();
       jsonGenerator.writeNumberField("idModerator",
-          session.idSession.getIdxModerator().getIdModerator());
+          session.idSession.getIdxPoll().getIdPoll().getIdxModerator().getIdModerator());
       jsonGenerator.writeNumberField("idPoll",
           session.idSession.getIdxPoll().getIdPoll().getIdPoll());
       jsonGenerator.writeNumberField("idSession",

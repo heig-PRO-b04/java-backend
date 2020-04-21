@@ -14,14 +14,13 @@ import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,31 +53,51 @@ public class QuestionController {
   /**
    * return all {@link ServerQuestion} of a {@link ServerPoll}.
    *
-   * @param idPoll id of the poll containing question
-   * @param token  token of the sender, moderator or participant
-   * @param idModo id of moderator owning the poll
+   * @param idPoll      id of the poll containing question
+   * @param token       token of the sender, moderator or participant
+   * @param idModerator id of moderator owning the poll
    * @return list of {@link ServerQuestion}
    * @throws ResourceNotFoundException if sender or poll is not found
    * @throws WrongCredentialsException if the sender cannot access this poll
    */
-  @RequestMapping(value = "/mod/{idModerator}/poll/{idPoll}/question", method = RequestMethod.GET)
-  public List<ServerQuestion> all(@PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
+  @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/question")
+  @Transactional
+  public List<ServerQuestion> all(
       @RequestParam(name = "token") String token,
-      @PathVariable(name = "idModerator") int idModo)
-      throws ResourceNotFoundException, WrongCredentialsException, PollNotExistingException {
+      @PathVariable(name = "idModerator") int idModerator,
+      @PathVariable(name = "idPoll") int idPoll)
+      throws ResourceNotFoundException, WrongCredentialsException {
 
-    ServerPoll pollTest = verifyModeratorOrParticipantAccess(
-        participantRepository, moderatorRepository, idPoll, token);
+    // Start authorization code.
+    Optional<Boolean> authorizeModerator = moderatorRepository.findByToken(token)
+        .filter(moderator -> moderator.getIdModerator() == idModerator)
+        .map(moderator -> true);
 
-    Optional<ServerPoll> pollConcerned = pollRepository.findById(idPoll);
+    Optional<Boolean> authorizeParticipant = participantRepository.findByToken(token)
+        .map(participant -> participant.getIdParticipant().getIdxServerSession())
+        .map(serverSession -> serverSession.getIdSession().getIdxPoll())
+        .filter(poll -> poll.getIdPoll().getIdPoll() == idPoll)
+        .filter(poll -> poll.getIdPoll().getIdxModerator().getIdModerator() == idModerator)
+        .map(poll -> true);
 
-    if (pollConcerned.isEmpty()) {
-      throw new ResourceNotFoundException();
-    } else if (!(pollTest.equals(pollConcerned.get()))) {
+    boolean authorize = authorizeModerator.isPresent() || authorizeParticipant.isPresent();
+
+    if (!authorize) {
       throw new WrongCredentialsException();
     }
 
-    return pollConcerned.get().getPollServerQuestions().stream().collect(Collectors.toList());
+    // We are now guaranteed to have the right to access the data !
+    Moderator moderator = moderatorRepository.findById(idModerator)
+        .orElseThrow(ResourceNotFoundException::new);
+
+    ServerPoll poll = pollRepository
+        .findById(ServerPollIdentifier.builder().idPoll(idPoll).idxModerator(moderator).build())
+        .orElseThrow(ResourceNotFoundException::new);
+
+    return repository.findAll()
+        .stream()
+        .filter(question -> question.getIdServerQuestion().getIdxPoll().equals(poll))
+        .collect(Collectors.toList());
   }
 
   /**
