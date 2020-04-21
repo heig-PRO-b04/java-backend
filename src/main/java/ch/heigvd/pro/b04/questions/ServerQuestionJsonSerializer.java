@@ -31,8 +31,7 @@ public class ServerQuestionJsonSerializer extends JsonSerializer<ServerQuestion>
     jsonGenerator.writeStringField("details", question.getDetails());
     jsonGenerator.writeNumberField("answerMin", question.getAnswersMin());
     jsonGenerator.writeNumberField("answerMax", question.getAnswersMax());
-    // TODO : Figure out why this does not work. Is the visibility null ?
-    // jsonGenerator.writeStringField("visibility", question.getVisibility().getRepresentation());
+    jsonGenerator.writeStringField("visibility", question.getVisibility().getRepresentation());
     jsonGenerator.writeEndObject();
   }
 }
