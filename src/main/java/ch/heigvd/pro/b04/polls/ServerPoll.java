@@ -72,13 +72,12 @@ public class ServerPoll implements Serializable {
    * @return A new unique identifier
    */
   public static Long getNewIdentifier(QuestionRepository repository) {
-    Long identifier = repository.findAll().stream()
+    return repository.findAll().stream()
         .map(ServerQuestion::getIdServerQuestion)
         .map(ServerQuestionIdentifier::getIdServerQuestion)
         .max(Long::compareTo)
         .map(id -> id + 1)
         .orElse(1L);
-    return identifier;
   }
 
   /**
@@ -86,16 +85,18 @@ public class ServerPoll implements Serializable {
    *
    * @param newQuestion The question to be added.
    */
-  @Transactional
   public ServerQuestion newQuestion(QuestionRepository repoQ, ClientQuestion newQuestion) {
     ServerQuestion qqW = ServerQuestion.builder()
-        .id(getNewIdentifier(repoQ))
+        .idServerQuestion(ServerQuestionIdentifier.builder()
+            .idxPoll(this)
+            .idServerQuestion(getNewIdentifier(repoQ))
+            .build())
         .title(newQuestion.getTitle())
         .details(newQuestion.getDetails())
-        .visible(newQuestion.getVisibility())
-        .index(newQuestion.getIndexInPoll())
-        .max(newQuestion.getAnswersMax())
-        .min(newQuestion.getAnswersMin()).build();
+        .visibility(newQuestion.getVisibility())
+        .indexInPoll(newQuestion.getIndexInPoll())
+        .answersMax(newQuestion.getAnswersMax())
+        .answersMin(newQuestion.getAnswersMin()).build();
     return repoQ.save(qqW);
   }
 
@@ -116,7 +117,6 @@ public class ServerPoll implements Serializable {
     ServerSession newServerSession = ServerSession.builder()
         .idSession(SessionIdentifier.builder()
             .idSession(SessionIdentifier.getNewIdentifier(repository))
-            .idxModerator(idPoll.getIdxModerator())
             .idxPoll(this)
             .build())
         .code(sessionCode)

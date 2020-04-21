@@ -1,6 +1,5 @@
 package ch.heigvd.pro.b04.sessions;
 
-import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -37,11 +36,6 @@ public class SessionIdentifier implements Serializable {
   @Getter
   @Column
   private long idSession;
-
-  @Getter
-  @ManyToOne
-  @PrimaryKeyJoinColumn
-  private Moderator idxModerator;
 
   @Getter
   @Setter

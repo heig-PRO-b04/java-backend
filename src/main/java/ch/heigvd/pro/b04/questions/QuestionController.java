@@ -2,7 +2,6 @@ package ch.heigvd.pro.b04.questions;
 
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
-import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.participants.Participant;
@@ -10,18 +9,14 @@ import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
-import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,85 +49,91 @@ public class QuestionController {
   /**
    * return all {@link ServerQuestion} of a {@link ServerPoll}.
    *
-   * @param idPoll id of the poll containing question
-   * @param token  token of the sender, moderator or participant
-   * @param idModo id of moderator owning the poll
+   * @param idPoll      id of the poll containing question
+   * @param token       token of the sender, moderator or participant
+   * @param idModerator id of moderator owning the poll
    * @return list of {@link ServerQuestion}
    * @throws ResourceNotFoundException if sender or poll is not found
    * @throws WrongCredentialsException if the sender cannot access this poll
    */
-  @RequestMapping(value = "/mod/{idModerator}/poll/{idPoll}/question", method = RequestMethod.GET)
-  public List<ServerQuestion> all(@PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
+  @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/question")
+  @Transactional
+  public List<ServerQuestion> all(
       @RequestParam(name = "token") String token,
-      @PathVariable(name = "idModerator") int idModo)
-      throws ResourceNotFoundException, WrongCredentialsException, PollNotExistingException {
+      @PathVariable(name = "idModerator") int idModerator,
+      @PathVariable(name = "idPoll") int idPoll)
+      throws ResourceNotFoundException, WrongCredentialsException {
 
-    ServerPoll pollTest = verifyModeratorOrParticipantAccess(
-        participantRepository, moderatorRepository, idPoll, token);
+    // Start authorization code.
+    Optional<Boolean> authorizeModerator = moderatorRepository.findByToken(token)
+        .filter(moderator -> moderator.getIdModerator() == idModerator)
+        .map(moderator -> true);
 
-    Optional<ServerPoll> pollConcerned = pollRepository.findById(idPoll);
+    Optional<Boolean> authorizeParticipant = participantRepository.findByToken(token)
+        .map(participant -> participant.getIdParticipant().getIdxServerSession())
+        .map(serverSession -> serverSession.getIdSession().getIdxPoll())
+        .filter(poll -> poll.getIdPoll().getIdPoll() == idPoll)
+        .filter(poll -> poll.getIdPoll().getIdxModerator().getIdModerator() == idModerator)
+        .map(poll -> true);
 
-    if (pollConcerned.isEmpty()) {
-      throw new ResourceNotFoundException();
-    } else if (!(pollTest.equals(pollConcerned.get()))) {
+    boolean authorize = authorizeModerator.isPresent() || authorizeParticipant.isPresent();
+
+    if (!authorize) {
       throw new WrongCredentialsException();
     }
 
-    return pollConcerned.get().getPollServerQuestions().stream().collect(Collectors.toList());
+    // We are now guaranteed to have the right to access the data !
+    Moderator moderator = moderatorRepository.findById(idModerator)
+        .orElseThrow(ResourceNotFoundException::new);
+
+    ServerPoll poll = pollRepository
+        .findById(ServerPollIdentifier.builder().idPoll(idPoll).idxModerator(moderator).build())
+        .orElseThrow(ResourceNotFoundException::new);
+
+    return repository.findAll()
+        .stream()
+        .filter(question -> question.getIdServerQuestion().getIdxPoll().equals(poll))
+        .collect(Collectors.toList());
   }
 
   /**
-   * return a chosen {@link ServerQuestion} of a {@link ServerPoll}.
+   * gets a {@link ServerQuestion} by his id.
    *
-   * @param idPoll     id of the poll containing question
-   * @param token      token of the sender, moderator or participant
-   * @param idQuestion id of the Question to return
-   * @return {@link ServerQuestion} wanted
-   * @throws ResourceNotFoundException if sender or question or poll is not found
-   * @throws WrongCredentialsException if the sender cannot access this poll
+   * @param token token of the moderator or participant
+   * @param idModerator id of moderator owning the poll
+   * @param idPoll part of the {@link ServerPollIdentifier}
+   * @param idQuestion part of the {@link ServerQuestionIdentifier}
+   * @return {@link ServerQuestion} found
+   * @throws ResourceNotFoundException if one of the parameters is broken
+   * @throws WrongCredentialsException if there a credentials violation
    */
   @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
-  public ServerQuestion byId(@RequestParam(name = "token") String token,
-      @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
-      @PathVariable(name = "idQuestion") ServerQuestionIdentifier idQuestion)
-      throws ResourceNotFoundException, WrongCredentialsException, PollNotExistingException {
-    ServerPoll pollTest = verifyModeratorOrParticipantAccess(participantRepository,
-        moderatorRepository, idPoll, token);
+  @Transactional
+  public ServerQuestion byId(
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") int idModerator,
+      @PathVariable(name = "idPoll") int idPoll,
+      @PathVariable(name = "idQuestion") int idQuestion)
+      throws ResourceNotFoundException, WrongCredentialsException {
+    ServerQuestionIdentifier idToFind = ServerQuestionIdentifier.builder()
+        .idServerQuestion(idQuestion)
+        .idxPoll(pollRepository.findById(ServerPollIdentifier.builder().idPoll(idPoll).idxModerator(
+            moderatorRepository.findById(idModerator).orElseThrow(ResourceNotFoundException::new))
+            .build())
+            .orElseThrow(ResourceNotFoundException::new))
+        .build();
 
-    Optional<ServerPoll> pollConcerned = pollRepository.findById(idPoll);
-    if (pollConcerned.isEmpty()) {
-      throw new ResourceNotFoundException();
-    } else if (!(pollTest.equals(pollConcerned.get()))) {
-      throw new WrongCredentialsException();
-    }
+    ServerQuestion questionWanted = repository.findById(idToFind)
+        .orElseThrow(ResourceNotFoundException::new);
 
-    return repository.findById(idQuestion).orElseThrow(ResourceNotFoundException::new);
-  }
-
-  private ServerPoll verifyModeratorOrParticipantAccess(ParticipantRepository prpRepo,
-      ModeratorRepository modoRepo, ServerPollIdentifier idPoll, String token)
-      throws ResourceNotFoundException, PollNotExistingException {
-    ServerPoll pollTest;
-    Optional<Participant> pollT = prpRepo.findByToken(token);
-    //if token doesn't lead to a Participant...
-    if (pollT.isEmpty()) {
-      //...it looks for a moderator
-      Optional<Moderator> pollM = modoRepo.findByToken(token);
-      if (pollM.isEmpty()) {
-        throw new ResourceNotFoundException();
-      } else {
-        //poll inside pollSet of the modo
-        pollTest = pollM.get().searchPoll(idPoll);
+    for (ServerQuestion q : this.all(token, idModerator, idPoll)) {
+      if (q.equals(questionWanted)) {
+        return q;
       }
-    } else {
-      //poll of the session in which Participant is logged
-      pollTest = pollT.get().getIdParticipant()
-          .getIdxServerSession().getIdSession().getIdxPoll();
     }
-    //If a participant or a moderator with this token exists,
-    //the poll corresponding to idPoll is returned
-    return pollTest;
+    throw new ResourceNotFoundException();
   }
+
 
   /**
    * Insert a new {@link ServerQuestion} in a {@link ServerPoll}.
@@ -146,103 +147,26 @@ public class QuestionController {
    * @throws WrongCredentialsException if there is a credentials problem
    */
   @PostMapping(value = "/mod/{idModerator}/poll/{idPoll}/question")
-  public ServerQuestion insertQuestion(@RequestParam(name = "token") String token,
-      @RequestBody ClientQuestion question,
+  @Transactional
+  public ServerQuestion insert(
+      @RequestParam(name = "token") String token,
       @PathVariable(name = "idModerator") int idModerator,
-      @PathVariable(name = "idPoll") ServerPollIdentifier idPoll)
-      throws ResourceNotFoundException, WrongCredentialsException {
+      @PathVariable(name = "idPoll") int idPoll,
+      @RequestBody ClientQuestion question
+  ) throws ResourceNotFoundException, WrongCredentialsException {
 
-    controlModeratorAccessToPoll(idModerator, idPoll, token);
+    // Retrieve the associated moderator.
+    Moderator moderator = moderatorRepository.findByToken(token)
+        .filter(m -> m.getIdModerator() == idModerator)
+        .orElseThrow(WrongCredentialsException::new);
 
-    return pollRepository.findById(idPoll).get().newQuestion(repository, question);
-  }
+    // Retrieve the associated poll.
+    ServerPoll poll = pollRepository.findById(ServerPollIdentifier.builder()
+        .idxModerator(moderator)
+        .idPoll(idPoll)
+        .build())
+        .orElseThrow(ResourceNotFoundException::new);
 
-  /**
-   * Update a {@link ServerQuestion} in a {@link ServerPoll}.
-   *
-   * @param token    sender's token
-   * @param question new version of the question
-   * @param idModo   moderator who should be the sender of the request
-   * @param idPoll   poll to add question in
-   * @param maggieQ  id of question to update
-   * @throws ResourceNotFoundException if one parameter is broken
-   * @throws WrongCredentialsException if there is a credentials problem
-   */
-  @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
-  public void updateQuestion(@RequestParam(name = "token") String token,
-      @RequestBody ClientQuestion question,
-      @PathVariable(name = "idModerator") int idModo,
-      @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
-      @PathVariable(name = "idQuestion") ServerQuestionIdentifier maggieQ)
-      throws ResourceNotFoundException, WrongCredentialsException {
-    controlModeratorAccessToPoll(idModo, idPoll, token);
-    ServerPoll pollTest = pollRepository.findById(idPoll).get();
-    Optional<ServerQuestion> upQ = repository.findById(maggieQ);
-    if (upQ.isEmpty() || !(pollTest.equals(maggieQ.getIdxPoll()))) {
-      throw new ResourceNotFoundException();
-    }
-
-    upQ.get().setTitle(question.getTitle());
-    upQ.get().setDetails(question.getDetails());
-    upQ.get().setAnswersMax(question.getAnswersMax());
-    upQ.get().setAnswersMin(question.getAnswersMin());
-    upQ.get().setVisibility(question.getVisibility());
-    upQ.get().setIndexInPoll(question.getIndexInPoll());
-  }
-
-  /**
-   * Delete a {@link ServerQuestion} in a {@link ServerPoll}.
-   *
-   * @param token   sender's token
-   * @param idModo  moderator who should be the sender of the request
-   * @param idPoll  poll to delete question in
-   * @param maggieQ id of question to delete
-   * @return message to confirm deletion succeeded
-   * @throws ResourceNotFoundException if one parameter is broken
-   */
-  @DeleteMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
-  public ServerMessage deleteQuestion(@RequestParam(name = "token") String token,
-      @PathVariable(name = "idModerator") int idModo,
-      @PathVariable(name = "idPoll") ServerPollIdentifier idPoll,
-      @PathVariable(name = "idQuestion") ServerQuestionIdentifier maggieQ)
-      throws ResourceNotFoundException, WrongCredentialsException {
-    controlModeratorAccessToPoll(idModo, idPoll, token);
-
-    ServerPoll pollTest = pollRepository.findById(idPoll).get();
-    Optional<ServerQuestion> upQ = repository.findById(maggieQ);
-    if (upQ.isEmpty() || !(pollTest.equals(maggieQ.getIdxPoll()))) {
-      throw new ResourceNotFoundException();
-    }
-
-    repository.delete(upQ.get());
-    return ServerMessage.builder().message("Question deleted").build();
-  }
-
-  /**
-   * Test if a token belongs to a {@link Moderator}, and if a {@link ServerPoll} belongs to this
-   * Moderator.
-   *
-   * @param idModerator id of the modo to test
-   * @param idPoll      id of the poll
-   * @param token       token of the moderator
-   * @return true it test is correct
-   * @throws ResourceNotFoundException if one of the parameters is not found
-   * @throws WrongCredentialsException if the tests fails, there is a credentials problem
-   */
-  private boolean controlModeratorAccessToPoll(int idModerator,
-      ServerPollIdentifier idPoll, String token)
-      throws ResourceNotFoundException, WrongCredentialsException {
-    Optional<ServerPoll> pollPo = pollRepository.findById(idPoll);
-    Optional<Moderator> poster = moderatorRepository.findById(idModerator);
-    Optional<Moderator> test = moderatorRepository.findByToken(token);
-
-    if (pollPo.isEmpty() || poster.isEmpty() || test.isEmpty()) {
-      throw new ResourceNotFoundException();
-    } else if (!(test.get().equals(poster.get()))
-        || !(pollPo.get().getIdPoll().getIdxModerator().equals(poster.get()))) {
-      throw new WrongCredentialsException();
-    }
-
-    return true;
+    return poll.newQuestion(repository, question);
   }
 }
