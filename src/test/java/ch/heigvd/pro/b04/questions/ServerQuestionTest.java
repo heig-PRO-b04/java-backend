@@ -104,12 +104,12 @@ public class ServerQuestionTest {
         .build();
 
     ServerQuestion q1 = ServerQuestion.builder()
-        .identifier(qi1)
+        .idServerQuestion(qi1)
         .title("Do you dream of Scorchers ?")
         .build();
 
     ServerQuestion q2 = ServerQuestion.builder()
-        .identifier(qi2)
+        .idServerQuestion(qi2)
         .title("Do you love the Frostclaws ?")
         .build();
 
@@ -123,36 +123,6 @@ public class ServerQuestionTest {
     when(participantRepository.findByToken("aliceToken")).thenReturn(Optional.empty());
 
     assertDoesNotThrow(() -> assertEquals(List.of(q1, q2), cc.all("aliceToken", 1, 123)));
-  }
-
-  @Test
-  public void testByIdEndpointsReturnTheRightQuestions()
-      throws WrongCredentialsException, ResourceNotFoundException, PollNotExistingException {
-    ServerQuestion c1 = ServerQuestion.builder()
-        .title("Do you dream of Scorchers ?").build();
-    ServerQuestion c2 = ServerQuestion.builder()
-        .title("Do you love the Frostclaws ?").build();
-
-    ServerPoll pollTemp = ServerPoll.builder()
-        .idPoll(ServerPollIdentifier.builder().idPoll(123).build())
-        .pollServerQuestions(Set.of(c1, c2)).build();
-
-    Moderator aloy = Moderator.builder()
-        .idModerator(1)
-        .username("aloy")
-        .secret("chieftain")
-        .pollSet(Set.of(pollTemp))
-        .build();
-
-    when(pollRepo.findById(pollTemp.getIdPoll())).thenReturn(Optional.of(pollTemp));
-    when(modoRepo.findByToken("t1")).thenReturn(Optional.of(aloy));
-    when(participantRepository.findByToken("t1")).thenReturn(Optional.empty());
-    when(repo.findById(new ServerQuestionIdentifier(1))).thenReturn(Optional.of(c1));
-
-    assertEquals(c1, cc.byId("t1", pollTemp.getIdPoll(), new ServerQuestionIdentifier(1)));
-    //with wrong idQuestion
-    assertThrows(ResourceNotFoundException.class,
-        () -> cc.byId("t1", pollTemp.getIdPoll(), new ServerQuestionIdentifier(3)));
   }
 
   @Test
@@ -171,7 +141,6 @@ public class ServerQuestionTest {
     lenient().when(modoRepo.findByToken("t1")).thenReturn(Optional.empty());
     lenient().when(participantRepository.findByToken("t1")).thenReturn(Optional.of(aloy));
 
-    assertThrows(ResourceNotFoundException.class,
-        () -> cc.insertQuestion("t1", c2, 1, pollTemp.getIdPoll()));
+    assertThrows(WrongCredentialsException.class, () -> cc.insert("t1", 1, 123, c2));
   }
 }

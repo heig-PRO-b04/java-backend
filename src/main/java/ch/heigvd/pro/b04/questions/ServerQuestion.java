@@ -11,49 +11,31 @@ import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @Entity
-public class ServerQuestion extends Question {
+@Builder
+@NoArgsConstructor
+public class ServerQuestion {
 
+  @Getter
+  protected double indexInPoll;
+  @Getter
+  protected String title;
+  @Getter
+  protected String details;
+  @Getter
+  protected QuestionVisibility visibility;
+  @Getter
+  protected short answersMin;
+  @Getter
+  protected short answersMax;
   @Getter
   @EmbeddedId
   private ServerQuestionIdentifier idServerQuestion;
-
   @OneToMany(mappedBy = "idAnswer.idxServerQuestion", cascade = CascadeType.ALL)
   private Set<Answer> answersToQuestion;
-
-  public ServerQuestion() {
-  }
-
-  /**
-   * Creates a new {@link ServerQuestion}.
-   *
-   * @param identifier The question identifier.
-   * @param index      The question index.
-   * @param title      The question title.
-   * @param details    The question details.
-   * @param visible    The question visibility.
-   * @param min        The lower bound for the number of required answers.
-   * @param max        The upper bound for the number of required answers.
-   */
-  @Builder
-  public ServerQuestion(
-      ServerQuestionIdentifier identifier,
-      double index,
-      String title,
-      String details,
-      QuestionVisibility visible,
-      short min,
-      short max) {
-    this.idServerQuestion = identifier;
-    this.indexInPoll = index;
-    this.title = title;
-    this.details = details;
-    visibility = visible;
-    this.answersMax = max;
-    this.answersMin = min;
-  }
 
   /**
    * Add a new answer to this {@link ServerQuestion}.

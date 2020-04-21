@@ -85,19 +85,18 @@ public class ServerPoll implements Serializable {
    *
    * @param newQuestion The question to be added.
    */
-  @Transactional
   public ServerQuestion newQuestion(QuestionRepository repoQ, ClientQuestion newQuestion) {
     ServerQuestion qqW = ServerQuestion.builder()
-        .identifier(ServerQuestionIdentifier.builder()
+        .idServerQuestion(ServerQuestionIdentifier.builder()
             .idxPoll(this)
             .idServerQuestion(getNewIdentifier(repoQ))
             .build())
         .title(newQuestion.getTitle())
         .details(newQuestion.getDetails())
-        .visible(newQuestion.getVisibility())
-        .index(newQuestion.getIndexInPoll())
-        .max(newQuestion.getAnswersMax())
-        .min(newQuestion.getAnswersMin()).build();
+        .visibility(newQuestion.getVisibility())
+        .indexInPoll(newQuestion.getIndexInPoll())
+        .answersMax(newQuestion.getAnswersMax())
+        .answersMin(newQuestion.getAnswersMin()).build();
     return repoQ.save(qqW);
   }
 
