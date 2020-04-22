@@ -21,7 +21,7 @@
   + Les issues sont classées dans des boards Kanban.
   + Chaque pôle du projet est responsable d'organiser sa gestion des issues à courte échéance. Permet d'avoir de la flexibilité en guarantissant une certaine visibilité sur ce qu'il se passe.
 
-## Présentation du planning avec les ajustements, et comparaison avec le planning initial
+## Présentation du planning avec les ajustements, et comparaison avec le planning initial
 
 - 1 à 2 semaines de retard. Nous pensons que cela est imputable aux facteurs suivants :
   + Interblocage entre les différents pôles du projet - nous n'avions pas suffisamment anticipé les inter-dépendances et avons perdu du temps pour nous aligner.
@@ -48,6 +48,10 @@
   + Chaque contribution est soumise à des tests automatiques :
     - Des test unitaires vérifient le bon fonctionnement du backend.
     - L'intégration continue s'assure que le code fournit compile.
+
+- Centralisation de la documentation interne sur un Wiki commun.
+  + Les guidelines concernant la review de code sont dans le Wiki.
+  + La spécification technique de l'API est aussi centralisée. Notamment, nous avons été capables d'implémenter une partie de l'API client en nous basant sur la spécification, avant son implémentation concrète dans le backend
 
 - Mise en place d'un processus de déploiement automatique.
   + Le code source reviewé du backend est déployé sur **Heroku**. La base de donnée est gérée par **Heroku**. L'application tourne sur une URL publique, la rendant accessible à toute l'équipe.
