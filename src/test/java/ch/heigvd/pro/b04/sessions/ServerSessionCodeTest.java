@@ -3,6 +3,7 @@ package ch.heigvd.pro.b04.sessions;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 public class ServerSessionCodeTest {
@@ -29,5 +30,11 @@ public class ServerSessionCodeTest {
   public void testFormatHexadecimal() {
     SessionCode code = SessionCode.builder().hexadecimal("0xABCD").build();
     assertTrue(SessionCode.conformsToFormat(code));
+  }
+
+  @RepeatedTest(150)
+  public void testGeneratedSessionCodeIsCorrectLength() {
+    String code = ServerSession.createSessionCode();
+    assertTrue(code.length() == 6);
   }
 }
