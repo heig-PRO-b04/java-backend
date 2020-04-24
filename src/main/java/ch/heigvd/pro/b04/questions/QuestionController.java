@@ -92,13 +92,12 @@ public class QuestionController {
    */
   private Optional<ServerQuestion> findQuestionByPollAndModerator(int idModerator, String token,
       int idPoll, int idQuestion) throws WrongCredentialsException {
-    Optional<Moderator> modo = findVerifiedModeratorByIdAndToken(idModerator, token);
-    if (modo.isEmpty()) {
-      throw new WrongCredentialsException();
-    }
+    Moderator moderator = findVerifiedModeratorByIdAndToken(
+        idModerator, token).orElseThrow(WrongCredentialsException::new);
+
     Optional<ServerQuestion> question = Optional.empty();
     Optional<ServerPoll> poll = pollRepository.findById(ServerPollIdentifier.builder()
-        .idxModerator(modo.get())
+        .idxModerator(moderator)
         .idPoll(idPoll)
         .build());
     if (poll.isEmpty()) {
