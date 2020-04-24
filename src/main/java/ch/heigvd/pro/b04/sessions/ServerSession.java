@@ -29,15 +29,22 @@ import org.springframework.boot.jackson.JsonComponent;
 @Entity
 @EqualsAndHashCode
 public class ServerSession {
-  private static final int CODE_BOUNDARY_EXCLUDED = 0x10000;
+  private static int NB_EMOJI = 4;
+  private static int HEX = 16;
 
   /**
    * Creates a new sessionCode in hexadecimal format.
    * @return A String containing the randomly generated session code
    */
   public static String createSessionCode() {
-    int rand = new Random().nextInt(CODE_BOUNDARY_EXCLUDED);
-    return ("0x" + Integer.toHexString(rand).toUpperCase());
+    StringBuilder str = new StringBuilder();
+    Random random = new Random();
+
+    for (int i = 0; i < NB_EMOJI; i++) {
+      str.append(Integer.toHexString(random.nextInt(HEX)).toUpperCase());
+    }
+
+    return ("0x" + str.toString());
   }
 
   @Getter
