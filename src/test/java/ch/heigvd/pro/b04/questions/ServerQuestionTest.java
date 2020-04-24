@@ -119,8 +119,8 @@ public class ServerQuestionTest {
     when(repo.findAll()).thenReturn(List.of(q1, q2));
 
     // Token management.
-    when(modoRepo.findByToken("aliceToken")).thenReturn(Optional.of(alice));
-    when(participantRepository.findByToken("aliceToken")).thenReturn(Optional.empty());
+    lenient().when(modoRepo.findByToken("aliceToken")).thenReturn(Optional.of(alice));
+    lenient().when(participantRepository.findByToken("aliceToken")).thenReturn(Optional.empty());
 
     assertDoesNotThrow(() -> assertEquals(List.of(q1, q2), cc.all("aliceToken", 1, 123)));
   }
