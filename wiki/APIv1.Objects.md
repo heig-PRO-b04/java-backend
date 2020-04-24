@@ -1,6 +1,7 @@
 # Table of Contents
 
 - [Table of Contents](#table-of-contents)
+    - [General](#general)
     - [Moderator](#moderator)
         - [Client](#client)
         - [Server](#server)
@@ -16,12 +17,15 @@
     - [Question](#question)
         - [Client](#client-4)
         - [Server](#server-4)
-        - [General](#general)
+        - [General](#general-1)
     - [Answers](#answers)
         - [Client](#client-5)
         - [Server](#server-5)
     - [Votes](#votes)
         - [Client](#client-6)
+
+## General
+When a list of objects needs to be sent, it will be done so using JSON arrays.
 
 ## Moderator
 ### Client
