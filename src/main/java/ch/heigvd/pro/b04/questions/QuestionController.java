@@ -96,13 +96,12 @@ public class QuestionController {
     if (modo.isEmpty()) {
       throw new WrongCredentialsException();
     }
-    Optional<ServerQuestion> question=Optional.empty();
+    Optional<ServerQuestion> question = Optional.empty();
     Optional<ServerPoll> poll = pollRepository.findById(ServerPollIdentifier.builder()
         .idxModerator(modo.get())
         .idPoll(idPoll)
         .build());
-    if(poll.isEmpty())
-    {
+    if (poll.isEmpty()) {
       return question;
     }
 
@@ -242,8 +241,11 @@ public class QuestionController {
       @PathVariable(name = "idQuestion") int maggieQ,
       @RequestBody ClientQuestion question
   ) throws WrongCredentialsException, ResourceNotFoundException {
-    Optional<ServerQuestion> upQ = findQuestionByPollAndModerator(idModerator, token, idPoll, maggieQ);
-    if(upQ.isEmpty()) { throw new ResourceNotFoundException();}
+    Optional<ServerQuestion> upQ = findQuestionByPollAndModerator(idModerator, token, idPoll,
+        maggieQ);
+    if (upQ.isEmpty()) {
+      throw new ResourceNotFoundException();
+    }
 
     upQ.get().setTitle(question.getTitle());
     upQ.get().setDetails(question.getDetails());
@@ -272,8 +274,11 @@ public class QuestionController {
       @PathVariable(name = "idPoll") int idPoll,
       @PathVariable(name = "idQuestion") int maggieQ)
       throws ResourceNotFoundException, WrongCredentialsException {
-    Optional<ServerQuestion> questionToDel= findQuestionByPollAndModerator(idModerator, token, idPoll, maggieQ);
-    if(questionToDel.isEmpty()) { throw new ResourceNotFoundException();}
+    Optional<ServerQuestion> questionToDel = findQuestionByPollAndModerator(idModerator, token,
+        idPoll, maggieQ);
+    if (questionToDel.isEmpty()) {
+      throw new ResourceNotFoundException();
+    }
 
     repository.delete(questionToDel.get());
     return ServerMessage.builder().message("Question deleted").build();
