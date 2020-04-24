@@ -111,6 +111,9 @@ When the server needs to send a session, it should be represented as so:
 ```
 
 ## Question
+**Note**: `indexInPoll` can be a `double`. In which case, the natural number ordering
+is to be followed.
+
 ### Client
 When a client needs to send a question, it should be represented as so:
 
