@@ -9,10 +9,8 @@ import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
-import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
 import ch.heigvd.pro.b04.sessions.SessionState;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +47,35 @@ public class QuestionController {
   }
 
   /**
+   * Returns a boolean indicating if the provided token is valid for the moderator.
+   *
+   * @param idMod The id of the moderator we check access to.
+   * @param token The token to check for.
+   */
+  private boolean hasAccessAsModerator(int idMod, String token) {
+    return moderatorRepository.findByToken(token)
+        .filter(moderator -> moderator.getIdModerator() == idMod)
+        .isPresent();
+  }
+
+  /**
+   * Returns a boolean indicating if the provided token is valid for the participant.
+   *
+   * @param idMod  The id of the moderator we check access to.
+   * @param idPoll The id of the poll we want to check access to.
+   * @param token  The token to check for.
+   */
+  private boolean hasAccessAsParticipant(int idMod, int idPoll, String token) {
+    return participantRepository.findByToken(token)
+        .map(participant -> participant.getIdParticipant().getIdxServerSession())
+        .filter(serverSession -> !(serverSession.getState().equals(SessionState.CLOSED)))
+        .map(serverSession -> serverSession.getIdSession().getIdxPoll())
+        .filter(poll -> poll.getIdPoll().getIdPoll() == idPoll)
+        .filter(poll -> poll.getIdPoll().getIdxModerator().getIdModerator() == idMod)
+        .isPresent();
+  }
+
+  /**
    * return all {@link ServerQuestion} of a {@link ServerPoll}.
    *
    * @param idPoll      id of the poll containing question
@@ -66,22 +93,8 @@ public class QuestionController {
       @PathVariable(name = "idPoll") int idPoll)
       throws ResourceNotFoundException, WrongCredentialsException {
 
-    // Start authorization code.
-    Optional<Boolean> authorizeModerator = moderatorRepository.findByToken(token)
-        .filter(moderator -> moderator.getIdModerator() == idModerator)
-        .map(moderator -> true);
-
-    Optional<Boolean> authorizeParticipant = participantRepository.findByToken(token)
-        .map(participant -> participant.getIdParticipant().getIdxServerSession())
-        .filter(serverSession -> !(serverSession.getState().equals(SessionState.CLOSED)))
-        .map(serverSession -> serverSession.getIdSession().getIdxPoll())
-        .filter(poll -> poll.getIdPoll().getIdPoll() == idPoll)
-        .filter(poll -> poll.getIdPoll().getIdxModerator().getIdModerator() == idModerator)
-        .map(poll -> true);
-
-    boolean authorize = authorizeModerator.isPresent() || authorizeParticipant.isPresent();
-
-    if (!authorize) {
+    if (!(hasAccessAsModerator(idModerator, token)
+        || hasAccessAsParticipant(idModerator, idPoll, token))) {
       throw new WrongCredentialsException();
     }
 
@@ -117,48 +130,26 @@ public class QuestionController {
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
       @PathVariable(name = "idQuestion") int idQuestion)
-      throws ResourceNotFoundException, PollNotExistingException {
+      throws ResourceNotFoundException, WrongCredentialsException {
+
+    if (!(hasAccessAsModerator(idModerator, token)
+        || hasAccessAsParticipant(idModerator, idPoll, token))) {
+      throw new WrongCredentialsException();
+    }
+
     ServerQuestionIdentifier idToFind = ServerQuestionIdentifier.builder()
         .idServerQuestion(idQuestion)
-        .idxPoll(pollRepository.findById(ServerPollIdentifier.builder().idPoll(idPoll).idxModerator(
-            moderatorRepository.findById(idModerator).orElseThrow(ResourceNotFoundException::new))
-            .build())
+        .idxPoll(pollRepository.findById(
+            ServerPollIdentifier.builder()
+                .idPoll(idPoll)
+                .idxModerator(moderatorRepository.findById(idModerator)
+                    .orElseThrow(ResourceNotFoundException::new))
+                .build())
             .orElseThrow(ResourceNotFoundException::new))
         .build();
 
-    ServerQuestion questionWanted = repository.findById(idToFind)
+    return repository.findById(idToFind)
         .orElseThrow(ResourceNotFoundException::new);
-
-    for (ServerQuestion q : verifyModeratorOrParticipantAccess(participantRepository,
-        moderatorRepository, idPoll, token).getPollServerQuestions()) {
-      if (q.equals(questionWanted)) {
-        return q;
-      }
-    }
-    throw new ResourceNotFoundException();
-  }
-
-  private ServerPoll verifyModeratorOrParticipantAccess(ParticipantRepository prpRepo,
-      ModeratorRepository modoRepo, int idPoll, String token)
-      throws ResourceNotFoundException, PollNotExistingException {
-    ServerPoll pollTest;
-    Optional<Participant> pollT = prpRepo.findByToken(token);
-    //if token doesn't lead to a Participant...
-    if (pollT.isEmpty()) {
-      //...it looks for a moderator
-      Moderator pollM = modoRepo.findByToken(token).orElseThrow(ResourceNotFoundException::new);
-
-        //poll inside pollSet of the modo
-        pollTest = pollM.searchPoll(ServerPollIdentifier.builder()
-            .idPoll(idPoll).idxModerator(pollM).build());
-    } else {
-      //poll of the session in which Participant is logged
-      pollTest = pollT.get().getIdParticipant()
-          .getIdxServerSession().getIdSession().getIdxPoll();
-    }
-    //If a participant or a moderator with this token exists,
-    //the poll corresponding to idPoll is returned
-    return pollTest;
   }
 
   /**
