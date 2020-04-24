@@ -10,6 +10,7 @@ import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
+import ch.heigvd.pro.b04.sessions.SessionState;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,6 +73,7 @@ public class QuestionController {
 
     Optional<Boolean> authorizeParticipant = participantRepository.findByToken(token)
         .map(participant -> participant.getIdParticipant().getIdxServerSession())
+        .filter(serverSession -> !(serverSession.getState().equals(SessionState.CLOSED)))
         .map(serverSession -> serverSession.getIdSession().getIdxPoll())
         .filter(poll -> poll.getIdPoll().getIdPoll() == idPoll)
         .filter(poll -> poll.getIdPoll().getIdxModerator().getIdModerator() == idModerator)
@@ -115,7 +117,7 @@ public class QuestionController {
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
       @PathVariable(name = "idQuestion") int idQuestion)
-      throws ResourceNotFoundException, WrongCredentialsException, PollNotExistingException {
+      throws ResourceNotFoundException, PollNotExistingException {
     ServerQuestionIdentifier idToFind = ServerQuestionIdentifier.builder()
         .idServerQuestion(idQuestion)
         .idxPoll(pollRepository.findById(ServerPollIdentifier.builder().idPoll(idPoll).idxModerator(
@@ -144,14 +146,11 @@ public class QuestionController {
     //if token doesn't lead to a Participant...
     if (pollT.isEmpty()) {
       //...it looks for a moderator
-      Optional<Moderator> pollM = modoRepo.findByToken(token);
-      if (pollM.isEmpty()) {
-        throw new ResourceNotFoundException();
-      } else {
+      Moderator pollM = modoRepo.findByToken(token).orElseThrow(ResourceNotFoundException::new);
+
         //poll inside pollSet of the modo
-        pollTest = pollM.get().searchPoll(ServerPollIdentifier.builder()
-            .idPoll(idPoll).idxModerator(pollM.get()).build());
-      }
+        pollTest = pollM.searchPoll(ServerPollIdentifier.builder()
+            .idPoll(idPoll).idxModerator(pollM).build());
     } else {
       //poll of the session in which Participant is logged
       pollTest = pollT.get().getIdParticipant()
