@@ -2,6 +2,7 @@ package ch.heigvd.pro.b04.questions;
 
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.participants.Participant;
@@ -11,11 +12,14 @@ import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.sessions.SessionState;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,11 +55,11 @@ public class QuestionController {
    *
    * @param idMod The id of the moderator we check access to.
    * @param token The token to check for.
+   * @return Optional with the right moderator, empty if not found
    */
-  private boolean hasAccessAsModerator(int idMod, String token) {
+  private Optional<Moderator> hasAccessAsModerator(int idMod, String token) {
     return moderatorRepository.findByToken(token)
-        .filter(moderator -> moderator.getIdModerator() == idMod)
-        .isPresent();
+        .filter(moderator -> moderator.getIdModerator() == idMod);
   }
 
   /**
@@ -64,15 +68,15 @@ public class QuestionController {
    * @param idMod  The id of the moderator we check access to.
    * @param idPoll The id of the poll we want to check access to.
    * @param token  The token to check for.
+   * @return Optional with the right participant, empty if not found
    */
-  private boolean hasAccessAsParticipant(int idMod, int idPoll, String token) {
+  private Optional<ServerPoll> hasAccessAsParticipant(int idMod, int idPoll, String token) {
     return participantRepository.findByToken(token)
         .map(participant -> participant.getIdParticipant().getIdxServerSession())
         .filter(serverSession -> !(serverSession.getState().equals(SessionState.CLOSED)))
         .map(serverSession -> serverSession.getIdSession().getIdxPoll())
         .filter(poll -> poll.getIdPoll().getIdPoll() == idPoll)
-        .filter(poll -> poll.getIdPoll().getIdxModerator().getIdModerator() == idMod)
-        .isPresent();
+        .filter(poll -> poll.getIdPoll().getIdxModerator().getIdModerator() == idMod);
   }
 
   /**
@@ -93,8 +97,8 @@ public class QuestionController {
       @PathVariable(name = "idPoll") int idPoll)
       throws ResourceNotFoundException, WrongCredentialsException {
 
-    if (!(hasAccessAsModerator(idModerator, token)
-        || hasAccessAsParticipant(idModerator, idPoll, token))) {
+    if ((hasAccessAsModerator(idModerator, token).isEmpty()
+        && hasAccessAsParticipant(idModerator, idPoll, token).isEmpty())) {
       throw new WrongCredentialsException();
     }
 
@@ -132,8 +136,8 @@ public class QuestionController {
       @PathVariable(name = "idQuestion") int idQuestion)
       throws ResourceNotFoundException, WrongCredentialsException {
 
-    if (!(hasAccessAsModerator(idModerator, token)
-        || hasAccessAsParticipant(idModerator, idPoll, token))) {
+    if ((hasAccessAsModerator(idModerator, token).isEmpty()
+        && hasAccessAsParticipant(idModerator, idPoll, token).isEmpty())) {
       throw new WrongCredentialsException();
     }
 
@@ -171,19 +175,99 @@ public class QuestionController {
       @PathVariable(name = "idPoll") int idPoll,
       @RequestBody ClientQuestion question
   ) throws ResourceNotFoundException, WrongCredentialsException {
-
-    // Retrieve the associated moderator.
-    Moderator moderator = moderatorRepository.findByToken(token)
-        .filter(m -> m.getIdModerator() == idModerator)
-        .orElseThrow(WrongCredentialsException::new);
+    if (hasAccessAsModerator(idModerator, token).isEmpty()) {
+      throw new WrongCredentialsException();
+    }
 
     // Retrieve the associated poll.
     ServerPoll poll = pollRepository.findById(ServerPollIdentifier.builder()
-        .idxModerator(moderator)
+        .idxModerator(hasAccessAsModerator(idModerator, token).get())
         .idPoll(idPoll)
         .build())
         .orElseThrow(ResourceNotFoundException::new);
 
     return poll.newQuestion(repository, question);
+  }
+
+  /**
+   * Update a {@link ServerQuestion} in a {@link ServerPoll}.
+   *
+   * @param token token of the moderator
+   * @param idModerator id of the moderator
+   * @param idPoll id of the poll owning the question
+   * @param maggieQ id of the question to modify
+   * @param question new representation of the question
+   * @return {@link ServerQuestion} modified
+   * @throws WrongCredentialsException if one of the parameters is broken
+   * @throws ResourceNotFoundException if one of the parameters is broken
+   */
+  @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
+  @Transactional
+  public ServerQuestion updateQuestion(
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") int idModerator,
+      @PathVariable(name = "idPoll") int idPoll,
+      @PathVariable(name = "idQuestion") int maggieQ,
+      @RequestBody ClientQuestion question
+  ) throws WrongCredentialsException, ResourceNotFoundException {
+    if (hasAccessAsModerator(idModerator, token).isEmpty()) {
+      throw new WrongCredentialsException();
+    }
+
+    ServerQuestion upQ = fetchQuestionByPollAndModo(idModerator, token, idPoll, maggieQ);
+
+    upQ.setTitle(question.getTitle());
+    upQ.setDetails(question.getDetails());
+    upQ.setVisibility(question.getVisibility());
+    upQ.setAnswersMin(question.answersMin);
+    upQ.setAnswersMax(question.answersMax);
+
+    return upQ;
+  }
+
+  /**
+   * Update a {@link ServerQuestion} in a {@link ServerPoll}.
+   *
+   * @param token token of the moderator
+   * @param idModerator id of the moderator
+   * @param idPoll id of the poll owning the question
+   * @param maggieQ id of the question to delete
+   * @return confirmation message
+   * @throws ResourceNotFoundException if one of the parameters is broken
+   */
+  @DeleteMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}")
+  @Transactional
+  public ServerMessage deleteQuestion(
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") int idModerator,
+      @PathVariable(name = "idPoll") int idPoll,
+      @PathVariable(name = "idQuestion") int maggieQ) throws ResourceNotFoundException {
+    repository.delete(fetchQuestionByPollAndModo(idModerator, token, idPoll, maggieQ));
+    return ServerMessage.builder().message("Question deleted").build();
+  }
+
+  /**
+   * fetch a {@link ServerQuestion} and verify its access by doing it.
+   *
+   * @param idModo id of the moderator
+   * @param token token of the moderator
+   * @param idPoll id of the poll owning the question
+   * @param idQuestion id of the question to retrieve
+   * @return {@link ServerQuestion} found
+   * @throws ResourceNotFoundException if question cannot be found
+   */
+  private ServerQuestion fetchQuestionByPollAndModo(int idModo, String token,
+      int idPoll, int idQuestion) throws ResourceNotFoundException {
+    ServerPoll poll = pollRepository.findById(ServerPollIdentifier.builder()
+        .idxModerator(hasAccessAsModerator(idModo, token).get())
+        .idPoll(idPoll)
+        .build())
+        .orElseThrow(ResourceNotFoundException::new);
+
+    ServerQuestion upQ = repository.findById(ServerQuestionIdentifier.builder()
+        .idServerQuestion(idQuestion).idxPoll(poll).build())
+        .orElseThrow(ResourceNotFoundException::new);
+
+    return upQ;
   }
 }
