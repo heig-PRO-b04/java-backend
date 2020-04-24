@@ -119,6 +119,7 @@ When a client needs to send a question, it should be represented as so:
   "title"       : "This is a Question title",
   "details"     : "Comment",
   "visibility"  : "hidden",
+  "indexInPoll" : 1,
   "answersMin"  : 1,
   "answersMax"  : 42
 }
@@ -135,6 +136,7 @@ When the server needs to send a question, it should be represented as so:
   "title"       : "This is a Question title",
   "details"     : "Comment",
   "visibility"  : "hidden",
+  "indexInPoll" : 1,
   "answersMin"  : 1,
   "answersMax"  : 42
 }
