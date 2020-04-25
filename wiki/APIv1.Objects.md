@@ -1,6 +1,7 @@
 # Table of Contents
 
 - [Table of Contents](#table-of-contents)
+    - [General](#general)
     - [Moderator](#moderator)
         - [Client](#client)
         - [Server](#server)
@@ -16,12 +17,15 @@
     - [Question](#question)
         - [Client](#client-4)
         - [Server](#server-4)
-        - [General](#general)
+        - [General](#general-1)
     - [Answers](#answers)
         - [Client](#client-5)
         - [Server](#server-5)
     - [Votes](#votes)
         - [Client](#client-6)
+
+## General
+When a list of objects needs to be sent, it will be done so using JSON arrays.
 
 ## Moderator
 ### Client
@@ -107,6 +111,9 @@ When the server needs to send a session, it should be represented as so:
 ```
 
 ## Question
+**Note**: `indexInPoll` can be a `double`. In which case, the natural number ordering
+is to be followed.
+
 ### Client
 When a client needs to send a question, it should be represented as so:
 
@@ -115,6 +122,7 @@ When a client needs to send a question, it should be represented as so:
   "title"       : "This is a Question title",
   "details"     : "Comment",
   "visibility"  : "hidden",
+  "indexInPoll" : 1,
   "answersMin"  : 1,
   "answersMax"  : 42
 }
@@ -131,6 +139,7 @@ When the server needs to send a question, it should be represented as so:
   "title"       : "This is a Question title",
   "details"     : "Comment",
   "visibility"  : "hidden",
+  "indexInPoll" : 1,
   "answersMin"  : 1,
   "answersMax"  : 42
 }

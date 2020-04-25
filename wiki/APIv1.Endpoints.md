@@ -47,7 +47,8 @@ On success, the server will send the moderator back.
 ### `POST /auth`
 Requests a token.
 
-To be connected as a moderator, send the json representation of a moderator in the request's body.
+Send the json representation of a moderator in the request's body. This endpoint is designed to be
+used by moderators.
 
 On success, the server will send the moderator back.
 
@@ -91,35 +92,35 @@ The emoji mapping table is as follows :
 ### `GET /mod/{idModerator}/poll`
 Get all available polls.
 
-A token is needed.
+A moderator token is needed.
 
 On success, a list of polls will be returned.
 
 ### `GET /mod/{idModerator}/poll/{idPoll}`
 Get poll with id `idPoll`.
 
-A token is needed.
+A (user/moderator) token is needed.
 
 On success, the poll will be returned.
 
 ### `POST /mod/{idModerator}/poll`
 Creates a new poll.
 
-A token is needed. Send the json representation of the poll in the request's
-body.
+A moderator token is needed. Send the json representation of the poll in the request's body.
 
 On success, the poll is returned by the server.
+
 ### `PUT /mod/{idModerator}/poll/{idPoll}`
 Updates a poll.
 
-A token is needed. Send the json representation of the poll in the request's
+A moderator token is needed. Send the json representation of the poll in the request's
 body.
 
 On success, the poll is returned by the server.
 ### `DELETE  /mod/{idModerator}/poll/{idPoll}`
 Deletes a poll.
 
-A token is needed.
+A moderator token is needed.
 
 On success, this message is returned by the server:
 ```json
@@ -132,55 +133,55 @@ On success, this message is returned by the server:
 ### `GET /session`
 Get the correct session corresponding with the given token.
 
-A token is needed.
+A user token is needed.
 
 On success, the server will send a session object.
 
 ### `GET /mod/{idModerator}/poll/{ídPoll}/session`
 Get the last active session for a given poll.
 
-A token is needed.
+A moderator token is needed.
 
 On success, a Session object is sent by the server.
 
 ### `PUT /mod/{idModerator}/poll/{ídPoll}/session`
 Creates or updates the state of a session. A Session object should be sent in the request's body.
 
-A token is needed
+A moderator token is needed
 
 ## Question
 ### `GET /mod/{idModerator}/poll/{idPoll}/question`
 Get all questions forming a poll.
 
-A token is needed.
+A (user/moderator) token is needed.
 
 On success, a list of questions will be returned.
 
 ### `GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`
 Get question with id `idQuestion`
 
-A token is needed.
+A (user/moderator) token is needed.
 
 On success, the question will be returned.
 
 ### `POST /mod/{idModerator}/poll/{idPoll}/question`
 Creates a new question.
 
-A token is needed. Send the json representation of the question in the request's body.
+A moderator token is needed. Send the json representation of the question in the request's body.
 
 On success, the created question will be returned.
 
 ### `PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`
 Updates a question.
 
-A token is needed. Send the json representation of the question in the request's body.
+A moderator token is needed. Send the json representation of the question in the request's body.
 
 On success, the modified question will be returned.
 
 ### `DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}`
 Deletes a question.
 
-A token is needed.
+A moderator token is needed.
 
 On success, this message is returned by the server:
 ```json
@@ -193,30 +194,35 @@ On success, this message is returned by the server:
 ### `GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer`
 Get answers forming a question.
 
-A token is needed.
+A (user/moderator) token is needed.
 
 On success, a list of answers will be returned.
 
 ### `GET /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`
 Get the answer with id `idAnswer`
 
-A token is needed.
+A (user/moderator) token is needed.
 
 On success, the answer will be returned.
 
 ### `POST /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer`
 Creates a new answer.
 
-A token is needed. Send the json representation of the answer in the request's body.
+A moderator token is needed. Send the json representation of the answer in the request's body.
+
+On success, the answer will be returned.
 
 ### `PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`
 Updates an answer.
 
-A token is needed. Send the json representation of the answer in the request's body.
+A moderator token is needed. Send the json representation of the answer in the request's body.
+
+On success, the answer will be returned.
+
 ### `DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`
 Deletes an answer.
 
-A token is needed.
+A moderator token is needed.
 
 On success, this message is returned by the server:
 ```json
@@ -228,10 +234,16 @@ On success, this message is returned by the server:
 ### `PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}/vote`
 Votes for an answer.
 
+A user token is needed.
+
 Send the json representation of the vote in the request's body.
 
+On success, a code 201 will be returned
+
 # Errors
+
 On error, a message indicating why the error occured must be sent:
+
 ```json
 {
   "error" : "Something terrible happened"
