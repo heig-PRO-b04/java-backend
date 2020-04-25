@@ -8,27 +8,34 @@ import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.websocket.server.ServerEndpoint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @Entity
 @Builder
 @NoArgsConstructor
 public class ServerQuestion {
-
+  @Setter
   @Getter
   protected double indexInPoll;
+  @Setter
   @Getter
   protected String title;
+  @Setter
   @Getter
   protected String details;
+  @Setter
   @Getter
   protected QuestionVisibility visibility;
+  @Setter
   @Getter
   protected short answersMin;
+  @Setter
   @Getter
   protected short answersMax;
   @Getter
