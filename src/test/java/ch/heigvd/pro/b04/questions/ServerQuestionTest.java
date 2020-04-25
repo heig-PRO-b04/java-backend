@@ -148,8 +148,7 @@ public class ServerQuestionTest {
   }
 
   @Test
-  public void testModeratorCanInsertOrUpdateQuestionOnlyWithRightAccess()
-      throws ResourceNotFoundException, WrongCredentialsException {
+  public void testModeratorCanInsertQuestionOnlyWithRightAccess() {
     ClientQuestion c1 = ClientQuestion.builder()
         .title("Do you dream of Scorchers ?").build();
 
@@ -163,7 +162,10 @@ public class ServerQuestionTest {
         .secret("chieftain")
         .pollSet(Set.of(pollTemp))
         .build();
-    pollTemp.getIdPoll().setIdxModerator(aloy);
+    pollTemp = ServerPoll.builder()
+        .idPoll(ServerPollIdentifier.builder().idPoll(123)
+            .idxModerator(aloy).build())
+        .build();
 
     Moderator ikrie = Moderator.builder()
         .idModerator(2)
@@ -176,13 +178,32 @@ public class ServerQuestionTest {
     when(pollRepo.findById(Mockito.any())).thenReturn(Optional.empty());
     when(pollRepo.findById(
         ServerPollIdentifier.builder()
-        .idPoll(123).idxModerator(aloy).build()
+            .idPoll(123).idxModerator(aloy).build()
     )).thenReturn(Optional.of(pollTemp));
 
     //Moderator who owns the poll
     assertDoesNotThrow(() -> cc.insert(1, 123, "t1", c1));
     //Moderator who does not own the poll
-    assertThrows(ResourceNotFoundException.class, () ->cc.insert(2, 123, "t2", c1));
+    assertThrows(ResourceNotFoundException.class, () -> cc.insert(2, 123, "t2", c1));
+  }
+
+  @Test
+  public void testModeratorCanUpdateQuestionOnlyWithRightAccess()
+      throws ResourceNotFoundException, WrongCredentialsException {
+    ClientQuestion c1 = ClientQuestion.builder()
+        .title("Do you dream of Scorchers ?").build();
+
+    Moderator aloy = Moderator.builder()
+        .idModerator(1)
+        .username("aloy")
+        .secret("chieftain")
+        .build();
+
+    Moderator ikrie = Moderator.builder()
+        .idModerator(2)
+        .username("ikrie")
+        .secret("banuk")
+        .build();
 
     ServerQuestion q2 = ServerQuestion.builder()
         .idServerQuestion(ServerQuestionIdentifier.builder()
@@ -198,18 +219,20 @@ public class ServerQuestionTest {
 
     q2.getIdServerQuestion().setIdxPoll(pollTemp2);
 
+    when(modoRepo.findByToken("t1")).thenReturn(Optional.of(aloy));
+    when(modoRepo.findByToken("t2")).thenReturn(Optional.of(ikrie));
     when(repo.findById(Mockito.any())).thenReturn(Optional.of(q2));
     when(pollRepo.findById(Mockito.any())).thenReturn(Optional.empty());
     when(pollRepo.findById(
         ServerPollIdentifier.builder()
             .idPoll(223).idxModerator(aloy).build()
-    )).thenReturn(Optional.of(pollTemp));
+    )).thenReturn(Optional.of(pollTemp2));
 
     //Moderator who owns the poll
     assertEquals("Do you dream of Scorchers ?",
         cc.updateQuestion(1, 223, 2, "t1", c1).getTitle());
     //Moderator who does not own the poll
     assertThrows(ResourceNotFoundException.class,
-        ()->cc.updateQuestion(2, 223, 2, "t2", c1));
+        () -> cc.updateQuestion(2, 223, 2, "t2", c1));
   }
 }
