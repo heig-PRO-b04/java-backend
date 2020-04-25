@@ -14,6 +14,12 @@ import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
+import ch.heigvd.pro.b04.participants.Participant;
+import ch.heigvd.pro.b04.participants.ParticipantIdentifier;
+import ch.heigvd.pro.b04.participants.ParticipantRepository;
+import ch.heigvd.pro.b04.sessions.ServerSession;
+import ch.heigvd.pro.b04.sessions.SessionIdentifier;
+import ch.heigvd.pro.b04.sessions.SessionState;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -33,6 +39,9 @@ public class ServerPollControllerTest {
 
   @Mock
   ServerPollRepository polls;
+
+  @Mock
+  ParticipantRepository participants;
 
   @Test
   public void testAllPollsKnownModeratorWithCorrectCredentialsWorks() {
@@ -284,5 +293,85 @@ public class ServerPollControllerTest {
       ClientPoll update = ClientPoll.builder().title("Hyper Poll").build();
       controller.update("bunny", 1, 1, update);
     });
+  }
+
+  @Test
+  public void testGetSinglePollWithParticipantTokenWorks() {
+
+    Moderator bob = Moderator.builder()
+        .idModerator(123)
+        .token("bobToken")
+        .build();
+
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idxModerator(bob)
+        .idPoll(321)
+        .build();
+
+    ServerPoll poll = ServerPoll.builder()
+        .idPoll(identifier)
+        .build();
+
+    ServerSession session = ServerSession.builder()
+        .state(SessionState.OPEN)
+        .idSession(SessionIdentifier.builder()
+            .idSession(1)
+            .idxPoll(poll)
+            .build())
+        .build();
+
+    Participant alice = Participant.builder()
+        .idParticipant(ParticipantIdentifier.builder()
+            .idxServerSession(session)
+            .idParticipant(2)
+            .build())
+        .token("aliceToken")
+        .build();
+
+    when(polls.findById(identifier)).thenReturn(Optional.of(poll));
+    when(participants.findByToken("aliceToken")).thenReturn(Optional.of(alice));
+
+    assertDoesNotThrow(() -> {
+      controller.get("aliceToken", 123, 321);
+    });
+  }
+
+  @Test
+  public void testGetSinglePollWithValidTokenAndClosedSessionDoesNotWork() {
+
+    Moderator bob = Moderator.builder()
+        .idModerator(123)
+        .token("bobToken")
+        .build();
+
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idxModerator(bob)
+        .idPoll(321)
+        .build();
+
+    ServerPoll poll = ServerPoll.builder()
+        .idPoll(identifier)
+        .build();
+
+    ServerSession session = ServerSession.builder()
+        .state(SessionState.CLOSED)
+        .idSession(SessionIdentifier.builder()
+            .idSession(1)
+            .idxPoll(poll)
+            .build())
+        .build();
+
+    Participant alice = Participant.builder()
+        .idParticipant(ParticipantIdentifier.builder()
+            .idxServerSession(session)
+            .idParticipant(2)
+            .build())
+        .token("aliceToken")
+        .build();
+
+    lenient().when(polls.findById(identifier)).thenReturn(Optional.of(poll));
+    lenient().when(participants.findByToken("aliceToken")).thenReturn(Optional.of(alice));
+
+    assertThrows(WrongCredentialsException.class, () -> controller.get("aliceToken", 123, 321));
   }
 }
