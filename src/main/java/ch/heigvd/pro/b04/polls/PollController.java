@@ -29,6 +29,13 @@ public class PollController {
   private final ModeratorRepository moderators;
   private final ParticipantRepository participants;
 
+  /**
+   * Constructor for a new {@link PollController instance}.
+   *
+   * @param moderators   The moderators repository.
+   * @param polls        The polls repository.
+   * @param participants The participants repository.
+   */
   public PollController(
       ModeratorRepository moderators,
       ServerPollRepository polls,
