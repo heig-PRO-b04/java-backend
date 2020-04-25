@@ -57,7 +57,10 @@ public class QuestionController {
    * @param token The token to check for.
    * @return Optional with the right moderator, empty if not found
    */
-  private Optional<Moderator> findVerifiedModeratorByIdAndToken(int idMod, String token) {
+  private Optional<Moderator> findVerifiedModeratorByIdAndToken(
+      int idMod,
+      String token
+  ) {
     return moderatorRepository.findByToken(token)
         .filter(moderator -> moderator.getIdModerator() == idMod);
   }
@@ -70,8 +73,11 @@ public class QuestionController {
    * @param idPoll The id of the poll we want to check access to.
    * @return Optional with the right participant, empty if not found
    */
-  private Optional<ServerPoll> findVerifiedParticipantByIdAndToken(int idMod, String token,
-      int idPoll) {
+  private Optional<ServerPoll> findVerifiedParticipantByIdAndToken(
+      int idMod,
+      int idPoll,
+      String token
+  ) {
     return participantRepository.findByToken(token)
         .map(participant -> participant.getIdParticipant().getIdxServerSession())
         .filter(serverSession -> !(serverSession.getState().equals(SessionState.CLOSED)))
@@ -90,20 +96,24 @@ public class QuestionController {
    * @return {@link ServerQuestion} found
    * @throws WrongCredentialsException if token is not a valid moderator token
    */
-  private Optional<ServerQuestion> findQuestionByPollAndModerator(int idModerator, String token,
-      int idPoll, int idQuestion) throws WrongCredentialsException {
+  private Optional<ServerQuestion> findQuestionByPollAndModerator(
+      int idModerator,
+      int idPoll,
+      int idQuestion,
+      String token
+  ) throws WrongCredentialsException {
     Moderator moderator = findVerifiedModeratorByIdAndToken(
         idModerator, token).orElseThrow(WrongCredentialsException::new);
 
-    Optional<ServerQuestion> question = Optional.empty();
     Optional<ServerPoll> poll = pollRepository.findById(ServerPollIdentifier.builder()
         .idxModerator(moderator)
         .idPoll(idPoll)
         .build());
 
-
-    return (repository.findById(ServerQuestionIdentifier.builder()
-        .idServerQuestion(idQuestion).idxPoll(poll.get()).build()));
+    return poll.flatMap(p -> repository.findById(ServerQuestionIdentifier.builder()
+        .idServerQuestion(idQuestion)
+        .idxPoll(p)
+        .build()));
   }
 
   /**
@@ -120,12 +130,12 @@ public class QuestionController {
   @Transactional
   public List<ServerQuestion> all(
       @PathVariable(name = "idModerator") int idModerator,
-      @RequestParam(name = "token") String token,
-      @PathVariable(name = "idPoll") int idPoll)
-      throws ResourceNotFoundException, WrongCredentialsException {
+      @PathVariable(name = "idPoll") int idPoll,
+      @RequestParam(name = "token") String token
+  ) throws ResourceNotFoundException, WrongCredentialsException {
 
     if ((findVerifiedModeratorByIdAndToken(idModerator, token).isEmpty()
-        && findVerifiedParticipantByIdAndToken(idModerator, token, idPoll).isEmpty())) {
+        && findVerifiedParticipantByIdAndToken(idModerator, idPoll, token).isEmpty())) {
       throw new WrongCredentialsException();
     }
 
@@ -159,13 +169,13 @@ public class QuestionController {
   @Transactional
   public ServerQuestion byId(
       @PathVariable(name = "idModerator") int idModerator,
-      @RequestParam(name = "token") String token,
       @PathVariable(name = "idPoll") int idPoll,
-      @PathVariable(name = "idQuestion") int idQuestion)
-      throws ResourceNotFoundException, WrongCredentialsException {
+      @PathVariable(name = "idQuestion") int idQuestion,
+      @RequestParam(name = "token") String token
+  ) throws ResourceNotFoundException, WrongCredentialsException {
 
     if ((findVerifiedModeratorByIdAndToken(idModerator, token).isEmpty()
-        && findVerifiedParticipantByIdAndToken(idModerator, token, idPoll).isEmpty())) {
+        && findVerifiedParticipantByIdAndToken(idModerator, idPoll, token).isEmpty())) {
       throw new WrongCredentialsException();
     }
 
@@ -199,17 +209,17 @@ public class QuestionController {
   @Transactional
   public ServerQuestion insert(
       @PathVariable(name = "idModerator") int idModerator,
-      @RequestParam(name = "token") String token,
       @PathVariable(name = "idPoll") int idPoll,
+      @RequestParam(name = "token") String token,
       @RequestBody ClientQuestion question
   ) throws ResourceNotFoundException, WrongCredentialsException {
-    if (findVerifiedModeratorByIdAndToken(idModerator, token).isEmpty()) {
-      throw new WrongCredentialsException();
-    }
+
+    Moderator moderator = findVerifiedModeratorByIdAndToken(idModerator, token)
+        .orElseThrow(WrongCredentialsException::new);
 
     // Retrieve the associated poll.
     ServerPoll poll = pollRepository.findById(ServerPollIdentifier.builder()
-        .idxModerator(findVerifiedModeratorByIdAndToken(idModerator, token).get())
+        .idxModerator(moderator)
         .idPoll(idPoll)
         .build())
         .orElseThrow(ResourceNotFoundException::new);
@@ -223,7 +233,7 @@ public class QuestionController {
    * @param idModerator id of the moderator
    * @param token       token of the moderator
    * @param idPoll      id of the poll owning the question
-   * @param maggieQ     id of the question to modify
+   * @param idQuestion  id of the question to modify
    * @param question    new representation of the question
    * @return {@link ServerQuestion} modified
    * @throws WrongCredentialsException if one of the parameters is broken
@@ -233,24 +243,23 @@ public class QuestionController {
   @Transactional
   public ServerQuestion updateQuestion(
       @PathVariable(name = "idModerator") int idModerator,
-      @RequestParam(name = "token") String token,
       @PathVariable(name = "idPoll") int idPoll,
-      @PathVariable(name = "idQuestion") int maggieQ,
+      @PathVariable(name = "idQuestion") int idQuestion,
+      @RequestParam(name = "token") String token,
       @RequestBody ClientQuestion question
   ) throws WrongCredentialsException, ResourceNotFoundException {
-    Optional<ServerQuestion> upQ = findQuestionByPollAndModerator(idModerator, token, idPoll,
-        maggieQ);
-    if (upQ.isEmpty()) {
-      throw new ResourceNotFoundException();
-    }
 
-    upQ.get().setTitle(question.getTitle());
-    upQ.get().setDetails(question.getDetails());
-    upQ.get().setVisibility(question.getVisibility());
-    upQ.get().setAnswersMin(question.answersMin);
-    upQ.get().setAnswersMax(question.answersMax);
+    ServerQuestion updated =
+        findQuestionByPollAndModerator(idModerator, idPoll, idQuestion, token)
+            .orElseThrow(ResourceNotFoundException::new);
 
-    return upQ.get();
+    updated.setTitle(question.getTitle());
+    updated.setDetails(question.getDetails());
+    updated.setVisibility(question.getVisibility());
+    updated.setAnswersMin(question.answersMin);
+    updated.setAnswersMax(question.answersMax);
+
+    return updated;
   }
 
   /**
@@ -259,7 +268,7 @@ public class QuestionController {
    * @param idModerator id of the moderator
    * @param token       token of the moderator
    * @param idPoll      id of the poll owning the question
-   * @param maggieQ     id of the question to delete
+   * @param idQuestion  id of the question to delete
    * @return confirmation message
    * @throws ResourceNotFoundException if one of the parameters is broken
    */
@@ -267,17 +276,16 @@ public class QuestionController {
   @Transactional
   public ServerMessage deleteQuestion(
       @PathVariable(name = "idModerator") int idModerator,
-      @RequestParam(name = "token") String token,
       @PathVariable(name = "idPoll") int idPoll,
-      @PathVariable(name = "idQuestion") int maggieQ)
+      @PathVariable(name = "idQuestion") int idQuestion,
+      @RequestParam(name = "token") String token)
       throws ResourceNotFoundException, WrongCredentialsException {
-    Optional<ServerQuestion> questionToDel = findQuestionByPollAndModerator(idModerator, token,
-        idPoll, maggieQ);
-    if (questionToDel.isEmpty()) {
-      throw new ResourceNotFoundException();
-    }
 
-    repository.delete(questionToDel.get());
+    ServerQuestion question =
+        findQuestionByPollAndModerator(idModerator, idPoll, idQuestion, token)
+            .orElseThrow(ResourceNotFoundException::new);
+
+    repository.delete(question);
     return ServerMessage.builder().message("Question deleted").build();
   }
 }
