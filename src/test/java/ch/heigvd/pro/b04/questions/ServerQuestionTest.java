@@ -69,7 +69,7 @@ public class ServerQuestionTest {
     when(modoRepo.findByToken("malloryToken")).thenReturn(Optional.of(mallory));
     lenient().when(pollRepo.findById(identifier)).thenReturn(Optional.of(pollTemp));
 
-    assertThrows(WrongCredentialsException.class, () -> cc.all(1, "malloryToken", 123));
+    assertThrows(WrongCredentialsException.class, () -> cc.all(1, 123, "malloryToken"));
   }
 
   @Test
@@ -120,7 +120,7 @@ public class ServerQuestionTest {
     lenient().when(modoRepo.findByToken("aliceToken")).thenReturn(Optional.of(alice));
     lenient().when(participantRepository.findByToken("aliceToken")).thenReturn(Optional.empty());
 
-    assertDoesNotThrow(() -> assertEquals(List.of(q1, q2), cc.all(1, "aliceToken", 123)));
+    assertDoesNotThrow(() -> assertEquals(List.of(q1, q2), cc.all(1, 123, "aliceToken")));
   }
 
   @Test
@@ -141,8 +141,8 @@ public class ServerQuestionTest {
     lenient().when(participantRepository.findByToken("t1")).thenReturn(Optional.of(aloy));
     //lenient().when(repo.delete(Mockito.any())).thenReturn(new ServerMessage("success"));
 
-    assertThrows(WrongCredentialsException.class, () -> cc.insert(1, "t1", 123, c2));
-    assertThrows(WrongCredentialsException.class, ()->cc.updateQuestion(1, "t1", 123, 1,c2));
-    assertThrows(WrongCredentialsException.class, ()->cc.deleteQuestion(1, "t1", 123, 1));
+    assertThrows(WrongCredentialsException.class, () -> cc.insert(1, 123, "t1", c2));
+    assertThrows(WrongCredentialsException.class, () -> cc.updateQuestion(1, 123, 1, "t1", c2));
+    assertThrows(WrongCredentialsException.class, () -> cc.deleteQuestion(1, 123, 1, "t1"));
   }
 }
