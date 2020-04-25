@@ -100,9 +100,7 @@ public class QuestionController {
         .idxModerator(moderator)
         .idPoll(idPoll)
         .build());
-    if (poll.isEmpty()) {
-      return question;
-    }
+
 
     return (repository.findById(ServerQuestionIdentifier.builder()
         .idServerQuestion(idQuestion).idxPoll(poll.get()).build()));
