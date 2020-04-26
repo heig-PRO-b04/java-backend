@@ -5,7 +5,9 @@ import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
-import ch.heigvd.pro.b04.polls.exceptions.PollNotExistingException;
+import ch.heigvd.pro.b04.participants.Participant;
+import ch.heigvd.pro.b04.participants.ParticipantRepository;
+import ch.heigvd.pro.b04.sessions.SessionState;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,13 +27,23 @@ public class PollController {
 
   private final ServerPollRepository polls;
   private final ModeratorRepository moderators;
+  private final ParticipantRepository participants;
 
+  /**
+   * Constructor for a new {@link PollController instance}.
+   *
+   * @param moderators   The moderators repository.
+   * @param polls        The polls repository.
+   * @param participants The participants repository.
+   */
   public PollController(
       ModeratorRepository moderators,
-      ServerPollRepository polls
+      ServerPollRepository polls,
+      ParticipantRepository participants
   ) {
     this.moderators = moderators;
     this.polls = polls;
+    this.participants = participants;
   }
 
   /**
@@ -62,6 +74,7 @@ public class PollController {
 
   /**
    * Returns an existing poll and displays its information.
+   *
    * @param token       The authentication token for the user.
    * @param idModerator The identifier of the moderator who is updating the poll.
    * @param idPoll      The identifier of the poll to update.
@@ -76,10 +89,28 @@ public class PollController {
       @PathVariable(name = "idPoll") Integer idPoll
   ) throws WrongCredentialsException, ResourceNotFoundException {
 
-    ServerPollIdentifier identifier = moderators.findByToken(token)
-        .filter(moderator -> moderator.getIdModerator() == idModerator)
-        .map(moderator -> moderator.getPollIdentifier(idPoll))
-        .orElseThrow(WrongCredentialsException::new);
+    Optional<Moderator> authenticatedModerator = moderators.findByToken(token);
+    Optional<Participant> authenticatedParticipant = participants.findByToken(token)
+        .filter(p -> SessionState.OPEN == p.getIdParticipant()
+            .getIdxServerSession()
+            .getState());
+
+    Moderator pollModerator = authenticatedModerator
+        .orElse(authenticatedParticipant.map(
+            participant -> participant
+                .getIdParticipant()
+                .getIdxServerSession()
+                .getIdSession()
+                .getIdxPoll()
+                .getIdPoll()
+                .getIdxModerator())
+            .filter(moderator -> moderator.getIdModerator() == idModerator)
+            .orElseThrow(WrongCredentialsException::new));
+
+    ServerPollIdentifier identifier = ServerPollIdentifier.builder()
+        .idxModerator(pollModerator)
+        .idPoll(idPoll)
+        .build();
 
     return polls.findById(identifier)
         .orElseThrow(ResourceNotFoundException::new);
