@@ -96,7 +96,7 @@ public class PollController {
             .getState());
 
     Moderator pollModerator = authenticatedModerator
-        .orElse(authenticatedParticipant.map(
+        .or(() -> authenticatedParticipant.map(
             participant -> participant
                 .getIdParticipant()
                 .getIdxServerSession()
@@ -104,8 +104,8 @@ public class PollController {
                 .getIdxPoll()
                 .getIdPoll()
                 .getIdxModerator())
-            .filter(moderator -> moderator.getIdModerator() == idModerator)
-            .orElseThrow(WrongCredentialsException::new));
+            .filter(moderator -> moderator.getIdModerator() == idModerator))
+        .orElseThrow(WrongCredentialsException::new);
 
     ServerPollIdentifier identifier = ServerPollIdentifier.builder()
         .idxModerator(pollModerator)
