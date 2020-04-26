@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Builder
 @Embeddable
@@ -25,7 +24,6 @@ public class ServerPollIdentifier implements Serializable {
   private long idPoll;
 
   @ManyToOne
-  @Setter
   @Getter
   @PrimaryKeyJoinColumn
   private Moderator idxModerator;
