@@ -18,12 +18,12 @@ public class AnswerController {
   }
 
   @RequestMapping(value = "/answer", method = RequestMethod.GET)
-  List<Answer> all() {
+  List<ServerAnswer> all() {
     return repository.findAll();
   }
 
   @RequestMapping(value = "/answer/{id}", method = RequestMethod.GET)
-  Answer byId(@PathVariable AnswerIdentifier id) {
+  ServerAnswer byId(@PathVariable ServerAnswerIdentifier id) {
     return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found."));
   }
 }

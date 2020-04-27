@@ -1,7 +1,5 @@
 package ch.heigvd.pro.b04.votes;
 
-import ch.heigvd.pro.b04.answers.Answer;
-import ch.heigvd.pro.b04.participants.Participant;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import lombok.AllArgsConstructor;
