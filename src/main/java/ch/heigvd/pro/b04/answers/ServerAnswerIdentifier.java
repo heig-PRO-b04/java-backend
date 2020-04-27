@@ -9,6 +9,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -18,9 +19,11 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class ServerAnswerIdentifier implements Serializable {
 
+  @Getter
   @Column
   private long idAnswer;
 
+  @Getter
   @ManyToOne
   @PrimaryKeyJoinColumn
   private ServerQuestion idxServerQuestion;
