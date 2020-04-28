@@ -2,6 +2,7 @@ package ch.heigvd.pro.b04.answers;
 
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;
@@ -15,9 +16,11 @@ import ch.heigvd.pro.b04.sessions.SessionState;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,11 +39,11 @@ public class AnswerController {
   /**
    * Standard constructor.
    *
-   * @param repository answer repository
-   * @param questionRepository question repository
-   * @param pollRepository poll repository
+   * @param repository            answer repository
+   * @param questionRepository    question repository
+   * @param pollRepository        poll repository
    * @param participantRepository participant repository
-   * @param moderatorRepository moderator repository
+   * @param moderatorRepository   moderator repository
    */
   public AnswerController(AnswerRepository repository,
       QuestionRepository questionRepository, ServerPollRepository pollRepository,
@@ -111,9 +114,9 @@ public class AnswerController {
    * Fetch all {@link ServerAnswer} of a {@link ServerQuestion}.
    *
    * @param idModerator id of moderator owning the poll
-   * @param idPoll id of poll owning the question
-   * @param idQuestion id of question owning the answers
-   * @param token accreditation of Participant or Moderator
+   * @param idPoll      id of poll owning the question
+   * @param idQuestion  id of question owning the answers
+   * @param token       accreditation of Participant or Moderator
    * @return List of {@link ServerAnswer}
    * @throws WrongCredentialsException if token is not right
    * @throws ResourceNotFoundException if one of the parameters is broken
@@ -142,9 +145,10 @@ public class AnswerController {
    * Fetch a precise {@link ServerAnswer} of a {@link ServerQuestion}.
    *
    * @param idModerator id of moderator owning the poll
-   * @param idPoll id of poll owning the question
-   * @param idQuestion id of question owning the answer
-   * @param token accreditation of Participant or Moderator
+   * @param idPoll      id of poll owning the question
+   * @param idQuestion  id of question owning the answer
+   * @param idAnswer    id of the answer to return
+   * @param token       accreditation of Participant or Moderator
    * @return {@link ServerAnswer} found
    * @throws WrongCredentialsException if token is not right
    * @throws ResourceNotFoundException if one of the parameters is broken
@@ -175,12 +179,11 @@ public class AnswerController {
    * Create in the DB a new {@link ServerAnswer} linked to a {@link ServerQuestion}.
    *
    * @param idModerator id of moderator owning the poll
-   * @param idPoll id of poll owning the question
-   * @param idQuestion id of question owning the answers
-   * @param token accreditation of Participant or Moderator
-   * @param answer {@link ClientAnswer} to insert as a {@link ServerAnswer}
+   * @param idPoll      id of poll owning the question
+   * @param idQuestion  id of question owning the answers
+   * @param token       accreditation of Participant or Moderator
+   * @param answer      {@link ClientAnswer} to insert as a {@link ServerAnswer}
    * @return {@link ServerAnswer} inserted
-   * @throws WrongCredentialsException if token is not right
    * @throws ResourceNotFoundException if one of the parameters is broken
    */
   @PostMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer")
@@ -190,10 +193,68 @@ public class AnswerController {
       @PathVariable(name = "idQuestion") int idQuestion,
       @RequestParam(name = "token") String token,
       @RequestBody ClientAnswer answer)
-      throws WrongCredentialsException, ResourceNotFoundException {
+      throws ResourceNotFoundException {
     ServerQuestion question = findQuestion(idModerator, token, idPoll, idQuestion)
         .orElseThrow(ResourceNotFoundException::new);
 
     return question.addAnswer(repository, answer);
+  }
+
+  /**
+   * Modify a precise {@link ServerAnswer} according a new {@link ClientAnswer}.
+   *
+   * @param idModerator id of moderator owning the poll
+   * @param idPoll      id of poll owning the question
+   * @param idQuestion  id of question owning the answer
+   * @param idAnswer    id of the answer to return
+   * @param token       accreditation of Participant or Moderator
+   * @param answer      new {@link ClientAnswer} model
+   * @return {@link ServerAnswer} updated
+   * @throws ResourceNotFoundException if one of the parameters is broken
+   */
+  @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}")
+  public ServerAnswer updateAnswer(
+      @PathVariable(name = "idModerator") int idModerator,
+      @PathVariable(name = "idPoll") int idPoll,
+      @PathVariable(name = "idQuestion") int idQuestion,
+      @PathVariable(name = "idAnswer") int idAnswer,
+      @RequestParam(name = "token") String token,
+      @RequestBody ClientAnswer answer)
+      throws ResourceNotFoundException {
+    ServerQuestion question = findQuestion(idModerator, token, idPoll, idQuestion)
+        .orElseThrow(ResourceNotFoundException::new);
+
+    ServerAnswer toUpdate = repository.findById(ServerAnswerIdentifier.builder()
+        .idAnswer(idAnswer).idxServerQuestion(question).build())
+        .orElseThrow(ResourceNotFoundException::new);
+
+    toUpdate.setText(answer.getText());
+    toUpdate.setDescription(answer.getDescription());
+
+    return toUpdate;
+  }
+
+  /**
+   * Delete a precise {@link ServerAnswer}.
+   *
+   * @param idModerator id of moderator owning the poll
+   * @param idPoll      id of poll owning the question
+   * @param idQuestion  id of question owning the answer
+   * @param idAnswer    id of the answer to delete
+   * @param token       accreditation of Participant or Moderator
+   * @return {@link ServerMessage} confirming suppression
+   * @throws WrongCredentialsException if token is not right
+   * @throws ResourceNotFoundException if one of the parameters is broken
+   */
+  @DeleteMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}")
+  public ServerMessage deleteAnswer(
+      @PathVariable(name = "idModerator") int idModerator,
+      @PathVariable(name = "idPoll") int idPoll,
+      @PathVariable(name = "idQuestion") int idQuestion,
+      @PathVariable(name = "idAnswer") int idAnswer,
+      @RequestParam(name = "token") String token)
+      throws ResourceNotFoundException, WrongCredentialsException {
+    repository.delete(byId(idModerator, idPoll, idQuestion, idAnswer, token));
+    return ServerMessage.builder().message("Answer deleted").build();
   }
 }
