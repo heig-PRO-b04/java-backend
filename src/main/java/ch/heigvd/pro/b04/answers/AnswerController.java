@@ -15,6 +15,7 @@ import ch.heigvd.pro.b04.sessions.SessionState;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,15 @@ public class AnswerController {
   private final ParticipantRepository participantRepository;
   private final ModeratorRepository moderatorRepository;
 
+  /**
+   * Standard constructor.
+   *
+   * @param repository answer repository
+   * @param questionRepository question repository
+   * @param pollRepository poll repository
+   * @param participantRepository participant repository
+   * @param moderatorRepository moderator repository
+   */
   public AnswerController(AnswerRepository repository,
       QuestionRepository questionRepository, ServerPollRepository pollRepository,
       ParticipantRepository participantRepository,
@@ -97,7 +107,18 @@ public class AnswerController {
     return question;
   }
 
-  @RequestMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer", method = RequestMethod.GET)
+  /**
+   * Fetch all {@link ServerAnswer} of a {@link ServerQuestion}.
+   *
+   * @param idModerator id of moderator owning the poll
+   * @param idPoll id of poll owning the question
+   * @param idQuestion id of question owning the answers
+   * @param token accreditation of Participant or Moderator
+   * @return List of {@link ServerAnswer}
+   * @throws WrongCredentialsException if token is not right
+   * @throws ResourceNotFoundException if one of the parameters is broken
+   */
+  @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer")
   public List<ServerAnswer> all(
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
@@ -117,7 +138,18 @@ public class AnswerController {
         .collect(Collectors.toList());
   }
 
-  @RequestMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}", method = RequestMethod.GET)
+  /**
+   * Fetch a precise {@link ServerAnswer} of a {@link ServerQuestion}.
+   *
+   * @param idModerator id of moderator owning the poll
+   * @param idPoll id of poll owning the question
+   * @param idQuestion id of question owning the answer
+   * @param token accreditation of Participant or Moderator
+   * @return {@link ServerAnswer} found
+   * @throws WrongCredentialsException if token is not right
+   * @throws ResourceNotFoundException if one of the parameters is broken
+   */
+  @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}")
   public ServerAnswer byId(
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
@@ -139,6 +171,18 @@ public class AnswerController {
     throw new ResourceNotFoundException("This should never happen. Call Tony Stark !");
   }
 
+  /**
+   * Create in the DB a new {@link ServerAnswer} linked to a {@link ServerQuestion}.
+   *
+   * @param idModerator id of moderator owning the poll
+   * @param idPoll id of poll owning the question
+   * @param idQuestion id of question owning the answers
+   * @param token accreditation of Participant or Moderator
+   * @param answer {@link ClientAnswer} to insert as a {@link ServerAnswer}
+   * @return {@link ServerAnswer} inserted
+   * @throws WrongCredentialsException if token is not right
+   * @throws ResourceNotFoundException if one of the parameters is broken
+   */
   @PostMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer")
   public ServerAnswer insertAnswer(
       @PathVariable(name = "idModerator") int idModerator,

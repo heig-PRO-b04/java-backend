@@ -1,8 +1,8 @@
 package ch.heigvd.pro.b04.votes;
 
+import ch.heigvd.pro.b04.answers.AnswerRepository;
 import ch.heigvd.pro.b04.answers.ServerAnswer;
 import ch.heigvd.pro.b04.answers.ServerAnswerIdentifier;
-import ch.heigvd.pro.b04.answers.AnswerRepository;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;

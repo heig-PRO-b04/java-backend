@@ -47,6 +47,13 @@ public class ServerQuestion {
   @OneToMany(mappedBy = "idAnswer.idxServerQuestion", cascade = CascadeType.ALL)
   private Set<ServerAnswer> answersToQuestion;
 
+  /**
+   * Insert a new {@link ServerAnswer} to this {@link ServerQuestion}.
+   *
+   * @param repoA answer repository
+   * @param newAnswer {@link ClientAnswer} to insert as a {@link ServerAnswer}
+   * @return {@link ServerAnswer} inserted
+   */
   public ServerAnswer addAnswer(AnswerRepository repoA, ClientAnswer newAnswer) {
     ServerAnswer sombra = ServerAnswer.builder()
         .idAnswer(ServerAnswerIdentifier.builder()
