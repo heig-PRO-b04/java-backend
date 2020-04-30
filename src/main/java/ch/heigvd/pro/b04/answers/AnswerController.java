@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -220,18 +218,12 @@ public class AnswerController {
       @PathVariable(name = "idAnswer") int idAnswer,
       @RequestParam(name = "token") String token,
       @RequestBody ClientAnswer answer)
-      throws ResourceNotFoundException {
-    ServerQuestion question = findQuestion(idModerator, token, idPoll, idQuestion)
-        .orElseThrow(ResourceNotFoundException::new);
-
-    ServerAnswer toUpdate = repository.findById(ServerAnswerIdentifier.builder()
-        .idAnswer(idAnswer).idxServerQuestion(question).build())
-        .orElseThrow(ResourceNotFoundException::new);
-
-    toUpdate.setText(answer.getText());
+      throws ResourceNotFoundException, WrongCredentialsException {
+    ServerAnswer toUpdate = byId(idModerator, idPoll, idQuestion, idAnswer, token);
+    toUpdate.setTitle(answer.getTitle());
     toUpdate.setDescription(answer.getDescription());
 
-    return toUpdate;
+    return repository.save(toUpdate);
   }
 
   /**

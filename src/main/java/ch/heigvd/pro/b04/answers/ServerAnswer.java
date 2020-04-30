@@ -21,7 +21,7 @@ public class ServerAnswer {
   @EmbeddedId
   private ServerAnswerIdentifier idAnswer;
 
-  private String text;
+  private String title;
   private String description;
 
   @OneToMany(mappedBy = "idVote.idxServerAnswer", cascade = CascadeType.ALL)

@@ -5,8 +5,6 @@ import ch.heigvd.pro.b04.answers.ClientAnswer;
 import ch.heigvd.pro.b04.answers.ServerAnswer;
 import ch.heigvd.pro.b04.answers.ServerAnswerIdentifier;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -59,7 +57,7 @@ public class ServerQuestion {
         .idAnswer(ServerAnswerIdentifier.builder()
             .idAnswer(getNewIdentifier(repoA))
             .idxServerQuestion(this).build())
-        .text(newAnswer.getText())
+        .title(newAnswer.getTitle())
         .description(newAnswer.getDescription()).build();
 
     return repoA.save(sombra);
