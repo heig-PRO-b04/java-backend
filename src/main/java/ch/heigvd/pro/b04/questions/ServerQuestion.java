@@ -41,6 +41,7 @@ public class ServerQuestion {
   @Getter
   @EmbeddedId
   private ServerQuestionIdentifier idServerQuestion;
+  @Getter
   @OneToMany(mappedBy = "idAnswer.idxServerQuestion", cascade = CascadeType.ALL)
   private Set<Answer> answersToQuestion;
 
