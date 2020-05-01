@@ -6,23 +6,25 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Embeddable
-public class AnswerIdentifier implements Serializable {
+public class ServerAnswerIdentifier implements Serializable {
 
+  @Getter
   @Column
   private long idAnswer;
 
+  @Getter
   @ManyToOne
   @PrimaryKeyJoinColumn
   private ServerQuestion idxServerQuestion;
-
-  public AnswerIdentifier() {
-  }
-
-  public AnswerIdentifier(long id) {
-    this.idAnswer = id;
-  }
 }

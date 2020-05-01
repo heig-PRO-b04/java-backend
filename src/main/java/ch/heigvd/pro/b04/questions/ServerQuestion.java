@@ -1,14 +1,14 @@
 package ch.heigvd.pro.b04.questions;
 
-import ch.heigvd.pro.b04.answers.Answer;
+import ch.heigvd.pro.b04.answers.AnswerRepository;
+import ch.heigvd.pro.b04.answers.ClientAnswer;
+import ch.heigvd.pro.b04.answers.ServerAnswer;
+import ch.heigvd.pro.b04.answers.ServerAnswerIdentifier;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.websocket.server.ServerEndpoint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +20,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 public class ServerQuestion {
+
   @Setter
   @Getter
   protected double indexInPoll;
@@ -43,19 +44,39 @@ public class ServerQuestion {
   private ServerQuestionIdentifier idServerQuestion;
   @Getter
   @OneToMany(mappedBy = "idAnswer.idxServerQuestion", cascade = CascadeType.ALL)
-  private Set<Answer> answersToQuestion;
+  private Set<ServerAnswer> answersToQuestion;
 
   /**
-   * Add a new answer to this {@link ServerQuestion}.
+   * Insert a new {@link ServerAnswer} to this {@link ServerQuestion}.
    *
-   * @param newAnswer The {@link Answer} to add.
+   * @param repoA answer repository
+   * @param newAnswer {@link ClientAnswer} to insert as a {@link ServerAnswer}
+   * @return {@link ServerAnswer} inserted
    */
-  public void addAnswer(Answer newAnswer) {
-    newAnswer.getIdAnswer().setIdxServerQuestion(this);
-    if (answersToQuestion == null) {
-      answersToQuestion = Stream.of(newAnswer).collect(Collectors.toSet());
-    } else {
-      answersToQuestion.add(newAnswer);
-    }
+  public ServerAnswer newAnswer(AnswerRepository repoA, ClientAnswer newAnswer) {
+    ServerAnswer answer = ServerAnswer.builder()
+        .idAnswer(ServerAnswerIdentifier.builder()
+            .idAnswer(getNewIdentifier(repoA))
+            .idxServerQuestion(this).build())
+        .title(newAnswer.getTitle())
+        .description(newAnswer.getDescription())
+        .build();
+
+    return repoA.save(answer);
+  }
+
+  /**
+   * Creates a new unique identifier for a {@link ServerQuestion}.
+   *
+   * @param repository The repository to which we will add a new Session to
+   * @return A new unique identifier
+   */
+  public static Long getNewIdentifier(AnswerRepository repository) {
+    return repository.findAll().stream()
+        .map(ServerAnswer::getIdAnswer)
+        .map(ServerAnswerIdentifier::getIdAnswer)
+        .max(Long::compareTo)
+        .map(id -> id + 1)
+        .orElse(1L);
   }
 }
