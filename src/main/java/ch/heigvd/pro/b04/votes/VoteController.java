@@ -1,9 +1,9 @@
 package ch.heigvd.pro.b04.votes;
 
 import ch.heigvd.pro.b04.answers.AnswerRepository;
-import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.answers.ServerAnswer;
 import ch.heigvd.pro.b04.answers.ServerAnswerIdentifier;
+import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.participants.Participant;
@@ -41,7 +41,6 @@ public class VoteController {
       + "/question/{idQuestion}/answer/{idAnswer}/vote")
   public void newVote(@RequestParam(name = "token") String token,
       @RequestBody boolean checked,
-
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
       @PathVariable(name = "idQuestion") int idQuestion,
@@ -50,10 +49,6 @@ public class VoteController {
 
     Participant voter = participantRepository.findByToken(token)
         .orElseThrow(ResourceNotFoundException::new);
-
-    Optional<Participant> voter = participantRepository.findByToken(token);
-    Optional<ServerAnswer> answerChanged = answerRepository.findById(idAnswer);
-
 
     ServerSession session = sessionRepository.findById(
         voter.getIdParticipant().getIdxServerSession().getIdSession())
@@ -71,27 +66,28 @@ public class VoteController {
             .idServerQuestion(idQuestion).idxPoll(session.getIdSession().getIdxPoll()).build())
         .orElseThrow(ResourceNotFoundException::new);
 
-    Answer answerChanged = answerRepository.findById(AnswerIdentifier
-    ).orElseThrow(ResourceNotFoundException::new);
+    ServerAnswer answerChanged = answerRepository.findById(ServerAnswerIdentifier.builder()
+        .idAnswer(idAnswer).idxServerQuestion(question).build())
+        .orElseThrow(ResourceNotFoundException::new);
 
     if(!(session.getIdSession().getIdxPoll().equals(pollRepository.findByModeratorAndId(
         moderatorRepository.findById(idModerator).orElseThrow(ResourceNotFoundException::new),idPoll)
     )) || !(session.getIdSession().getIdxPoll().getPollServerQuestions().contains(question))
-    || !(question.getAnswersToQuestion().contains())
+        || !(question.getAnswersToQuestion().contains(answerChanged))
     ){
       throw new ResourceNotFoundException();
     }
 
-
-
-    if (voter.isEmpty() || answerChanged.isEmpty()) {
-      throw new ResourceNotFoundException();
-    }
+//
+//
+//    if (voter.isEmpty() || answerChanged.isEmpty()) {
+//      throw new ResourceNotFoundException();
+//    }
 
     Vote newVote = Vote.builder()
         .idVote(VoteIdentifier.builder()
-            .idxParticipant(voter.get())
-            .idxServerAnswer(answerChanged.get())
+            .idxParticipant(voter)
+            .idxServerAnswer(answerChanged)
             .build())
         .answerChecked(checked)
         .build();
