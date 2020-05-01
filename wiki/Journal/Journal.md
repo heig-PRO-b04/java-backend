@@ -13,6 +13,27 @@ meetings**.
 
 ## Team Alignments
 
+### Meeting du 27 avril
+
+Choses faites depuis le dernier meeting :
+
+- **Mobile** : Récupération des sondages.
+- **Web** : Récupération et récupération des sondages.
+- **Backend** : Endpoints pour les questions.
+
+Pas d'éléments bloquants pour le **mobile**, le **backend** ou le frontend
+**web**.
+
+Choses qui sont planifiées pour les prochains jours :
+
+- **Mobile** : Fix de Travis CI et merge de plusieurs PRs.
+  + Fix notamment du fichier `local.properties`.
+- **Mobile** : Récupération des questions.
+- **Web** : UI plus jolie pour les sondages & les questions.
+- **Web** : API pour la gestion des réponses, selon la spec.
+- **Backend** : API pour la gestion des réponses.
+- **Backend** : Corriger les questions qui n'ont pas d'index pour le moment.
+
 ### Meeting du 20 avril
 
 Points qui ont été fait depuis la dernière:

@@ -53,15 +53,16 @@ public class ServerQuestion {
    * @param newAnswer {@link ClientAnswer} to insert as a {@link ServerAnswer}
    * @return {@link ServerAnswer} inserted
    */
-  public ServerAnswer addAnswer(AnswerRepository repoA, ClientAnswer newAnswer) {
-    ServerAnswer sombra = ServerAnswer.builder()
+  public ServerAnswer newAnswer(AnswerRepository repoA, ClientAnswer newAnswer) {
+    ServerAnswer answer = ServerAnswer.builder()
         .idAnswer(ServerAnswerIdentifier.builder()
             .idAnswer(getNewIdentifier(repoA))
             .idxServerQuestion(this).build())
         .title(newAnswer.getTitle())
-        .description(newAnswer.getDescription()).build();
+        .description(newAnswer.getDescription())
+        .build();
 
-    return repoA.save(sombra);
+    return repoA.save(answer);
   }
 
   /**

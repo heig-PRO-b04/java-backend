@@ -155,7 +155,7 @@ Attributes `answersMin` and `answersMax` are __optionnal__.
 When a client needs to send an answer, it should be represented as so:
 ```json
 {
-  "title"       : "First answer",
+  "text"       : "First answer",
   "description" : "This is a description"
 }
 ```

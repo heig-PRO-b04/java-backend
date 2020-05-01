@@ -16,6 +16,7 @@ import ch.heigvd.pro.b04.sessions.SessionState;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,22 +91,42 @@ public class AnswerController {
         .filter(poll -> poll.getIdPoll().getIdxModerator().getIdModerator() == idMod);
   }
 
-  private Optional<ServerQuestion> findQuestion(int idModerator, String token, int idPoll,
-      int idQuestion)
-      throws ResourceNotFoundException {
-    Moderator mod = findVerifiedModeratorByIdAndToken(idModerator, token)
-        .orElseThrow(ResourceNotFoundException::new);
+  /**
+   * fetch a {@link ServerAnswer} and verify its access by doing it.
+   *
+   * @param idModerator id of the moderator
+   * @param token       token of the moderator
+   * @param idPoll      id of the poll owning the question
+   * @param idQuestion  id of the question to retrieve
+   * @param idAnswer    id of the answer to retrieve
+   * @return {@link ServerQuestion} found
+   * @throws WrongCredentialsException if token is not a valid moderator token
+   */
+  private Optional<ServerAnswer> findAnswerByPollAndModerator(
+      int idModerator,
+      int idPoll,
+      int idQuestion,
+      int idAnswer,
+      String token
+  ) throws WrongCredentialsException {
+    Moderator moderator = findVerifiedModeratorByIdAndToken(
+        idModerator, token).orElseThrow(WrongCredentialsException::new);
 
-    ServerPoll poll = pollRepository.findById(ServerPollIdentifier.builder()
-        .idxModerator(mod)
-        .idPoll(idPoll).build())
-        .orElseThrow(ResourceNotFoundException::new);
+    Optional<ServerPoll> poll = pollRepository.findById(ServerPollIdentifier.builder()
+        .idxModerator(moderator)
+        .idPoll(idPoll)
+        .build());
 
-    Optional<ServerQuestion> question = questionRepository
-        .findById(ServerQuestionIdentifier.builder()
-            .idServerQuestion(idQuestion).idxPoll(poll).build());
+    Optional<ServerQuestion> question = poll
+        .flatMap(p -> questionRepository.findById(ServerQuestionIdentifier.builder()
+            .idServerQuestion(idQuestion)
+            .idxPoll(p)
+            .build()));
 
-    return question;
+    return question.flatMap(q -> repository.findById(ServerAnswerIdentifier.builder()
+        .idxServerQuestion(q)
+        .idAnswer(idAnswer)
+        .build()));
   }
 
   /**
@@ -120,22 +141,36 @@ public class AnswerController {
    * @throws ResourceNotFoundException if one of the parameters is broken
    */
   @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer")
+  @Transactional
   public List<ServerAnswer> all(
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
       @PathVariable(name = "idQuestion") int idQuestion,
       @RequestParam(name = "token") String token)
       throws WrongCredentialsException, ResourceNotFoundException {
+
     if ((findVerifiedModeratorByIdAndToken(idModerator, token).isEmpty()
         && findVerifiedParticipantByIdAndToken(idModerator, idPoll, token).isEmpty())) {
       throw new WrongCredentialsException();
     }
 
-    ServerQuestion question = findQuestion(idModerator, token, idPoll, idQuestion)
+    Moderator moderator = moderatorRepository.findById(idModerator)
         .orElseThrow(ResourceNotFoundException::new);
 
-    return repository.findAll().stream()
-        .filter(serverAnswer -> serverAnswer.getIdAnswer().getIdxServerQuestion().equals(question))
+    ServerPoll poll = pollRepository
+        .findById(ServerPollIdentifier.builder().idPoll(idPoll).idxModerator(moderator).build())
+        .orElseThrow(ResourceNotFoundException::new);
+
+    ServerQuestion question = questionRepository
+        .findById(ServerQuestionIdentifier.builder()
+            .idServerQuestion(idQuestion)
+            .idxPoll(poll)
+            .build())
+        .orElseThrow(ResourceNotFoundException::new);
+
+    return repository.findAll()
+        .stream()
+        .filter(answer -> answer.getIdAnswer().getIdxServerQuestion().equals(question))
         .collect(Collectors.toList());
   }
 
@@ -152,6 +187,7 @@ public class AnswerController {
    * @throws ResourceNotFoundException if one of the parameters is broken
    */
   @GetMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}")
+  @Transactional
   public ServerAnswer byId(
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
@@ -159,18 +195,38 @@ public class AnswerController {
       @PathVariable(name = "idAnswer") int idAnswer,
       @RequestParam(name = "token") String token)
       throws WrongCredentialsException, ResourceNotFoundException {
+
     if ((findVerifiedModeratorByIdAndToken(idModerator, token).isEmpty()
         && findVerifiedParticipantByIdAndToken(idModerator, idPoll, token).isEmpty())) {
       throw new WrongCredentialsException();
     }
 
-    for (ServerAnswer ssA : all(idModerator, idPoll, idQuestion, token)) {
-      if (ssA.getIdAnswer().getIdAnswer() == idAnswer) {
-        return ssA;
-      }
-    }
+    Moderator moderator = moderatorRepository.findById(idModerator)
+        .orElseThrow(ResourceNotFoundException::new);
 
-    throw new ResourceNotFoundException("This should never happen. Call Tony Stark !");
+    ServerPollIdentifier pollIdentifier = ServerPollIdentifier.builder()
+        .idPoll(idPoll)
+        .idxModerator(moderator)
+        .build();
+
+    ServerPoll poll = pollRepository.findById(pollIdentifier)
+        .orElseThrow(ResourceNotFoundException::new);
+
+    ServerQuestionIdentifier questionIdentifier = ServerQuestionIdentifier.builder()
+        .idServerQuestion(idQuestion)
+        .idxPoll(poll)
+        .build();
+
+    ServerQuestion question = questionRepository.findById(questionIdentifier)
+        .orElseThrow(ResourceNotFoundException::new);
+
+    ServerAnswerIdentifier answerIdentifier = ServerAnswerIdentifier.builder()
+        .idAnswer(idAnswer)
+        .idxServerQuestion(question)
+        .build();
+
+    return repository.findById(answerIdentifier)
+        .orElseThrow(ResourceNotFoundException::new);
   }
 
   /**
@@ -191,11 +247,26 @@ public class AnswerController {
       @PathVariable(name = "idQuestion") int idQuestion,
       @RequestParam(name = "token") String token,
       @RequestBody ClientAnswer answer)
-      throws ResourceNotFoundException {
-    ServerQuestion question = findQuestion(idModerator, token, idPoll, idQuestion)
+      throws ResourceNotFoundException, WrongCredentialsException {
+
+    Moderator moderator = findVerifiedModeratorByIdAndToken(idModerator, token)
+        .orElseThrow(WrongCredentialsException::new);
+
+    // Retrieve the associated poll.
+    ServerPoll poll = pollRepository.findById(ServerPollIdentifier.builder()
+        .idxModerator(moderator)
+        .idPoll(idPoll)
+        .build())
         .orElseThrow(ResourceNotFoundException::new);
 
-    return question.addAnswer(repository, answer);
+    // Retrieve the associated question.
+    ServerQuestion question = questionRepository.findById(ServerQuestionIdentifier.builder()
+        .idxPoll(poll)
+        .idServerQuestion(idQuestion)
+        .build())
+        .orElseThrow(ResourceNotFoundException::new);
+
+    return question.newAnswer(repository, answer);
   }
 
   /**
@@ -211,6 +282,7 @@ public class AnswerController {
    * @throws ResourceNotFoundException if one of the parameters is broken
    */
   @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}")
+  @Transactional
   public ServerAnswer updateAnswer(
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
@@ -219,7 +291,16 @@ public class AnswerController {
       @RequestParam(name = "token") String token,
       @RequestBody ClientAnswer answer)
       throws ResourceNotFoundException, WrongCredentialsException {
-    ServerAnswer toUpdate = byId(idModerator, idPoll, idQuestion, idAnswer, token);
+
+    ServerAnswer toUpdate =
+        findAnswerByPollAndModerator(
+            idModerator,
+            idPoll,
+            idQuestion,
+            idAnswer,
+            token
+        ).orElseThrow(ResourceNotFoundException::new);
+
     toUpdate.setTitle(answer.getTitle());
     toUpdate.setDescription(answer.getDescription());
 
@@ -246,7 +327,15 @@ public class AnswerController {
       @PathVariable(name = "idAnswer") int idAnswer,
       @RequestParam(name = "token") String token)
       throws ResourceNotFoundException, WrongCredentialsException {
-    repository.delete(byId(idModerator, idPoll, idQuestion, idAnswer, token));
+    ServerAnswer answer =
+        findAnswerByPollAndModerator(
+            idModerator,
+            idPoll,
+            idQuestion,
+            idAnswer,
+            token
+        ).orElseThrow(ResourceNotFoundException::new);
+    repository.delete(answer);
     return ServerMessage.builder().message("Answer deleted").build();
   }
 }
