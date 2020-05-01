@@ -1,8 +1,8 @@
 package ch.heigvd.pro.b04.votes;
 
-import ch.heigvd.pro.b04.answers.Answer;
-import ch.heigvd.pro.b04.answers.AnswerIdentifier;
 import ch.heigvd.pro.b04.answers.AnswerRepository;
+import ch.heigvd.pro.b04.answers.ServerAnswer;
+import ch.heigvd.pro.b04.answers.ServerAnswerIdentifier;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;
@@ -39,11 +39,11 @@ public class VoteController {
       + "/question/{idQuestion}/answer/{idAnswer}/vote")
   public void newVote(@RequestParam(name = "token") String token,
       @RequestBody boolean checked,
-      @PathVariable(name = "idAnswer") AnswerIdentifier idAnswer)
+      @PathVariable(name = "idAnswer") ServerAnswerIdentifier idAnswer)
       throws ResourceNotFoundException, SessionNotAvailableException, SessionNotExistingException {
 
     Optional<Participant> voter = participantRepository.findByToken(token);
-    Optional<Answer> answerChanged = answerRepository.findById(idAnswer);
+    Optional<ServerAnswer> answerChanged = answerRepository.findById(idAnswer);
 
     if (voter.isEmpty() || answerChanged.isEmpty()) {
       throw new ResourceNotFoundException();
@@ -60,7 +60,7 @@ public class VoteController {
     Vote newVote = Vote.builder()
         .idVote(VoteIdentifier.builder()
             .idxParticipant(voter.get())
-            .idxAnswer(answerChanged.get())
+            .idxServerAnswer(answerChanged.get())
             .build())
         .answerChecked(checked)
         .build();

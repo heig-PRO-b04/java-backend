@@ -139,8 +139,6 @@ public class QuestionController {
       throw new WrongCredentialsException();
     }
 
-    // We are now guaranteed to have the right to
-    // access the data !
     Moderator moderator = moderatorRepository.findById(idModerator)
         .orElseThrow(ResourceNotFoundException::new);
 
