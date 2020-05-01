@@ -11,8 +11,10 @@ import org.springframework.boot.jackson.JsonComponent;
 
 @Builder
 public class ClientAnswer {
+
   @Getter
   private String title;
+
   @Getter
   private String description;
 
@@ -24,16 +26,11 @@ public class ClientAnswer {
         JsonParser jsonParser,
         DeserializationContext deserializationContext
     ) throws IOException {
-      try {
-        JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-        return ClientAnswer.builder()
-            .title(node.get("title").asText())
-            .description(node.get("description").asText())
-            .build();
-      } catch (Exception anything) {
-        anything.printStackTrace();
-        throw anything;
-      }
+      JsonNode node = jsonParser.getCodec().readTree(jsonParser);
+      return ClientAnswer.builder()
+          .title(node.get("title").asText())
+          .description(node.get("description").asText())
+          .build();
     }
   }
 }

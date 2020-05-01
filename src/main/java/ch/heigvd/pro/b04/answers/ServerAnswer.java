@@ -1,6 +1,10 @@
 package ch.heigvd.pro.b04.answers;
 
 import ch.heigvd.pro.b04.votes.Vote;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import java.io.IOException;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
@@ -10,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.jackson.JsonComponent;
 
 @Data
 @Entity
@@ -26,4 +31,30 @@ public class ServerAnswer {
 
   @OneToMany(mappedBy = "idVote.idxServerAnswer", cascade = CascadeType.ALL)
   private Set<Vote> voteSet;
+
+  @JsonComponent
+  public static class Serializer extends JsonSerializer<ServerAnswer> {
+
+    @Override
+    public void serialize(
+        ServerAnswer answer,
+        JsonGenerator jsonGenerator,
+        SerializerProvider serializerProvider
+    ) throws IOException {
+      jsonGenerator.writeStartObject();
+      jsonGenerator.writeStringField("title", answer.getTitle());
+      jsonGenerator.writeStringField("description", answer.getDescription());
+      jsonGenerator.writeNumberField("idModerator", answer.getIdAnswer()
+          .getIdxServerQuestion().getIdServerQuestion()
+          .getIdxPoll().getIdPoll()
+          .getIdxModerator().getIdModerator());
+      jsonGenerator.writeNumberField("idPoll", answer.getIdAnswer()
+          .getIdxServerQuestion().getIdServerQuestion()
+          .getIdxPoll().getIdPoll().getIdPoll());
+      jsonGenerator.writeNumberField("idQuestion", answer.getIdAnswer()
+          .getIdxServerQuestion().getIdServerQuestion().getIdServerQuestion());
+      jsonGenerator.writeNumberField("idAnswer", answer.getIdAnswer().getIdAnswer());
+      jsonGenerator.writeEndObject();
+    }
+  }
 }
