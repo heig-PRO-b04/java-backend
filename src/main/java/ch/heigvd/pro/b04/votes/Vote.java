@@ -19,6 +19,5 @@ public class Vote {
   private VoteIdentifier idVote;
 
   @Getter
-  @Setter
   private boolean answerChecked;
 }

@@ -24,8 +24,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@AllArgsConstructor
+@RestController
 public class VoteController {
 
   private final ModeratorRepository moderatorRepository;
@@ -36,20 +37,34 @@ public class VoteController {
   private final SessionRepository sessionRepository;
   private final ServerPollRepository pollRepository;
 
+  public VoteController(ModeratorRepository moderatorRepository,
+      ParticipantRepository participantRepository,
+      QuestionRepository questionRepository, VoteRepository voteRepository,
+      AnswerRepository answerRepository,
+      SessionRepository sessionRepository,
+      ServerPollRepository pollRepository) {
+    this.moderatorRepository = moderatorRepository;
+    this.participantRepository = participantRepository;
+    this.questionRepository = questionRepository;
+    this.voteRepository = voteRepository;
+    this.answerRepository = answerRepository;
+    this.sessionRepository = sessionRepository;
+    this.pollRepository = pollRepository;
+  }
 
-  @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}"
-      + "/question/{idQuestion}/answer/{idAnswer}/vote")
-  public void newVote(@RequestParam(name = "token") String token,
-      @RequestBody boolean checked,
+  @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}/vote")
+  public Vote newVote(
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
       @PathVariable(name = "idQuestion") int idQuestion,
-      @PathVariable(name = "idAnswer") int idAnswer)
-      throws ResourceNotFoundException, SessionNotAvailableException, SessionNotExistingException, WrongCredentialsException {
-
+      @PathVariable(name = "idAnswer") int idAnswer,
+      @RequestParam(name = "token") String token,
+      @RequestBody BooleanVote vote)
+      throws ResourceNotFoundException, SessionNotAvailableException, WrongCredentialsException {
+    System.out.println("entered");
     Participant voter = participantRepository.findByToken(token)
-        .orElseThrow(ResourceNotFoundException::new);
-
+        .orElseThrow(WrongCredentialsException::new);
+    System.out.println("token good");
     ServerSession session = sessionRepository.findById(
         voter.getIdParticipant().getIdxServerSession().getIdSession())
         .orElseThrow(SessionNotExistingException::new);
@@ -57,41 +72,34 @@ public class VoteController {
       throw new SessionNotAvailableException();
     }
 
-    if (!(session.equals(voter.getIdParticipant().getIdxServerSession()))) {
-      throw new WrongCredentialsException();
-    }
-
-    ServerQuestion question=questionRepository
+    ServerQuestion question = questionRepository
         .findById(ServerQuestionIdentifier.builder()
             .idServerQuestion(idQuestion).idxPoll(session.getIdSession().getIdxPoll()).build())
         .orElseThrow(ResourceNotFoundException::new);
 
     ServerAnswer answerChanged = answerRepository.findById(ServerAnswerIdentifier.builder()
         .idAnswer(idAnswer).idxServerQuestion(question).build())
-    .orElseThrow(ResourceNotFoundException::new);
+        .orElseThrow(ResourceNotFoundException::new);
 
-    if(!(session.getIdSession().getIdxPoll().equals(pollRepository.findByModeratorAndId(
-        moderatorRepository.findById(idModerator).orElseThrow(ResourceNotFoundException::new),idPoll)
-    )) || !(session.getIdSession().getIdxPoll().getPollServerQuestions().contains(question))
-        || !(question.getAnswersToQuestion().contains(answerChanged))
-    ){
+    //compare session accessed by Participant to Session accessed by Poll
+    if ((!(session.getIdSession().getIdxPoll().equals(pollRepository.findByModeratorAndId(
+        (moderatorRepository.findById(idModerator).orElseThrow(ResourceNotFoundException::new)),
+        idPoll).orElseThrow(ResourceNotFoundException::new))))
+        //verify this session contains the wanted question
+        || (!(session.getIdSession().getIdxPoll().getPollServerQuestions().contains(question)))
+        //verify this question contains the wanted answer
+        || (!(question.getAnswersToQuestion().contains(answerChanged)))) {
       throw new ResourceNotFoundException();
     }
-
-//
-//
-//    if (voter.isEmpty() || answerChanged.isEmpty()) {
-//      throw new ResourceNotFoundException();
-//    }
-
+    
     Vote newVote = Vote.builder()
         .idVote(VoteIdentifier.builder()
             .idxParticipant(voter)
             .idxServerAnswer(answerChanged)
             .build())
-        .answerChecked(checked)
+        .answerChecked(vote.isChecked())
         .build();
 
-    voteRepository.saveAndFlush(newVote);
+    return voteRepository.save(newVote);
   }
 }
