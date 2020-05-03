@@ -5,10 +5,10 @@ import ch.heigvd.pro.b04.answers.ServerAnswer;
 import ch.heigvd.pro.b04.answers.ServerAnswerIdentifier;
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
+import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;
-import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.questions.QuestionRepository;
 import ch.heigvd.pro.b04.questions.ServerQuestion;
@@ -18,8 +18,6 @@ import ch.heigvd.pro.b04.sessions.SessionRepository;
 import ch.heigvd.pro.b04.sessions.SessionState;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotExistingException;
-import java.util.Optional;
-import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +35,17 @@ public class VoteController {
   private final SessionRepository sessionRepository;
   private final ServerPollRepository pollRepository;
 
+  /**
+   * Standard constructor.
+   *
+   * @param moderatorRepository {@link Moderator} repository
+   * @param participantRepository {@link Participant} repository
+   * @param questionRepository {@link ServerQuestion} repository
+   * @param voteRepository {@link Vote} repository
+   * @param answerRepository {@link ServerAnswer} repository
+   * @param sessionRepository {@link ServerSession} repository
+   * @param pollRepository {@link ch.heigvd.pro.b04.polls.ServerPoll} repository
+   */
   public VoteController(ModeratorRepository moderatorRepository,
       ParticipantRepository participantRepository,
       QuestionRepository questionRepository, VoteRepository voteRepository,
@@ -52,7 +61,22 @@ public class VoteController {
     this.pollRepository = pollRepository;
   }
 
-  @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}/vote")
+  /**
+   * Create a new vote in database.
+   *
+   * @param idModerator {@link Moderator} owning the poll
+   * @param idPoll {@link ch.heigvd.pro.b04.polls.ServerPoll} owning the question
+   * @param idQuestion {@link ServerQuestion} owning the answer
+   * @param idAnswer {@link ServerAnswer} answer which Participant voted for
+   * @param token token of Participant (/!\ Participant only)
+   * @param vote boolean if answer has been checked or not
+   * @return new {@link Vote} created
+   * @throws ResourceNotFoundException if one of the parameters is broken
+   * @throws SessionNotAvailableException if Participant cannot vote now
+   * @throws WrongCredentialsException if token is not right
+   */
+  @PutMapping(value = "/mod/{idModerator}/poll/{idPoll}"
+      + "/question/{idQuestion}/answer/{idAnswer}/vote")
   public Vote newVote(
       @PathVariable(name = "idModerator") int idModerator,
       @PathVariable(name = "idPoll") int idPoll,
@@ -61,10 +85,9 @@ public class VoteController {
       @RequestParam(name = "token") String token,
       @RequestBody BooleanVote vote)
       throws ResourceNotFoundException, SessionNotAvailableException, WrongCredentialsException {
-    System.out.println("entered");
     Participant voter = participantRepository.findByToken(token)
         .orElseThrow(WrongCredentialsException::new);
-    System.out.println("token good");
+
     ServerSession session = sessionRepository.findById(
         voter.getIdParticipant().getIdxServerSession().getIdSession())
         .orElseThrow(SessionNotExistingException::new);
