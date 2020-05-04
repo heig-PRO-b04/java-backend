@@ -1,6 +1,6 @@
 package ch.heigvd.pro.b04.answers;
 
-import ch.heigvd.pro.b04.votes.Vote;
+import ch.heigvd.pro.b04.votes.ServerVote;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -30,7 +30,7 @@ public class ServerAnswer {
   private String description;
 
   @OneToMany(mappedBy = "idVote.idxServerAnswer", cascade = CascadeType.ALL)
-  private Set<Vote> voteSet;
+  private Set<ServerVote> voteSet;
 
   @JsonComponent
   public static class Serializer extends JsonSerializer<ServerAnswer> {

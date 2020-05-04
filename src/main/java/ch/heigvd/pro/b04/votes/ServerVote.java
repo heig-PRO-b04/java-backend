@@ -1,6 +1,5 @@
 package ch.heigvd.pro.b04.votes;
 
-import ch.heigvd.pro.b04.answers.ServerAnswer;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -17,7 +16,7 @@ import org.springframework.boot.jackson.JsonComponent;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Vote {
+public class ServerVote {
 
   @Getter
   @EmbeddedId
@@ -27,11 +26,11 @@ public class Vote {
   private boolean answerChecked;
 
   @JsonComponent
-  public static class Serializer extends JsonSerializer<Vote> {
+  public static class Serializer extends JsonSerializer<ServerVote> {
 
     @Override
     public void serialize(
-        Vote vote,
+        ServerVote vote,
         JsonGenerator jsonGenerator,
         SerializerProvider serializerProvider
     ) throws IOException {

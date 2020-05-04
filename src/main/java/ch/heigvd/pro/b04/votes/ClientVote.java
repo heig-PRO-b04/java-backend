@@ -10,21 +10,21 @@ import lombok.Getter;
 import org.springframework.boot.jackson.JsonComponent;
 
 @Builder
-public class BooleanVote {
+public class ClientVote {
 
   @Getter
-  private boolean checked;
+  private final boolean checked;
 
   @JsonComponent
-  public static class Deserializer extends JsonDeserializer<BooleanVote> {
+  public static class Deserializer extends JsonDeserializer<ClientVote> {
 
     @Override
-    public BooleanVote deserialize(
+    public ClientVote deserialize(
         JsonParser jsonParser,
         DeserializationContext deserializationContext
     ) throws IOException {
       JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-      return BooleanVote.builder()
+      return ClientVote.builder()
           .checked(node.get("checked").asBoolean())
           .build();
     }
