@@ -27,6 +27,7 @@ public class ServerQuestionJsonSerializer extends JsonSerializer<ServerQuestion>
     );
     jsonGenerator.writeNumberField("idQuestion",
         question.getIdServerQuestion().getIdServerQuestion());
+    jsonGenerator.writeNumberField("indexInPoll", question.getIndexInPoll());
     jsonGenerator.writeStringField("title", question.getTitle());
     jsonGenerator.writeStringField("details", question.getDetails());
     jsonGenerator.writeNumberField("answerMin", question.getAnswersMin());
