@@ -55,6 +55,7 @@ public class ClientQuestion {
             break;
         }
         return ClientQuestion.builder()
+            .indexInPoll(node.get("indexInPoll").asDouble())
             .title(node.get("title").asText())
             .details(node.get("details").asText())
             .visibility(visibility)

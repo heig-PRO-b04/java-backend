@@ -1,9 +1,7 @@
 package ch.heigvd.pro.b04.participants;
 
-import ch.heigvd.pro.b04.votes.Vote;
+import ch.heigvd.pro.b04.votes.ServerVote;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -45,5 +43,5 @@ public class Participant {
   private String token;
 
   @OneToMany(mappedBy = "idVote.idxParticipant", cascade = CascadeType.ALL)
-  private Set<Vote> voteSet;
+  private Set<ServerVote> voteSet;
 }
