@@ -251,6 +251,7 @@ public class QuestionController {
         findQuestionByPollAndModerator(idModerator, idPoll, idQuestion, token)
             .orElseThrow(ResourceNotFoundException::new);
 
+    updated.setIndexInPoll(question.getIndexInPoll());
     updated.setTitle(question.getTitle());
     updated.setDetails(question.getDetails());
     updated.setVisibility(question.getVisibility());
