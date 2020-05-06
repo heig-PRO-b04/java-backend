@@ -240,6 +240,16 @@ Send the json representation of the vote in the request's body.
 
 On success, a code 201 will be returned
 
+## Statistics
+
+### `GET /mod/{idModerator}/poll/{idPoll}/statistics`
+
+Retrieves the statistics object for a poll.
+
+A moderator token is needed.
+
+On success, a code 200 will be returned, alongside with a statistics object.
+
 # Errors
 
 On error, a message indicating why the error occured must be sent:
