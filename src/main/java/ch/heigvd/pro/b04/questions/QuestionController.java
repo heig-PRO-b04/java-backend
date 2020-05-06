@@ -134,8 +134,11 @@ public class QuestionController {
       @RequestParam(name = "token") String token
   ) throws ResourceNotFoundException, WrongCredentialsException {
 
-    if ((findVerifiedModeratorByIdAndToken(idModerator, token).isEmpty()
-        && findVerifiedParticipantByIdAndToken(idModerator, idPoll, token).isEmpty())) {
+    boolean verifiedAsModerator = findVerifiedModeratorByIdAndToken(idModerator, token).isPresent();
+    boolean verifiedAsParticipant =
+        findVerifiedParticipantByIdAndToken(idModerator, idPoll, token).isPresent();
+
+    if (!verifiedAsModerator && !verifiedAsParticipant) {
       throw new WrongCredentialsException();
     }
 
@@ -149,6 +152,8 @@ public class QuestionController {
     return repository.findAll()
         .stream()
         .filter(question -> question.getIdServerQuestion().getIdxPoll().equals(poll))
+        .filter(question ->
+            verifiedAsModerator || question.getVisibility() == QuestionVisibility.VISIBLE)
         .collect(Collectors.toList());
   }
 
