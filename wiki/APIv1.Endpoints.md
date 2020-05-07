@@ -31,6 +31,8 @@
         - [`PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`](#put-modidmoderatorpollidpollquestionidquestionansweridanswer)
         - [`DELETE /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}`](#delete-modidmoderatorpollidpollquestionidquestionansweridanswer)
         - [`PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}/vote`](#put-modidmoderatorpollidpollquestionidquestionansweridanswervote)
+    - [Statistics](#statistics)
+        - [`GET /mod/{idModerator}/poll/{idPoll}/statistics`](#get-modidmoderatorpollidpollstatistics)
 - [Errors](#errors)
 
 # List of endpoints
