@@ -23,6 +23,7 @@
         - [Server](#server-5)
     - [Votes](#votes)
         - [Client](#client-6)
+    - [Statistics](#statistics)
         - [Server](#server-6)
 
 ## General
@@ -186,6 +187,7 @@ When a client needs to send a vote for an answer, it should be represented as so
 
 The value of `checked` is a boolean and should represent if the answer is selected in the user's UI.
 
+## Statistics
 ### Server
 
 When a moderator needs some basic statistics, he might retrieve some general poll statistics that
@@ -193,7 +195,7 @@ are represented as so :
 
 ````json
 [
-  { 
+  {
     "title": "Question title 1",
     "answers" :
       [
