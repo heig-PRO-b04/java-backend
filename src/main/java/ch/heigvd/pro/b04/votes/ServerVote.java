@@ -1,5 +1,6 @@
 package ch.heigvd.pro.b04.votes;
 
+import ch.heigvd.pro.b04.questions.ServerQuestion;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -16,7 +17,7 @@ import org.springframework.boot.jackson.JsonComponent;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class ServerVote {
+public class ServerVote implements Comparable<ServerVote>{
 
   @Getter
   @EmbeddedId
@@ -24,6 +25,23 @@ public class ServerVote {
 
   @Getter
   private boolean answerChecked;
+
+  @Override
+  public int compareTo(ServerVote o) {
+    if (idVote.getTimeVote().after(o.getIdVote().getTimeVote())) {
+      return 1;
+    } else if (idVote.getTimeVote().before(o.getIdVote().getTimeVote())){
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+
+  public boolean compareId(ServerVote other)
+  {
+    return (idVote.getIdxServerAnswer().equals(other.getIdVote().getIdxServerAnswer())
+          && idVote.getIdxParticipant().equals(other.getIdVote().getIdxParticipant()));
+  }
 
   @JsonComponent
   public static class Serializer extends JsonSerializer<ServerVote> {

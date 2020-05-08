@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Singular;
 import org.springframework.boot.jackson.JsonComponent;
 
@@ -15,6 +16,7 @@ import org.springframework.boot.jackson.JsonComponent;
 public class ServerPollStatistics {
 
   @Singular
+  @Getter
   private final List<QuestionStatistics> questions;
 
   @Data
@@ -80,5 +82,4 @@ public class ServerPollStatistics {
       jsonGenerator.writeObject(statistics.getQuestions());
     }
   }
-
 }

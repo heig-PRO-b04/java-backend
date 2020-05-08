@@ -19,7 +19,7 @@ import lombok.Setter;
 @Entity
 @Builder
 @NoArgsConstructor
-public class ServerQuestion {
+public class ServerQuestion implements Comparable<ServerQuestion> {
 
   @Setter
   @Getter
@@ -49,7 +49,7 @@ public class ServerQuestion {
   /**
    * Insert a new {@link ServerAnswer} to this {@link ServerQuestion}.
    *
-   * @param repoA answer repository
+   * @param repoA     answer repository
    * @param newAnswer {@link ClientAnswer} to insert as a {@link ServerAnswer}
    * @return {@link ServerAnswer} inserted
    */
@@ -78,5 +78,16 @@ public class ServerQuestion {
         .max(Long::compareTo)
         .map(id -> id + 1)
         .orElse(1L);
+  }
+
+  @Override
+  public int compareTo(ServerQuestion o) {
+    if (indexInPoll > (o.indexInPoll)) {
+      return 1;
+    } else if (indexInPoll == (o.indexInPoll)) {
+      return 0;
+    } else {
+      return -1;
+    }
   }
 }
