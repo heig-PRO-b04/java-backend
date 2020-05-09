@@ -23,6 +23,7 @@ public class ServerPollStatistics {
   @Builder
   public static class QuestionStatistics {
 
+
     @Singular
     private List<AnswerStatistics> answers;
     private String title;

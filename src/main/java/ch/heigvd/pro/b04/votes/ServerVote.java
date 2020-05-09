@@ -29,9 +29,9 @@ public class ServerVote implements Comparable<ServerVote>{
   @Override
   public int compareTo(ServerVote o) {
     if (idVote.getTimeVote().after(o.getIdVote().getTimeVote())) {
-      return 1;
-    } else if (idVote.getTimeVote().before(o.getIdVote().getTimeVote())){
       return -1;
+    } else if (idVote.getTimeVote().before(o.getIdVote().getTimeVote())){
+      return 1;
     } else {
       return 0;
     }
