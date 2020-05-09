@@ -171,9 +171,13 @@ When the server needs to send an answer, it should be represented as so:
   "idQuestion"  : {idQuestion},
   "idAnswer"    : {idAnswer},
   "title"       : "First answer",
-  "description" : "This is a description"
+  "description" : "This is a description",
+  "checked"     : {boolean, optional}
 }
 ```
+
+Answers that have been requested with a participant token will get the `checked` field, but
+moderators will not see any field set.
 
 ## Votes
 ### Client

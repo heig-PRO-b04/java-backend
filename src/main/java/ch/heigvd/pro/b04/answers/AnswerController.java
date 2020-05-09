@@ -5,6 +5,7 @@ import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
+import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
@@ -13,8 +14,12 @@ import ch.heigvd.pro.b04.questions.QuestionRepository;
 import ch.heigvd.pro.b04.questions.ServerQuestion;
 import ch.heigvd.pro.b04.questions.ServerQuestionIdentifier;
 import ch.heigvd.pro.b04.sessions.SessionState;
+import ch.heigvd.pro.b04.votes.ServerVote;
+import ch.heigvd.pro.b04.votes.ServerVoteRepository;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,6 +39,7 @@ public class AnswerController {
   private final ServerPollRepository pollRepository;
   private final ParticipantRepository participantRepository;
   private final ModeratorRepository moderatorRepository;
+  private final ServerVoteRepository voteRepository;
 
   /**
    * Standard constructor.
@@ -43,16 +49,20 @@ public class AnswerController {
    * @param pollRepository        poll repository
    * @param participantRepository participant repository
    * @param moderatorRepository   moderator repository
+   * @param voteRepository        vote repository
    */
   public AnswerController(AnswerRepository repository,
       QuestionRepository questionRepository, ServerPollRepository pollRepository,
       ParticipantRepository participantRepository,
-      ModeratorRepository moderatorRepository) {
+      ModeratorRepository moderatorRepository,
+      ServerVoteRepository voteRepository
+  ) {
     this.repository = repository;
     this.questionRepository = questionRepository;
     this.pollRepository = pollRepository;
     this.participantRepository = participantRepository;
     this.moderatorRepository = moderatorRepository;
+    this.voteRepository = voteRepository;
   }
 
   /**
@@ -78,17 +88,55 @@ public class AnswerController {
    * @param idPoll The id of the poll we want to check access to.
    * @return Optional with the right participant, empty if not found
    */
-  private Optional<ServerPoll> findVerifiedParticipantByIdAndToken(
+  private Optional<Participant> findVerifiedParticipantByIdAndToken(
       int idMod,
       int idPoll,
       String token
   ) {
     return participantRepository.findByToken(token)
-        .map(participant -> participant.getIdParticipant().getIdxServerSession())
-        .filter(serverSession -> !(serverSession.getState().equals(SessionState.CLOSED)))
-        .map(serverSession -> serverSession.getIdSession().getIdxPoll())
-        .filter(poll -> poll.getIdPoll().getIdPoll() == idPoll)
-        .filter(poll -> poll.getIdPoll().getIdxModerator().getIdModerator() == idMod);
+        .filter(p -> !p.getIdParticipant().getIdxServerSession()
+            .getState().equals(SessionState.CLOSED))
+        .filter(p -> p.getIdParticipant().getIdxServerSession()
+            .getIdSession().getIdxPoll()
+            .getIdPoll().getIdPoll() == idPoll)
+        .filter(p -> p.getIdParticipant().getIdxServerSession()
+            .getIdSession().getIdxPoll()
+            .getIdPoll().getIdxModerator()
+            .getIdModerator() == idMod);
+  }
+
+  /**
+   * Returns a function that populates a certain {@link ServerAnswer} with the last user vote,
+   * assuming that the provided {@link Participant} is not empty.
+   *
+   * @param participant An optionally empty participant.
+   * @return The mapping function.
+   */
+  public Function<ServerAnswer, ServerAnswer> populateWithCheckedValues(
+      Optional<Participant> participant
+  ) {
+    return participant.map((Function<Participant, Function<ServerAnswer, ServerAnswer>>) p ->
+        serverAnswer -> {
+          // If we are connected as a participant.
+          serverAnswer.setShowChecked(true);
+          // Retrieve the latest vote for the said answer.
+          serverAnswer.setChecked(voteRepository.findAll().stream()
+              // Fetch the votes for the right participant and answer.
+              .filter(vote -> vote.getIdVote().getIdxParticipant() == p)
+              .filter(vote -> vote.getIdVote().getIdxServerAnswer() == serverAnswer)
+              // Retrieve the last vote.
+              .max(Comparator.comparing(serverVote -> serverVote.getIdVote().getTimeVote()))
+              // Get its checked status.
+              .map(ServerVote::isAnswerChecked)
+              // No vote could be found.
+              .orElse(false));
+          return serverAnswer;
+        })
+        .orElse(serverAnswer -> {
+          // We are not connected as a participant.
+          serverAnswer.setShowChecked(false);
+          return serverAnswer;
+        });
   }
 
   /**
@@ -149,8 +197,11 @@ public class AnswerController {
       @RequestParam(name = "token") String token)
       throws WrongCredentialsException, ResourceNotFoundException {
 
+    Optional<Participant> participant =
+        findVerifiedParticipantByIdAndToken(idModerator, idPoll, token);
+
     if ((findVerifiedModeratorByIdAndToken(idModerator, token).isEmpty()
-        && findVerifiedParticipantByIdAndToken(idModerator, idPoll, token).isEmpty())) {
+        && participant.isEmpty())) {
       throw new WrongCredentialsException();
     }
 
@@ -171,6 +222,7 @@ public class AnswerController {
     return repository.findAll()
         .stream()
         .filter(answer -> answer.getIdAnswer().getIdxServerQuestion().equals(question))
+        .map(populateWithCheckedValues(participant))
         .collect(Collectors.toList());
   }
 
@@ -196,8 +248,11 @@ public class AnswerController {
       @RequestParam(name = "token") String token)
       throws WrongCredentialsException, ResourceNotFoundException {
 
+    Optional<Participant> participant =
+        findVerifiedParticipantByIdAndToken(idModerator, idPoll, token);
+
     if ((findVerifiedModeratorByIdAndToken(idModerator, token).isEmpty()
-        && findVerifiedParticipantByIdAndToken(idModerator, idPoll, token).isEmpty())) {
+        && participant.isEmpty())) {
       throw new WrongCredentialsException();
     }
 
@@ -226,6 +281,7 @@ public class AnswerController {
         .build();
 
     return repository.findById(answerIdentifier)
+        .map(populateWithCheckedValues(participant))
         .orElseThrow(ResourceNotFoundException::new);
   }
 

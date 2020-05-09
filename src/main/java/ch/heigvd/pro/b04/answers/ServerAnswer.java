@@ -10,6 +10,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,12 @@ public class ServerAnswer {
 
   private String title;
   private String description;
+
+  @Transient
+  private boolean checked;
+
+  @Transient
+  private boolean showChecked;
 
   @OneToMany(mappedBy = "idVote.idxServerAnswer", cascade = CascadeType.ALL)
   private Set<ServerVote> voteSet;
@@ -54,6 +61,9 @@ public class ServerAnswer {
       jsonGenerator.writeNumberField("idQuestion", answer.getIdAnswer()
           .getIdxServerQuestion().getIdServerQuestion().getIdServerQuestion());
       jsonGenerator.writeNumberField("idAnswer", answer.getIdAnswer().getIdAnswer());
+      if (answer.showChecked) {
+        jsonGenerator.writeBooleanField("checked", answer.isChecked());
+      }
       jsonGenerator.writeEndObject();
     }
   }
