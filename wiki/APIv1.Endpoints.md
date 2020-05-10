@@ -252,6 +252,14 @@ A moderator token is needed.
 
 On success, a code 200 will be returned, alongside with a statistics object.
 
+### `POST /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/statistics`
+
+Retrieves the statistics object for a question.
+
+A moderator token is needed.
+
+On success, a code 200 will be returned, alongside with a question statistics object.
+
 # Errors
 
 On error, a message indicating why the error occured must be sent:
