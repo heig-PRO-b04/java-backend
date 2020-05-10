@@ -191,13 +191,13 @@ When a client needs to send a vote for an answer, it should be represented as so
 
 The value of `checked` is a boolean and should represent if the answer is selected in the user's UI.
 
-## Statistics
+## Poll Statistics
 ### Server
 
 When a moderator needs some basic statistics, he might retrieve some general poll statistics that
 are represented as so :
 
-````json
+```json
 [
   {
     "title": "Question title 1",
@@ -213,4 +213,66 @@ are represented as so :
     "answers" : []
   }
 ]
-````
+```
+
+## Question statistics
+### Client
+
+An array of question statistics is requested for certain UNIX timestamps. The timestamps consider
+the current time in seconds.
+
+```json
+[
+  1589128713,
+  1589128722
+]
+```
+
+### Server
+An array of question statistics is returned for a certain question at a set of different timestamps.
+```json
+{
+  "answers":
+    [
+      {
+        "idAnswer" : 1,
+        "title": "Answer 1"
+      },
+      {
+        "idAnswer" : 2,
+        "title": "Answer 2"
+      }
+    ],
+  "timestamps": 
+    [
+      {
+        "seconds": 1589128713,
+        "votes":
+          [
+            {
+              "idAnswer" : 1,
+              "count": 123
+            },
+            {
+              "idAnswer" : 2,
+              "count": 456
+            }
+          ]
+      },
+      {
+        "seconds": 1589128715,
+        "votes":
+          [
+            {
+              "idAnswer" : 1,
+              "count": 123
+            },
+            {
+              "idAnswer" : 2,
+              "count": 456
+            }
+          ]
+      }
+    ]
+}
+```
