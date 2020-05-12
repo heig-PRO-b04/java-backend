@@ -3,6 +3,8 @@ import os
 import sys
 import subprocess
 
+print("Running integration tests")
+
 path = r"."
 for f in os.listdir(path):
     if (re.match('^test(.)+\.py$', f)):
