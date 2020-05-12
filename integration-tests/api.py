@@ -120,8 +120,12 @@ def getQuestionWithId(token, idMod, idPoll, idQuestion):
         return { "error" : res.status_code }
 
 def postQuestion(token, idPoll, title, visibility, qmin, qmax):
-    data = { "title" : title, "details" : "This is a comment", "visibility" : visibility,
-            "answersMin" : qmin, "answersMax" : qmax }
+    data = { "title" : title
+           , "details" : "This is a comment"
+           , "visibility" : visibility
+           , "answersMin" : qmin
+           , "answersMax" : qmax
+           }
     url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question?token=" + token
     res = requests.post(url, json = data)
     if (res.status_code == 200):
@@ -129,9 +133,19 @@ def postQuestion(token, idPoll, title, visibility, qmin, qmax):
     else:
         return { "error" : res.status_code }
 
-def putQuestionWithId(token, idMod, idPoll, idQuestion):
-    # TODO
-    return
+def putQuestionWithId(token, idMod, idPoll, idQuestion, title, visibility, qmin, qmax):
+    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question/" + str(idQuestion) + "?token=" + token
+    data = { "title" : title
+           , "details" : "This is a comment"
+           , "visibility" : visibility
+           , "answersMin" : qmin
+           , "answersMax" : qmax
+           }
+    res = requests.put(url, json = data)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
 
 def deleteQuestionWithId(token, idMod, idPoll, idQuestion):
     # TODO
