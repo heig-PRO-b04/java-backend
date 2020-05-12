@@ -124,10 +124,11 @@ def getQuestionWithId(token, idMod, idPoll, idQuestion):
     else:
         return { "error" : res.status_code }
 
-def postQuestion(token, idPoll, title, visibility, qmin, qmax):
+def postQuestion(token, idPoll, title, visibility, index, qmin, qmax):
     data = { "title" : title
            , "details" : "This is a comment"
            , "visibility" : visibility
+           , "indexInPoll": index
            , "answersMin" : qmin
            , "answersMax" : qmax
            }
@@ -138,7 +139,7 @@ def postQuestion(token, idPoll, title, visibility, qmin, qmax):
     else:
         return { "error" : res.status_code }
 
-def putQuestionWithId(token, idMod, idPoll, idQuestion, title, visibility, qmin, qmax):
+def putQuestionWithId(token, idMod, idPoll, idQuestion, title, visibility, index, qmin, qmax):
     url = (server
             + "/mod/"+ str(idMod)
             + "/poll/" + str(idPoll)
@@ -148,6 +149,7 @@ def putQuestionWithId(token, idMod, idPoll, idQuestion, title, visibility, qmin,
     data = { "title" : title
            , "details" : "This is a comment"
            , "visibility" : visibility
+           , "indexInPoll": index
            , "answersMin" : qmin
            , "answersMax" : qmax
            }
