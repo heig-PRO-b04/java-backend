@@ -14,6 +14,8 @@ for f in os.listdir(path):
         status = p.wait()
 
         if (status != 0):
-            print ("File " + f + " has some failing unit tests")
+            print ("[FAILURE] File " + f + " has some failing unit tests")
             sys.exit(1)
+        else:
+            print ("[SUCCESS]")
 
