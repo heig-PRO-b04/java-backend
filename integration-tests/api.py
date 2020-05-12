@@ -55,13 +55,18 @@ def postPoll(token, idMod, title):
     url = server + "/mod/"+ str(idMod) + "/poll?token=" + token
     res = requests.post(url, json = data)
     if (res.status_code == 200):
-        return res.json()["idPoll"]
+        return res.json()
     else:
         return { "error" : res.status_code }
 
 def putPoll(token, idMod, idPoll, title):
-    # TODO
-    return
+    data = { "title" : title }
+    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "?token=" + token
+    res = requests.put(url, json = data)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
 
 def deletePoll(token, idMod, idPoll):
     # TODO
