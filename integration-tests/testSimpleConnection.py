@@ -12,4 +12,4 @@ token2 = api.auth(username, password)
 if token1 != token2:
     sys.exit(1)
 else:
-    sys.exit(1)
+    sys.exit(0)
