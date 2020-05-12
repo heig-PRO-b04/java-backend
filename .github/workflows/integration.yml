@@ -1,0 +1,15 @@
+name: Integrations tests (Python)
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker-compose up
+        run: |
+          cd integration-tests
+          docker-compose up -d --build
+      - name: Integration tests
+        run: |
+          testSimpleConnection.py 
