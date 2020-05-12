@@ -15,4 +15,4 @@ jobs:
           python3 integration-tests/waitToBeOnline.py
       - name: Integration tests
         run: |
-          python3 integration-tests/testSimpleConnection.py 
+          python3 integration-tests/launchIntegrationTests.py
