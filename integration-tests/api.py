@@ -201,13 +201,39 @@ def getAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer):
     else:
         return { "error" : res.status_code }
 
-def postAnswer(token, idMod, idPoll, idQuestion):
-    # TODO
-    return
+def postAnswer(token, idMod, idPoll, idQuestion, title, description):
+    data = { "title" : title
+           , "description" : description
+           }
+    url = (server
+            + "/mod/" + str(idMod)
+            + "/poll/" + str(idPoll)
+            + "/question/" + str(idQuestion)
+            + "/answer/"
+            + "?token=" + token
+            )
+    res = requests.post(url, json = data)
+    if (res.status_code == 200):
+        return
+    else:
+        return { "error" : res.status_code }
 
 def putAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer):
-    # TODO
-    return
+    data = { "title" : title
+           , "description" : description
+           }
+    url = (server
+            + "/mod/" + str(idMod)
+            + "/poll/" + str(idPoll)
+            + "/question/" + str(idQuestion)
+            + "/answer/" + str(idAnswer)
+            + "?token=" + token
+            )
+    res = requests.put(url, json = data)
+    if (res.status_code == 200):
+        return
+    else:
+        return { "error" : res.status_code }
 
 def deleteAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer):
     # TODO
