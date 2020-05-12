@@ -2,8 +2,11 @@
 
 - [Table of Contents](#table-of-contents)
 - [List of endpoints](#list-of-endpoints)
-    - [Register](#register)
+    - [Moderator](#moderator)
         - [`POST /register`](#post-register)
+        - [`PUT /mod/{idModerator}/password`](#put-modidmoderatorpassword)
+        - [`PUT /mod/{idModerator}/username`](#put-modidmoderatorusername)
+        - [`DELETE /mod/{idModerator}`](#delete-modidmoderator)
     - [Token](#token)
         - [`POST /auth`](#post-auth)
     - [User connection](#user-connection)
@@ -33,17 +36,66 @@
         - [`PUT /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/answer/{idAnswer}/vote`](#put-modidmoderatorpollidpollquestionidquestionansweridanswervote)
     - [Statistics](#statistics)
         - [`GET /mod/{idModerator}/poll/{idPoll}/statistics`](#get-modidmoderatorpollidpollstatistics)
+        - [`POST /mod/{idModerator}/poll/{idPoll}/question/{idQuestion}/statistics`](#post-modidmoderatorpollidpollquestionidquestionstatistics)
 - [Errors](#errors)
 
 # List of endpoints
 
-## Register
+## Moderator
+**Note**: When using one of these endpoint, a new token will be generated.
+
 ### `POST /register`
 Registers a moderator.
 
 The json representation of the moderator needs to be sent in the request's body.
 
 On success, the server will send the moderator back.
+
+### `PUT /mod/{idModerator}/password`
+
+Updates the password of a moderator. A moderator token must be provided.
+
+The body of the request should be formatted as so:
+
+```json
+{
+  "currentPassword" : "abcd",
+  "newPassword"     : "1234"
+}
+```
+
+On success, a HTTP status 200 should be sent.
+On failure, the appropriate HTTP status should be sent.
+
+### `PUT /mod/{idModerator}/username`
+
+Updates the username of a moderator. A moderator token must be provided.
+
+The body of the request should be formatted as so:
+
+```json
+{
+  "currentPassword" : "abcd",
+  "newUsername"     : "mumfred"
+}
+```
+
+On success, a HTTP status 200 should be sent.
+On failure, the appropriate HTTP status should be sent.
+
+### `DELETE /mod/{idModerator}`
+
+Deletes a moderator. A moderator token must be provided.
+
+The body of the request should be formatted as so:
+
+```json
+{
+  "currentPassword" : "abcd"
+}
+```
+On success, a HTTP status 200 should be sent.
+On failure, the appropriate HTTP status should be sent.
 
 ## Token
 ### `POST /auth`
