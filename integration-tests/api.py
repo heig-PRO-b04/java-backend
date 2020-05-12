@@ -69,8 +69,12 @@ def putPoll(token, idMod, idPoll, title):
         return { "error" : res.status_code }
 
 def deletePoll(token, idMod, idPoll):
-    # TODO
-    return
+    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "?token=" + token
+    res = requests.delete(url)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
 
 # Session section
 def getSession(token):
