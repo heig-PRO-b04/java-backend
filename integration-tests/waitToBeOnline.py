@@ -5,8 +5,12 @@ import json
 server="http://localhost:80"
 
 def start():
-    res = requests.get(server)
-    return res.status_code
+    try:
+        res = requests.get(server)
+        status = res.status_code
+    except:
+        status = 500
+    return status
 
 status = 400
 

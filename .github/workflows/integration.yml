@@ -9,10 +9,10 @@ jobs:
       - name: Docker-compose up
         run: |
           cd integration-tests
-          docker-compose up -d --build
+          docker-compose up -d 
       - name: Wait to be online
         run: |
-          python3 waitToBeOnline.py
+          python3 integration-tests/waitToBeOnline.py
       - name: Integration tests
         run: |
-          python3 testSimpleConnection.py 
+          python3 integration-tests/testSimpleConnection.py 
