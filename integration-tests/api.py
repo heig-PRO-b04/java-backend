@@ -148,8 +148,12 @@ def putQuestionWithId(token, idMod, idPoll, idQuestion, title, visibility, qmin,
         return { "error" : res.status_code }
 
 def deleteQuestionWithId(token, idMod, idPoll, idQuestion):
-    # TODO
-    return
+    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question/" + str(idQuestion) + "?token=" + token
+    res = requests.delete(url)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
 
 # Answers section
 def getAnswer(token, idMod, idPoll, idQuestion):
