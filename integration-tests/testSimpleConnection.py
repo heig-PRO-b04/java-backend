@@ -3,7 +3,7 @@
 import api
 import sys
 
-username="mod"
+username="moderator"
 password="1234"
 
 token1 = api.register(username, password)
