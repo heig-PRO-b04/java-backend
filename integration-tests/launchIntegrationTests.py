@@ -5,7 +5,7 @@ import subprocess
 
 print("Running integration tests")
 
-path = r"."
+path = "integration-tests"
 for f in os.listdir(path):
     if (re.match('^test(.)+\.py$', f)):
         command = "python3 " + path + "/" + f
