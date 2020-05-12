@@ -6,7 +6,7 @@ import sys
 username="mod"
 password="1234"
 
-token1 = api.register(username, 1234)
+token1 = api.register(username, password)
 token2 = api.auth(username, password)
 
 if token1 != token2:
