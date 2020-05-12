@@ -111,3 +111,28 @@ def putQuestionWithId(token, idMod, idPoll, idQuestion):
 def deleteQuestionWithId(token, idMod, idPoll, idQuestion):
     # TODO
     return
+
+# Answers section
+def getAnswer(token, idMod, idPoll, idQuestion):
+    # TODO
+    return
+
+def getAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer):
+    # TODO
+    return
+
+def postAnswer(token, idMod, idPoll, idQuestion):
+    # TODO
+    return
+
+def putAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer):
+    # TODO
+    return
+
+def deleteAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer):
+    # TODO
+    return
+
+def vote(token, idMod, idPoll, idQuestion, idAnswer):
+    # TODO
+    return
