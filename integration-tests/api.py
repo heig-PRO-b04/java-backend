@@ -104,12 +104,20 @@ def putSessionWithId(token, idPoll, status):
 
 # Question section
 def getQuestion(token, idMod, idPoll):
-    # TODO
-    return
+    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question?token=" + token
+    res = requests.get(url)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
 
 def getQuestionWithId(token, idMod, idPoll, idQuestion):
-    # TODO
-    return
+    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question/" + str(idQuestion) + "?token=" + token
+    res = requests.get(url)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
 
 def postQuestion(token, idPoll, title, visibility, qmin, qmax):
     data = { "title" : title, "details" : "This is a comment", "visibility" : visibility,
