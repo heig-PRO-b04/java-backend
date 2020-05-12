@@ -19,7 +19,7 @@ def auth(username, password):
     url = server + "/auth?token=" + token
     res = requests.post(url, json = data)
     if (res.status_code == 200):
-        return { "idMod" : res.json()["idModerator"], "token" : res.json()["token"] }
+        return res.json()
     else:
         return { "error" : res.status_code }
 
