@@ -24,7 +24,6 @@ def auth(username, password):
         return { "error" : res.status_code }
 
 # User section
-
 def connectUser(code):
     data = { "code" : code }
     url = server + "/connect"
@@ -35,7 +34,15 @@ def connectUser(code):
         return { "error" : res.status_code }
 
 # Poll section
-def createPoll(token, idMod, title):
+def getPoll(token, idMod):
+    # TODO
+    return
+
+def getPollWithId(token, idMod, idPoll):
+    # TODO
+    return
+
+def postPoll(token, idMod, title):
     data = { "title" : title }
     url = server + "/mod/"+ str(idMod) + "/poll?token=" + token
     res = requests.post(url, json = data)
@@ -43,6 +50,16 @@ def createPoll(token, idMod, title):
         return res.json()["idPoll"]
     else:
         return { "error" : res.status_code }
+
+def putPoll(token, idMod, idPoll, title):
+    # TODO
+    return
+
+def deletePoll(token, idMod, idPoll):
+    # TODO
+    return
+
+# Session section
 
 def sessionStatus(token, idPoll, status):
     data = { "status" : status }
