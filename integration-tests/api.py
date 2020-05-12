@@ -124,7 +124,7 @@ def getQuestionWithId(token, idMod, idPoll, idQuestion):
     else:
         return { "error" : res.status_code }
 
-def postQuestion(token, idPoll, title, visibility, index, qmin, qmax):
+def postQuestion(token, idMod, idPoll, title, visibility, index, qmin, qmax):
     data = { "title" : title
            , "details" : "This is a comment"
            , "visibility" : visibility
