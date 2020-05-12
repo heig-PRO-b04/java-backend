@@ -35,12 +35,20 @@ def connectUser(code):
 
 # Poll section
 def getPoll(token, idMod):
-    # TODO
-    return
+    url = server + "/mod/"+ str(idMod) + "/poll?token=" + token
+    res = requests.get(url)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
 
 def getPollWithId(token, idMod, idPoll):
-    # TODO
-    return
+    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "?token=" + token
+    res = requests.get(url)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
 
 def postPoll(token, idMod, title):
     data = { "title" : title }
