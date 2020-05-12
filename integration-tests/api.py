@@ -10,7 +10,7 @@ def register(username, password):
     url = server + "/register"
     res = requests.post(url, json = data)
     if (res.status_code == 200):
-        return res.json()["token"]
+        return res.json()
     else:
         return { "error" : res.status_code }
 
@@ -19,7 +19,7 @@ def auth(username, password):
     url = server + "/auth"
     res = requests.post(url, json = data)
     if (res.status_code == 200):
-        return res.json()["token"]
+        return res.json()
     else:
         return { "error" : res.status_code }
 
@@ -29,7 +29,7 @@ def connectUser(code):
     url = server + "/connect"
     res = requests.post(url, json = data)
     if (res.status_code == 200):
-        return res.json()["token"]
+        return res.json()
     else:
         return { "error" : res.status_code }
 
@@ -93,12 +93,12 @@ def getSessionWithId(token, idMod, idPoll):
     else:
         return { "error" : res.status_code }
 
-def putSessionWithId(token, idPoll, status):
+def putSessionWithId(token, idMod, idPoll, status):
     data = { "status" : status }
     url = server + "/mod/" + str(idMod) + "/poll/" + str(idPoll) + "/session?token=" + token
     res = requests.put(url, json = data)
     if (res.status_code == 200):
-        return res.json()["code"]
+        return res.json()
     else:
         return { "error" : res.status_code }
 
@@ -124,7 +124,7 @@ def getQuestionWithId(token, idMod, idPoll, idQuestion):
     else:
         return { "error" : res.status_code }
 
-def postQuestion(token, idPoll, title, visibility, index, qmin, qmax):
+def postQuestion(token, idMod, idPoll, title, visibility, index, qmin, qmax):
     data = { "title" : title
            , "details" : "This is a comment"
            , "visibility" : visibility
@@ -135,7 +135,7 @@ def postQuestion(token, idPoll, title, visibility, index, qmin, qmax):
     url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question?token=" + token
     res = requests.post(url, json = data)
     if (res.status_code == 200):
-        return
+        return res.json()
     else:
         return { "error" : res.status_code }
 
