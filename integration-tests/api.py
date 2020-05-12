@@ -112,7 +112,12 @@ def getQuestion(token, idMod, idPoll):
         return { "error" : res.status_code }
 
 def getQuestionWithId(token, idMod, idPoll, idQuestion):
-    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question/" + str(idQuestion) + "?token=" + token
+    url = (server
+            + "/mod/"+ str(idMod)
+            + "/poll/" + str(idPoll)
+            + "/question/" + str(idQuestion)
+            + "?token=" + token
+            )
     res = requests.get(url)
     if (res.status_code == 200):
         return res.json()
@@ -134,7 +139,12 @@ def postQuestion(token, idPoll, title, visibility, qmin, qmax):
         return { "error" : res.status_code }
 
 def putQuestionWithId(token, idMod, idPoll, idQuestion, title, visibility, qmin, qmax):
-    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question/" + str(idQuestion) + "?token=" + token
+    url = (server
+            + "/mod/"+ str(idMod)
+            + "/poll/" + str(idPoll)
+            + "/question/" + str(idQuestion)
+            + "?token=" + token
+            )
     data = { "title" : title
            , "details" : "This is a comment"
            , "visibility" : visibility
@@ -148,7 +158,12 @@ def putQuestionWithId(token, idMod, idPoll, idQuestion, title, visibility, qmin,
         return { "error" : res.status_code }
 
 def deleteQuestionWithId(token, idMod, idPoll, idQuestion):
-    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question/" + str(idQuestion) + "?token=" + token
+    url = (server
+            + "/mod/" + str(idMod)
+            + "/poll/" + str(idPoll)
+            + "/question/" + str(idQuestion)
+            + "?token=" + token
+            )
     res = requests.delete(url)
     if (res.status_code == 200):
         return res.json()
@@ -157,8 +172,17 @@ def deleteQuestionWithId(token, idMod, idPoll, idQuestion):
 
 # Answers section
 def getAnswer(token, idMod, idPoll, idQuestion):
-    # TODO
-    return
+    url = (server
+            + "/mod/" + str(idMod)
+            + "/poll/" + str(idPoll)
+            + "/question/" + str(idQuestion)
+            + "/answer?token=" + token
+            )
+    res = requests.get(url)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
 
 def getAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer):
     # TODO
