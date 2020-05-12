@@ -16,10 +16,10 @@ def register(username, password):
 
 def auth(username, password):
     data = { "username" : username, "password" : password }
-    url = server + "/auth?token=" + token
+    url = server + "/auth"
     res = requests.post(url, json = data)
     if (res.status_code == 200):
-        return res.json()
+        return res.json()["token"]
     else:
         return { "error" : res.status_code }
 
