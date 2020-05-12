@@ -11,7 +11,7 @@ def register(username, password):
     if (res.status_code == 200):
         return res.json()["token"]
     else:
-        print (res.json()["error"])
+        return { "error" : res.status_code }
 
 def auth(username, password):
     data = { "username" : username, "password" : password }
@@ -20,7 +20,7 @@ def auth(username, password):
     if (res.status_code == 200):
         return { "idMod" : res.json()["idModerator"], "token" : res.json()["token"] }
     else:
-        print("auth rip")
+        return { "error" : res.status_code }
 
 def createPoll(token, idMod, title):
     data = { "title" : title }
@@ -29,7 +29,7 @@ def createPoll(token, idMod, title):
     if (res.status_code == 200):
         return res.json()["idPoll"]
     else:
-        print(res.json())
+        return { "error" : res.status_code }
 
 def addQuestion(token, idPoll, title):
     data = { "title" : title, "details" : "This is a comment", "visibility" : "visible",
@@ -37,19 +37,18 @@ def addQuestion(token, idPoll, title):
     url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question?token=" + token
     res = requests.post(url, json = data)
     if (res.status_code == 200):
-        print("Added question with title: " + res.json()["title"])
+        return
     else:
-        print(res.json())
+        return { "error" : res.status_code }
 
 def sessionStatus(token, idPoll, status):
     data = { "status" : status }
     url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/session?token=" + token
     res = requests.put(url, json = data)
     if (res.status_code == 200):
-        print(res.json())
         return res.json()["code"]
     else:
-        print(res.json())
+        return { "error" : res.status_code }
 
 def connectUser(code):
     data = { "code" : code }
@@ -58,14 +57,13 @@ def connectUser(code):
     if (res.status_code == 200):
         return res.json()["token"]
     else:
-        print(res.json())
+        return { "error" : res.status_code }
 
 def getSession(token):
     url = server + "/session?token=" + token
     res = requests.get(url)
     if (res.status_code == 200):
-        print(res.json())
         return res.json()
     else:
-        print(res.json())
+        return { "error" : res.status_code }
 
