@@ -249,6 +249,18 @@ def deleteAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer):
     else:
         return { "error" : res.status_code }
 
-def vote(token, idMod, idPoll, idQuestion, idAnswer):
-    # TODO
-    return
+def vote(token, idMod, idPoll, idQuestion, idAnswer, checked):
+    url = (server
+            + "/mod/" + str(idMod)
+            + "/poll/" + str(idPoll)
+            + "/question/" + str(idQuestion)
+            + "/answer/" + str(idAnswer)
+            + "/vote"
+            + "?token=" + token
+            )
+    data = { "checked" : checked }
+    res = requests.put(url, json = data)
+    if (res.status_code == 200):
+        return
+    else:
+        return { "error" : res.status_code }
