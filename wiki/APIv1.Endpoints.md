@@ -292,7 +292,7 @@ A user token is needed.
 
 Send the json representation of the vote in the request's body.
 
-On success, a code 201 will be returned
+On success, a code 200 will be returned
 
 ## Statistics
 
