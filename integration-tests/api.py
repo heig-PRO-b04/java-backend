@@ -176,7 +176,8 @@ def getAnswer(token, idMod, idPoll, idQuestion):
             + "/mod/" + str(idMod)
             + "/poll/" + str(idPoll)
             + "/question/" + str(idQuestion)
-            + "/answer?token=" + token
+            + "/answer"
+            + "?token=" + token
             )
     res = requests.get(url)
     if (res.status_code == 200):
@@ -185,8 +186,18 @@ def getAnswer(token, idMod, idPoll, idQuestion):
         return { "error" : res.status_code }
 
 def getAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer):
-    # TODO
-    return
+    url = (server
+            + "/mod/" + str(idMod)
+            + "/poll/" + str(idPoll)
+            + "/question/" + str(idQuestion)
+            + "/answer/" + str(idAnswer)
+            + "?token=" + token
+            )
+    res = requests.get(url)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
 
 def postAnswer(token, idMod, idPoll, idQuestion):
     # TODO
