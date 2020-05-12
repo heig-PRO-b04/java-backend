@@ -60,21 +60,28 @@ def deletePoll(token, idMod, idPoll):
     return
 
 # Session section
-
-def sessionStatus(token, idPoll, status):
-    data = { "status" : status }
-    url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/session?token=" + token
-    res = requests.put(url, json = data)
-    if (res.status_code == 200):
-        return res.json()["code"]
-    else:
-        return { "error" : res.status_code }
-
 def getSession(token):
     url = server + "/session?token=" + token
     res = requests.get(url)
     if (res.status_code == 200):
         return res.json()
+    else:
+        return { "error" : res.status_code }
+
+def getSessionWithId(token, idMod, idPoll):
+    url = server + "/mod/" + str(idMod) + "/poll/" + str(idPoll) + "/session?token=" + token
+    res = requests.get(url)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
+
+def putSessionWithId(token, idPoll, status):
+    data = { "status" : status }
+    url = server + "/mod/" + str(idMod) + "/poll/" + str(idPoll) + "/session?token=" + token
+    res = requests.put(url, json = data)
+    if (res.status_code == 200):
+        return res.json()["code"]
     else:
         return { "error" : res.status_code }
 
