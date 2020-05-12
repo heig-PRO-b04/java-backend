@@ -86,9 +86,17 @@ def putSessionWithId(token, idPoll, status):
         return { "error" : res.status_code }
 
 # Question section
-def addQuestion(token, idPoll, title):
-    data = { "title" : title, "details" : "This is a comment", "visibility" : "visible",
-            "answersMin" : 1, "answersMax" : 10 }
+def getQuestion(token, idMod, idPoll):
+    # TODO
+    return
+
+def getQuestionWithId(token, idMod, idPoll, idQuestion):
+    # TODO
+    return
+
+def postQuestion(token, idPoll, title, visibility, qmin, qmax):
+    data = { "title" : title, "details" : "This is a comment", "visibility" : visibility,
+            "answersMin" : qmin, "answersMax" : qmax }
     url = server + "/mod/"+ str(idMod) + "/poll/" + str(idPoll) + "/question?token=" + token
     res = requests.post(url, json = data)
     if (res.status_code == 200):
@@ -96,3 +104,10 @@ def addQuestion(token, idPoll, title):
     else:
         return { "error" : res.status_code }
 
+def putQuestionWithId(token, idMod, idPoll, idQuestion):
+    # TODO
+    return
+
+def deleteQuestionWithId(token, idMod, idPoll, idQuestion):
+    # TODO
+    return
