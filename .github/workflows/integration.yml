@@ -6,10 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Docker-compose up
+      - name: Launch docker-compose up
         run: |
           cd integration-tests
-          docker-compose up -d 
+          docker-compose up -d
       - name: Wait to be online
         run: |
           python3 integration-tests/waitToBeOnline.py
