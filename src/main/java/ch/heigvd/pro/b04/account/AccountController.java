@@ -7,6 +7,7 @@ import static ch.heigvd.pro.b04.auth.TokenUtils.generateRandomToken;
 import static ch.heigvd.pro.b04.auth.TokenUtils.getSecret;
 
 import ch.heigvd.pro.b04.auth.exceptions.CredentialsTooShortException;
+import ch.heigvd.pro.b04.auth.exceptions.DuplicateUsernameException;
 import ch.heigvd.pro.b04.auth.exceptions.UnknownUserCredentialsException;
 import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
@@ -38,6 +39,62 @@ public class AccountController {
   private boolean isCurrentPassword(Moderator moderator, String candidate) {
     return getSecret(candidate, base64Decode(moderator.getSalt()))
         .equals(moderator.getSecret());
+  }
+
+  /**
+   * Changes the username of the moderator.
+   *
+   * @param token       The authentication token of the user.
+   * @param idModerator The moderator identifier.
+   * @param username    The username information.
+   * @return A success message.
+   * @throws UnknownUserCredentialsException If authentication fails.
+   * @throws CredentialsTooShortException    If the new password is too short.
+   * @throws DuplicateUsernameException      If the new username already exists.
+   */
+  @Transactional
+  @PutMapping("/mod/{idModerator}/username")
+  public ServerMessage changeUsername(
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") Integer idModerator,
+      @RequestBody NewUsername username)
+      throws
+      UnknownUserCredentialsException,
+      CredentialsTooShortException,
+      DuplicateUsernameException {
+
+    Moderator moderator = moderators.findById(idModerator)
+        .filter(found -> found.getToken().equals(token))
+        .orElseThrow(UnknownUserCredentialsException::new);
+
+    if (!isCurrentPassword(moderator, username.getCurrentPassword())) {
+      throw new UnknownUserCredentialsException();
+    }
+
+    if (username.getUsername().length() < 4) {
+      throw new CredentialsTooShortException();
+    }
+
+    // Ensure the said username is actually unique.
+    if (moderators.findByUsername(username.getUsername()).isPresent()) {
+      throw new DuplicateUsernameException();
+    }
+
+    // Reset the current token, and change the username. The password remains the same. This way,
+    // existing moderator sessions are reset.
+    Moderator updated = Moderator.builder()
+        .idModerator(moderator.getIdModerator())
+        .username(username.getUsername())
+        .token(base64Encode(generateRandomToken()))
+        .salt(moderator.getSalt())
+        .secret(moderator.getSecret())
+        .build();
+
+    moderators.saveAndFlush(updated);
+
+    return ServerMessage.builder()
+        .message("Username successfully updated.")
+        .build();
   }
 
   /**
