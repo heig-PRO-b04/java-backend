@@ -33,6 +33,15 @@ def account_change_password(token, idMod, current, new):
     else:
         return { "error" : res.status_code }
 
+def account_change_username(token, idMod, password, username):
+    data = { "currentPassword": password, "newUsername": username }
+    url = server + "/mod/" + str(idMod) + "/password?token=" + token
+    res = requests.put(url, json = data)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
+
 def account_delete(token, idMod, password):
     data = { "currentPassword": password }
     url = server + "/mod/" + str(idMod) + "?token=" + token
