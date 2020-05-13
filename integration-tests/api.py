@@ -23,6 +23,16 @@ def auth(username, password):
     else:
         return { "error" : res.status_code }
 
+# Account section
+def account_change_password(token, idMod, current, new):
+    data = { "currentPassword": current, "newPassword": new }
+    url = server + "/mod/" + str(idMod) + "/password?token=" + token
+    res = requests.put(url, json = data)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
+
 # User section
 def connectUser(code):
     data = { "code" : code }
