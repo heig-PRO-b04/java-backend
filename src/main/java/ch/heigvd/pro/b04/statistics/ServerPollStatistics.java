@@ -26,6 +26,7 @@ public class ServerPollStatistics {
 
     @Singular
     private List<AnswerStatistics> answers;
+    private double index;
     private String title;
 
     @JsonComponent
@@ -38,6 +39,7 @@ public class ServerPollStatistics {
           SerializerProvider serializerProvider
       ) throws IOException {
         jsonGenerator.writeStartObject();
+        jsonGenerator.writeNumberField("index", questionStatistics.index);
         jsonGenerator.writeStringField("title", questionStatistics.title);
         jsonGenerator.writeObjectField("answers", questionStatistics.answers);
         jsonGenerator.writeEndObject();
@@ -51,6 +53,7 @@ public class ServerPollStatistics {
 
     private int positive;
     private int negative;
+    private long idAnswer;
     private String title;
 
     @JsonComponent

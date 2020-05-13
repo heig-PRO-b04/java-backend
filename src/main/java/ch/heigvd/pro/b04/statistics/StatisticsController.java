@@ -211,6 +211,7 @@ public class StatisticsController {
     List<QuestionStatistics> questionsS = new LinkedList<>();
     for (ServerQuestion question : poll.getPollServerQuestions()) {
       QuestionStatistics.QuestionStatisticsBuilder questionBuilder = QuestionStatistics.builder();
+      questionBuilder.index(question.getIndexInPoll());
       questionBuilder.title(question.getTitle());
       List<AnswerStatistics> answersS = new LinkedList<>();
 
@@ -280,6 +281,7 @@ public class StatisticsController {
       //build statistics
       for (ServerAnswer a : question.getAnswersToQuestion()) {
         AnswerStatistics.AnswerStatisticsBuilder answerBuilder = AnswerStatistics.builder();
+        answerBuilder.idAnswer(a.getIdAnswer().getIdAnswer());
         answerBuilder.title(a.getTitle());
         answerBuilder.negative(negative[(int) a.getIdAnswer().getIdAnswer()]);
         answerBuilder.positive(positive[(int) a.getIdAnswer().getIdAnswer()]);
