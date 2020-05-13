@@ -12,6 +12,7 @@ import ch.heigvd.pro.b04.messages.ServerMessage;
 import ch.heigvd.pro.b04.moderators.Moderator;
 import ch.heigvd.pro.b04.moderators.ModeratorRepository;
 import javax.transaction.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -85,6 +86,38 @@ public class AccountController {
 
     return ServerMessage.builder()
         .message("Password successfully updated.")
+        .build();
+  }
+
+  /**
+   * Deletes a Moderator account, and all of its associated data.
+   *
+   * @param token       The authentication token of the user.
+   * @param idModerator The moderator identifier.
+   * @param password    The password information.
+   * @return A success message.
+   * @throws UnknownUserCredentialsException If authentication fails.
+   */
+  @Transactional
+  @DeleteMapping("/mod/{idModerator}")
+  public ServerMessage delete(
+      @RequestParam(name = "token") String token,
+      @PathVariable(name = "idModerator") Integer idModerator,
+      @RequestBody CurrentPassword password
+  ) throws UnknownUserCredentialsException {
+
+    Moderator moderator = moderators.findById(idModerator)
+        .filter(found -> found.getToken().equals(token))
+        .orElseThrow(UnknownUserCredentialsException::new);
+
+    if (!isCurrentPassword(moderator, password.getCurrentPassword())) {
+      throw new UnknownUserCredentialsException();
+    }
+
+    moderators.delete(moderator);
+
+    return ServerMessage.builder()
+        .message("Account successfully deleted")
         .build();
   }
 }
