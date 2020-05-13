@@ -240,11 +240,11 @@ public class ServerAnswerTest {
         .build();
 
     ServerQuestionIdentifier iq = ServerQuestionIdentifier.builder()
-            .idServerQuestion(1)
-            .idxPoll(pollTemp).build();
+        .idServerQuestion(1)
+        .idxPoll(pollTemp).build();
 
     ServerAnswerIdentifier ia = ServerAnswerIdentifier.builder()
-            .idAnswer(1).build();
+        .idAnswer(1).build();
 
     ServerAnswer a1 = ServerAnswer.builder()
         .idAnswer(ia)
@@ -291,9 +291,9 @@ public class ServerAnswerTest {
 
     //Moderator who owns the poll
     assertEquals("Just when I destroyed one",
-        ac.updateAnswer(1, 123, 1, 1,"t1", a2).getTitle());
+        ac.updateAnswer(1, 123, 1, 1, "t1", a2).getTitle());
     //Moderator who does not own the poll
     assertThrows(WrongCredentialsException.class,
-        () -> ac.updateAnswer(1, 123, 1, 1,"t2", a2));
+        () -> ac.updateAnswer(1, 123, 1, 1, "t2", a2));
   }
 }

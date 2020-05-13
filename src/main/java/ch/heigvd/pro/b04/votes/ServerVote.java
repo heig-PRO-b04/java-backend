@@ -17,7 +17,7 @@ import org.springframework.boot.jackson.JsonComponent;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class ServerVote implements Comparable<ServerVote>{
+public class ServerVote implements Comparable<ServerVote> {
 
   @Getter
   @EmbeddedId
@@ -30,17 +30,16 @@ public class ServerVote implements Comparable<ServerVote>{
   public int compareTo(ServerVote o) {
     if (idVote.getTimeVote().after(o.getIdVote().getTimeVote())) {
       return -1;
-    } else if (idVote.getTimeVote().before(o.getIdVote().getTimeVote())){
+    } else if (idVote.getTimeVote().before(o.getIdVote().getTimeVote())) {
       return 1;
     } else {
       return 0;
     }
   }
 
-  public boolean compareId(ServerVote other)
-  {
+  public boolean compareId(ServerVote other) {
     return (idVote.getIdxServerAnswer().equals(other.getIdVote().getIdxServerAnswer())
-          && idVote.getIdxParticipant().equals(other.getIdVote().getIdxParticipant()));
+        && idVote.getIdxParticipant().equals(other.getIdVote().getIdxParticipant()));
   }
 
   @JsonComponent

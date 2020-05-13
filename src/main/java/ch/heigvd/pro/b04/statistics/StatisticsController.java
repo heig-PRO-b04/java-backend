@@ -22,8 +22,6 @@ import ch.heigvd.pro.b04.votes.ServerVoteRepository;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -247,8 +245,9 @@ public class StatisticsController {
           .collect(Collectors.toUnmodifiableList());
       //at this point, groupedByParticipant is a List<List<ServerVote>>
 
-      short[] positive = new short[question.getAnswersToQuestion().size() * 2];//*2 to avoid surely out of bounds
-      short[] negative = new short[question.getAnswersToQuestion().size() * 2];//theoretically (+1) would be enough
+      //*2 to avoid surely out of bounds, theoretically (+1) would be enough
+      short[] positive = new short[question.getAnswersToQuestion().size() * 2];
+      short[] negative = new short[question.getAnswersToQuestion().size() * 2];
 
       //counting negative and positives votes one participant at a time
       for (short x = 0; x < groupedByParticipant.size(); ++x) {
@@ -257,7 +256,8 @@ public class StatisticsController {
         for (; y < groupedByParticipant.get(x).size(); ++y) {
           if (groupedByParticipant.get(x).get(y).isAnswerChecked()) {
             ++participantCount;
-            //limit to answersMax positive votes. remember most recent votes are the first ones in the list.
+            //limit to answersMax positive votes.
+            // remember most recent votes are the first ones in the list.
             if (!(participantCount > question.getAnswersMax())) {
               ++positive[(int) groupedByParticipant.get(x).get(y).getIdVote().getIdxServerAnswer()
                   .getIdAnswer()
@@ -294,7 +294,7 @@ public class StatisticsController {
       //}//end foreach answer
       questionsS.add(questionBuilder.build());
       //builder.question(questionBuilder.build());
-    }//end foreach question
+    } //end foreach question
     builder.questions(questionsS);
     return builder.build();
   }
