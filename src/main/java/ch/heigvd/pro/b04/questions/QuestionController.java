@@ -1,5 +1,6 @@
 package ch.heigvd.pro.b04.questions;
 
+import ch.heigvd.pro.b04.answers.ServerAnswer;
 import ch.heigvd.pro.b04.auth.exceptions.WrongCredentialsException;
 import ch.heigvd.pro.b04.error.exceptions.ResourceNotFoundException;
 import ch.heigvd.pro.b04.messages.ServerMessage;
@@ -11,6 +12,7 @@ import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.sessions.SessionState;
+import ch.heigvd.pro.b04.sessions.exceptions.IndexInPollAlreadyExist;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -101,7 +103,7 @@ public class QuestionController {
       int idPoll,
       int idQuestion,
       String token
-  ) throws WrongCredentialsException {
+  ) throws WrongCredentialsException, IndexInPollAlreadyExist {
     Moderator moderator = findVerifiedModeratorByIdAndToken(
         idModerator, token).orElseThrow(WrongCredentialsException::new);
 
@@ -114,6 +116,14 @@ public class QuestionController {
         .idServerQuestion(idQuestion)
         .idxPoll(p)
         .build()));
+  }
+
+  private void verifyAndInsertIndexInPoll(ServerPoll poll, double index)
+      throws IndexInPollAlreadyExist {
+    if (poll.getAllIndexs().contains(index)) {
+      throw new IndexInPollAlreadyExist();
+    }
+    poll.getAllIndexs().add(index);
   }
 
   /**
@@ -226,7 +236,7 @@ public class QuestionController {
         .idPoll(idPoll)
         .build())
         .orElseThrow(ResourceNotFoundException::new);
-
+    verifyAndInsertIndexInPoll(poll, question.getIndexInPoll());
     return poll.newQuestion(repository, question);
   }
 
@@ -255,6 +265,12 @@ public class QuestionController {
     ServerQuestion updated =
         findQuestionByPollAndModerator(idModerator, idPoll, idQuestion, token)
             .orElseThrow(ResourceNotFoundException::new);
+
+    if (updated.indexInPoll != question.getIndexInPoll()) {
+      verifyAndInsertIndexInPoll(updated.getIdServerQuestion().getIdxPoll(),
+          question.getIndexInPoll());
+      updated.getIdServerQuestion().getIdxPoll().getAllIndexs().remove(question.getIndexInPoll());
+    }
 
     updated.setIndexInPoll(question.getIndexInPoll());
     updated.setTitle(question.getTitle());

@@ -11,6 +11,7 @@ import ch.heigvd.pro.b04.sessions.SessionRepository;
 import ch.heigvd.pro.b04.sessions.SessionState;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,6 +48,10 @@ public class ServerPoll implements Serializable {
 
   @Getter
   private String title;
+
+  @Getter
+  @Transient
+  private ArrayList<Double> allIndexs = new ArrayList<>();
 
   /**
    * Returns a boolean indicating whether a certain token has the permissions to perform some
@@ -127,7 +133,8 @@ public class ServerPoll implements Serializable {
     return repository.saveAndFlush(newServerSession);
   }
 
-  /** Returns the latest session made in this poll.
+  /**
+   * Returns the latest session made in this poll.
    *
    * @param repository The session repository
    * @return An Optional of serversession. If set, it contains the last session made in this poll
