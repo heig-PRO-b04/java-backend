@@ -33,6 +33,15 @@ def account_change_password(token, idMod, current, new):
     else:
         return { "error" : res.status_code }
 
+def account_delete(token, idMod, password):
+    data = { "currentPassword": password }
+    url = server + "/mod/" + str(idMod) + "?token=" + token
+    res = requests.delete(url, json = data)
+    if (res.status_code == 200):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
+
 # User section
 def connectUser(code):
     data = { "code" : code }
