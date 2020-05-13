@@ -21,8 +21,7 @@ public class TokenUtils {
   /**
    * Returns some cryptographically secure and randomly generated salt.
    */
-  /* package */
-  static byte[] generateRandomSalt() {
+  public static byte[] generateRandomSalt() {
     byte[] values = new byte[SALT_LENGTH];
     sRandom.nextBytes(values);
     return values;
