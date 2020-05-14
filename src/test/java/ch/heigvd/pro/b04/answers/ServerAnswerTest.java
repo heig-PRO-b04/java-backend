@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -288,6 +289,7 @@ public class ServerAnswerTest {
             .idPoll(123).idxModerator(aloy).build()
     )).thenReturn(Optional.of(pollTemp));
     when(answerRepository.findById(a1.getIdAnswer())).thenReturn(Optional.of(a1));
+    when(answerRepository.save(Mockito.any())).then(AdditionalAnswers.returnsFirstArg());
 
     //Moderator who owns the poll
     assertEquals("Just when I destroyed one",
