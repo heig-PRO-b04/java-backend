@@ -1,5 +1,6 @@
 # heig-PRO-b04/java-backend
 
+![Integrations tests (Python)](https://github.com/heig-PRO-b04/java-backend/workflows/Integrations%20tests%20(Python)/badge.svg)
 ![JUnit5 Tests](https://github.com/heig-PRO-b04/java-backend/workflows/JUnit5%20Tests/badge.svg)
 ![Google Java Checkstyle](https://github.com/heig-PRO-b04/java-backend/workflows/Google%20Java%20Checkstyle/badge.svg)
 [![Heroku App Status](https://heroku-shields.herokuapp.com/heig-PRO-b04)](https://heig-PRO-b04.herokuapp.com)
