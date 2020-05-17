@@ -15,7 +15,6 @@ import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
-import ch.heigvd.pro.b04.questions.ClientQuestion;
 import ch.heigvd.pro.b04.questions.QuestionRepository;
 import ch.heigvd.pro.b04.questions.ServerQuestion;
 import ch.heigvd.pro.b04.questions.ServerQuestionIdentifier;

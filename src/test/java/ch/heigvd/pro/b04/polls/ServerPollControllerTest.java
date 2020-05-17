@@ -62,6 +62,8 @@ public class ServerPollControllerTest {
       List<ServerPoll> response = controller.all("secret", 1);
       assertEquals(expected, response);
     });
+    assertThrows(WrongCredentialsException.class, () -> controller.all("scret", 1));
+    assertThrows(WrongCredentialsException.class, () -> controller.all("secret", 2));
   }
 
   @Test
@@ -333,6 +335,12 @@ public class ServerPollControllerTest {
 
     assertDoesNotThrow(() -> {
       controller.get("aliceToken", 123, 321);
+    });
+    assertThrows(WrongCredentialsException.class, () -> {
+      controller.get("bobToken", 123, 321);
+    });
+    assertThrows(WrongCredentialsException.class, () -> {
+      controller.get("bobToken", 223, 321);
     });
   }
 

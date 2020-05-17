@@ -32,22 +32,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountTest {
+
   @InjectMocks
   AccountController ac;
 
   @Mock
   ModeratorRepository moderatorRepository;
 
-  private final String saltT=new String("HZD2017");
+  private final String saltT = new String("HZD2017");
 
   @Test
-  public void testModeratorCanChangeFieldWithGoodParams()
-  {
-    Moderator aloy= Moderator.builder()
+  public void testModeratorCanChangeFieldWithGoodParams() {
+    Moderator aloy = Moderator.builder()
         .idModerator(1)
         .username("aloy")
         .salt(saltT)
-        .secret(getSecret("chieftain",base64Decode(saltT)))
+        .secret(getSecret("chieftain", base64Decode(saltT)))
         .token("t1").build();
 
     when(moderatorRepository.findById(1)).thenReturn(Optional.of(aloy));
@@ -55,106 +55,116 @@ public class AccountTest {
     when(moderatorRepository.findByUsername("chieftain aloy")).thenReturn(Optional.empty());
     when(moderatorRepository.saveAndFlush(Mockito.any())).then(AdditionalAnswers.returnsFirstArg());
 
-    assertDoesNotThrow(()-> ac.changeUsername("t1",aloy.getIdModerator(),
+    assertDoesNotThrow(() -> ac.changeUsername("t1", aloy.getIdModerator(),
         NewUsername.builder()
             .currentPassword("chieftain")
             .username("chieftain aloy").build()));
 
-    assertDoesNotThrow(()-> ac.changePassword("t1",aloy.getIdModerator(),
+    assertDoesNotThrow(() -> ac.changePassword("t1", aloy.getIdModerator(),
         NewPassword.builder()
             .currentPassword("chieftain")
             .newPassword("chieftain banuk").build()));
   }
 
   @Test
-  public void testModeratorCannotChangeFieldWithWrongParams()
-  {
-    Moderator aloy= Moderator.builder()
+  public void testModeratorCannotChangeFieldWithWrongParams() {
+    Moderator aloy = Moderator.builder()
         .idModerator(1)
         .username("aloy")
         .salt(saltT)
-        .secret(getSecret("chieftain",base64Decode(saltT)))
+        .secret(getSecret("chieftain", base64Decode(saltT)))
         .token("t1").build();
 
     when(moderatorRepository.findById(1)).thenReturn(Optional.of(aloy));
     lenient().when(moderatorRepository.findByUsername("aloy")).thenReturn(Optional.of(aloy));
-    lenient().when(moderatorRepository.findByUsername("chieftain aloy")).thenReturn(Optional.empty());
-    lenient().when(moderatorRepository.saveAndFlush(Mockito.any())).then(AdditionalAnswers.returnsFirstArg());
+    lenient().when(moderatorRepository.findByUsername("chieftain aloy"))
+        .thenReturn(Optional.empty());
+    lenient().when(moderatorRepository.saveAndFlush(Mockito.any()))
+        .then(AdditionalAnswers.returnsFirstArg());
 
     //wrong pwd
-    assertThrows(UnknownUserCredentialsException.class,() -> ac.changeUsername("t1",aloy.getIdModerator(),
-        NewUsername.builder()
-            .currentPassword("banuk")
-            .username("chieftain aloy").build()));
+    assertThrows(UnknownUserCredentialsException.class,
+        () -> ac.changeUsername("t1", aloy.getIdModerator(),
+            NewUsername.builder()
+                .currentPassword("banuk")
+                .username("chieftain aloy").build()));
 
     //wrong token
-    assertThrows(UnknownUserCredentialsException.class,() -> ac.changeUsername("t11",aloy.getIdModerator(),
-        NewUsername.builder()
-            .currentPassword("chieftain")
-            .username("chieftain aloy").build()));
+    assertThrows(UnknownUserCredentialsException.class,
+        () -> ac.changeUsername("t11", aloy.getIdModerator(),
+            NewUsername.builder()
+                .currentPassword("chieftain")
+                .username("chieftain aloy").build()));
 
     //wrong pwd
-    assertThrows(UnknownUserCredentialsException.class,() -> ac.changeUsername("t1",aloy.getIdModerator(),
-        NewUsername.builder()
-            .currentPassword("cheiftain")
-            .username("chieftain aloy").build()));
+    assertThrows(UnknownUserCredentialsException.class,
+        () -> ac.changeUsername("t1", aloy.getIdModerator(),
+            NewUsername.builder()
+                .currentPassword("cheiftain")
+                .username("chieftain aloy").build()));
 
     //duplicate username
-    assertThrows(DuplicateUsernameException.class,() -> ac.changeUsername("t1",aloy.getIdModerator(),
-        NewUsername.builder()
-            .currentPassword("chieftain")
-            .username("aloy").build()));
+    assertThrows(DuplicateUsernameException.class,
+        () -> ac.changeUsername("t1", aloy.getIdModerator(),
+            NewUsername.builder()
+                .currentPassword("chieftain")
+                .username("aloy").build()));
 
     //new username too short
-    assertThrows(CredentialsTooShortException.class,() -> ac.changeUsername("t1",aloy.getIdModerator(),
-        NewUsername.builder()
-            .currentPassword("chieftain")
-            .username("tfw").build()));
+    assertThrows(CredentialsTooShortException.class,
+        () -> ac.changeUsername("t1", aloy.getIdModerator(),
+            NewUsername.builder()
+                .currentPassword("chieftain")
+                .username("tfw").build()));
 
     //wrong token
-    assertThrows(UnknownUserCredentialsException.class,() -> ac.changePassword("t11",aloy.getIdModerator(),
-        NewPassword.builder()
-            .currentPassword("chieftain")
-            .newPassword("chieftain banuk").build()));
+    assertThrows(UnknownUserCredentialsException.class,
+        () -> ac.changePassword("t11", aloy.getIdModerator(),
+            NewPassword.builder()
+                .currentPassword("chieftain")
+                .newPassword("chieftain banuk").build()));
 
     //wrong pwd
-    assertThrows(UnknownUserCredentialsException.class,() -> ac.changePassword("t1",aloy.getIdModerator(),
-        NewPassword.builder()
-            .currentPassword("cheiftain")
-            .newPassword("chieftain banuk").build()));
+    assertThrows(UnknownUserCredentialsException.class,
+        () -> ac.changePassword("t1", aloy.getIdModerator(),
+            NewPassword.builder()
+                .currentPassword("cheiftain")
+                .newPassword("chieftain banuk").build()));
 
     //new password too short
-    assertThrows(CredentialsTooShortException.class,() -> ac.changePassword("t1",aloy.getIdModerator(),
-        NewPassword.builder()
-            .currentPassword("chieftain")
-            .newPassword("tfw").build()));
+    assertThrows(CredentialsTooShortException.class,
+        () -> ac.changePassword("t1", aloy.getIdModerator(),
+            NewPassword.builder()
+                .currentPassword("chieftain")
+                .newPassword("tfw").build()));
   }
 
   @Test
-  public void testModeratorCanDeleteHisAccountWithRightParamsOnly()
-  {
-    Moderator aloy= Moderator.builder()
+  public void testModeratorCanDeleteHisAccountWithRightParamsOnly() {
+    Moderator aloy = Moderator.builder()
         .idModerator(1)
         .username("aloy")
         .salt(saltT)
-        .secret(getSecret("chieftain",base64Decode(saltT)))
+        .secret(getSecret("chieftain", base64Decode(saltT)))
         .token("t1").build();
 
     when(moderatorRepository.findById(1)).thenReturn(Optional.of(aloy));
     lenient().when(moderatorRepository.findByUsername("aloy")).thenReturn(Optional.of(aloy));
-    lenient().when(moderatorRepository.findByUsername("chieftain aloy")).thenReturn(Optional.empty());
+    lenient().when(moderatorRepository.findByUsername("chieftain aloy"))
+        .thenReturn(Optional.empty());
 
-    assertDoesNotThrow(()-> ac.delete("t1",aloy.getIdModerator(),
+    assertDoesNotThrow(() -> ac.delete("t1", aloy.getIdModerator(),
         CurrentPassword.builder()
             .currentPassword("chieftain").build()));
 
     //wrong token
-    assertThrows(UnknownUserCredentialsException.class,()-> ac.delete("t11",aloy.getIdModerator(),
-        CurrentPassword.builder()
-            .currentPassword("chieftain").build()));
+    assertThrows(UnknownUserCredentialsException.class,
+        () -> ac.delete("t11", aloy.getIdModerator(),
+            CurrentPassword.builder()
+                .currentPassword("chieftain").build()));
 
     //wrong pwd
-    assertThrows(UnknownUserCredentialsException.class,()-> ac.delete("t1",aloy.getIdModerator(),
+    assertThrows(UnknownUserCredentialsException.class, () -> ac.delete("t1", aloy.getIdModerator(),
         CurrentPassword.builder()
             .currentPassword("cheiftain").build()));
   }

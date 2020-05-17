@@ -130,7 +130,8 @@ public class ServerPoll implements Serializable {
   /** Returns the latest session made in this poll.
    *
    * @param repository The session repository
-   * @return An Optional of serversession. If set, it contains the last session made in this poll
+   * @return An Optional of {@link ServerSession}.
+   * If set, it contains the last session made in this poll
    */
   public Optional<ServerSession> getLatestSession(SessionRepository repository) {
     List<ServerSession> allSessions =
