@@ -76,8 +76,8 @@ public class VoteControllerTest {
     ServerSession session = ServerSession.builder().build();
     ServerAnswer a1 = ServerAnswer.builder().build();
     ServerAnswer a2 = ServerAnswer.builder().build();
-    ServerQuestion q1= ServerQuestion.builder().build();
-    ServerPoll poll= ServerPoll.builder().build();
+    ServerQuestion q1 = ServerQuestion.builder().build();
+    ServerPoll poll = ServerPoll.builder().build();
 
     ServerQuestionIdentifier qi1 = ServerQuestionIdentifier.builder()
         .idServerQuestion(1)
@@ -107,7 +107,7 @@ public class VoteControllerTest {
     q1 = ServerQuestion.builder()
         .idServerQuestion(qi1)
         .title("Do you dream of Scorchers ?")
-        .answersToQuestion(Set.of(a1,a2))
+        .answersToQuestion(Set.of(a1, a2))
         .build();
 
     poll = ServerPoll.builder()
@@ -123,7 +123,7 @@ public class VoteControllerTest {
             .idxPoll(poll).build())
         .state(SessionState.OPEN).build();
 
-    Participant ikrie= Participant.builder()
+    Participant ikrie = Participant.builder()
         .idParticipant(ParticipantIdentifier.builder()
             .idxServerSession(session)
             .idParticipant(1).build())
@@ -133,7 +133,7 @@ public class VoteControllerTest {
     when(modoRepo.findById(1)).thenReturn(Optional.of(aloy));
     lenient().when(modoRepo.findByToken("HZD2017")).thenReturn(Optional.of(aloy));
     lenient().when(pollRepo.findById(identifier)).thenReturn(Optional.of(poll));
-    when(pollRepo.findByModeratorAndId(aloy,123)).thenReturn(Optional.of(poll));
+    when(pollRepo.findByModeratorAndId(aloy, 123)).thenReturn(Optional.of(poll));
     when(questionRepository.findById(Mockito.any())).thenReturn(Optional.of(q1));
     when(participantRepository.findByToken("banuk")).thenReturn(Optional.of(ikrie));
     when(sessionRepository.findById(session.getIdSession())).thenReturn(Optional.of(session));
@@ -141,24 +141,25 @@ public class VoteControllerTest {
     when(answerRepository.findById(Mockito.any())).thenReturn(Optional.of(a1));
     when(voteRepository.save(Mockito.any())).thenAnswer(AdditionalAnswers.returnsFirstArg());
 
-    assertDoesNotThrow(()->vc.newVote(1, 123, 1, 1,ikrie.getToken(),
+    assertDoesNotThrow(() -> vc.newVote(1, 123, 1, 1, ikrie.getToken(),
         ClientVote.builder()
             .checked(true).build()));
     //wrong idModerator (we cannot change test wrong idQuestion or idAnswer :()
-    assertThrows(ResourceNotFoundException.class, ()->vc.newVote(2, 123, 1, 1,ikrie.getToken(),
+    assertThrows(ResourceNotFoundException.class, () -> vc.newVote(2, 123, 1, 1, ikrie.getToken(),
         ClientVote.builder()
             .checked(true).build()));
     //wrong token
-    assertThrows(WrongCredentialsException.class,()->vc.newVote(1, 123, 1, 1,"blabla",
+    assertThrows(WrongCredentialsException.class, () -> vc.newVote(1, 123, 1, 1, "blabla",
         ClientVote.builder()
             .checked(true).build()));
     session.setState(SessionState.QUARANTINED);
-    assertDoesNotThrow(()->vc.newVote(1, 123, 1, 1,ikrie.getToken(),
+    assertDoesNotThrow(() -> vc.newVote(1, 123, 1, 1, ikrie.getToken(),
         ClientVote.builder()
             .checked(true).build()));
     session.setState(SessionState.CLOSED);
-    assertThrows(SessionNotAvailableException.class,()->vc.newVote(1, 123, 1, 1,ikrie.getToken(),
-        ClientVote.builder()
-            .checked(true).build()));
+    assertThrows(SessionNotAvailableException.class,
+        () -> vc.newVote(1, 123, 1, 1, ikrie.getToken(),
+            ClientVote.builder()
+                .checked(true).build()));
   }
 }
