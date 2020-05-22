@@ -59,7 +59,7 @@ Les tests effectués sont les suivants :
         
 
 ## Instructions pour vérifier les protocoles
-L'entièreté des tests unitaires, d'intégration continue, de formatage, et autres ayant été effectués sur GitHub grâce à Jarvis CI et à GitHub Actions, un historique pour chacun de ces tests pour chaque Pull Request ou commit de merge sur le master y est disponible.\
+L'entièreté des tests unitaires, d'intégration continue, de formatage, et autres ayant été effectués sur GitHub grâce à Travis CI et à GitHub Actions, un historique pour chacun de ces tests pour chaque Pull Request ou commit de merge sur le master y est disponible.\
 Chaque Pull Request avec les tests effectués, la personne ayant revu le code (et potentiellement commenté / demandé des modifications), ainsi que les changements effectués sont disponibles aux adresses suivantes:
 
 - Pour le backend: https://github.com/heig-PRO-b04/java-backend/pulls?q=is:pr+is:closed
