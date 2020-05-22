@@ -68,6 +68,7 @@ public class ServerPollStatistics {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("positive", answerStatistics.positive);
         jsonGenerator.writeNumberField("negative", answerStatistics.negative);
+        jsonGenerator.writeNumberField("idAnswer", answerStatistics.idAnswer);
         jsonGenerator.writeStringField("title", answerStatistics.title);
         jsonGenerator.writeEndObject();
       }

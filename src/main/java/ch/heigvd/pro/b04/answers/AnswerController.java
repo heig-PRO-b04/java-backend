@@ -359,7 +359,7 @@ public class AnswerController {
 
     toUpdate.setTitle(answer.getTitle());
     toUpdate.setDescription(answer.getDescription());
-    return toUpdate;
+    return repository.save(toUpdate);
   }
 
   /**

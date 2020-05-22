@@ -215,10 +215,10 @@ public class StatisticsController {
       questionBuilder.title(question.getTitle());
       List<AnswerStatistics> answersS = new LinkedList<>();
 
-      Set<ServerVote> votes = null; //null because Set cannot be instantiated (abstract class)
+      Set<ServerVote> votes = Set.of(); //null because Set cannot be instantiated (abstract class)
       //fetch all votes of all answers to a question
       for (ServerAnswer answer : question.getAnswersToQuestion()) {
-        if (votes == null) {
+        if (votes.isEmpty()) {
           votes = answer.getVoteSet();
         } else {
           votes.addAll(answer.getVoteSet());
