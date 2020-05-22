@@ -161,7 +161,7 @@ public class QuestionController {
    * gets a {@link ServerQuestion} by his id.
    *
    * @param idModerator id of moderator owning the poll
-   * @param token       token of the moderator or participant
+   * @param token       token of the {@link Moderator} or {@link Participant}
    * @param idPoll      part of the {@link ServerPollIdentifier}
    * @param idQuestion  part of the {@link ServerQuestionIdentifier}
    * @return {@link ServerQuestion} found
