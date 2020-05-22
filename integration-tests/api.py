@@ -246,7 +246,7 @@ def postAnswer(token, idMod, idPoll, idQuestion, title, description):
     else:
         return { "error" : res.status_code }
 
-def putAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer):
+def putAnswerWithId(token, idMod, idPoll, idQuestion, idAnswer, title, description):
     data = { "title" : title
            , "description" : description
            }
