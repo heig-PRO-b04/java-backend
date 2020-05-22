@@ -126,7 +126,7 @@ public class ServerAnswerTest {
         .idPoll(123)
         .build();
 
-    ServerSession session=ServerSession.builder().build();
+    ServerSession session = ServerSession.builder().build();
 
     ServerPoll poll = ServerPoll.builder()
         .idPoll(identifier)
@@ -163,14 +163,14 @@ public class ServerAnswerTest {
         .title("Just when I destroyed one")
         .build();
 
-    session= ServerSession.builder()
+    session = ServerSession.builder()
         .idSession(SessionIdentifier.builder()
-        .idSession(1)
-        .idxPoll(poll).build())
+            .idSession(1)
+            .idxPoll(poll).build())
         .state(SessionState.OPEN)
         .build();
 
-    Participant varga= Participant.builder()
+    Participant varga = Participant.builder()
         .idParticipant(ParticipantIdentifier.builder()
             .idxServerSession(session)
             .idParticipant(1).build())
@@ -191,17 +191,18 @@ public class ServerAnswerTest {
     lenient().when(modoRepo.findByToken("banuk")).thenReturn(Optional.of(ikrie));
     lenient().when(participantRepository.findByToken("chieftain")).thenReturn(Optional.empty());
     when(participantRepository.findByToken(varga.getToken())).thenReturn(Optional.of(varga));
-    lenient().when(participantRepository.findById(varga.getIdParticipant())).thenReturn(Optional.of(varga));
+    lenient().when(participantRepository.findById(varga.getIdParticipant()))
+        .thenReturn(Optional.of(varga));
     when(voteRepository.findAll()).thenReturn(List.of());
 
     //moderator token
     assertDoesNotThrow(() -> assertEquals(List.of(a1, a2), ac.all(1, 123, 1, "chieftain")));
-    assertEquals(a1.getTitle(), ac.byId(1,123,1,1,aloy.getToken()).getTitle());
-    assertEquals(a2.getTitle(), ac.byId(1,123,1,2,aloy.getToken()).getTitle());
+    assertEquals(a1.getTitle(), ac.byId(1, 123, 1, 1, aloy.getToken()).getTitle());
+    assertEquals(a2.getTitle(), ac.byId(1, 123, 1, 2, aloy.getToken()).getTitle());
 
     //participant token
     assertDoesNotThrow(() -> assertEquals(List.of(a1, a2), ac.all(1, 123, 1, varga.getToken())));
-    assertEquals(a1.getTitle(), ac.byId(1,123,1,1,varga.getToken()).getTitle());
+    assertEquals(a1.getTitle(), ac.byId(1, 123, 1, 1, varga.getToken()).getTitle());
 
     //wrong tokens and params
     assertThrows(WrongCredentialsException.class, () -> assertEquals(List.of(a1, a2),
@@ -362,7 +363,7 @@ public class ServerAnswerTest {
     assertEquals(a2.getTitle(),
         ac.updateAnswer(1, 123, 1, 1, "t1", a2).getTitle());
     //wrong params
-    assertThrows(ResourceNotFoundException.class, ()-> ac.updateAnswer(1, 123, 2, 1, "t1", a2));
+    assertThrows(ResourceNotFoundException.class, () -> ac.updateAnswer(1, 123, 2, 1, "t1", a2));
     //Moderator who does not own the poll
     assertThrows(ResourceNotFoundException.class,
         () -> ac.updateAnswer(2, 123, 1, 1, "t2", a2));
