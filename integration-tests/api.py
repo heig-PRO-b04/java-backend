@@ -292,3 +292,13 @@ def vote(token, idMod, idPoll, idQuestion, idAnswer, checked):
         return
     else:
         return { "error" : res.status_code }
+
+def getStats(token, idMod, idPoll):
+    url=(server+"/mod/"+str(idMod)
+        +"/poll/"+str(idPoll)+"/statistics?token="
+        +token)
+    res=requests.get(url)
+    if (res.status_code == 404):
+        return res.json()
+    else:
+        return { "error" : res.status_code }
