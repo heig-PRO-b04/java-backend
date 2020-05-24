@@ -2,6 +2,13 @@
 Ce document contient toutes les informations demandées pour le rendu final de ce projet.
 Ce dernier étant composé de trois axes, nous avons séparé les détails de ces trois axes.
 
+- [Package de test/installation](## Package de test/installation)
+  + [Frontend web](### Frontend web)
+  + [Frontend Android](### Frontend Android)
+  + [Back-end](### Back-end)
+- [Organisation du code](## Organisation du code)
+- [Suivi qualité](## Suivi qualité)
+
 ## Package de test/installation
 
 ### Frontend web
@@ -124,7 +131,6 @@ Le code est réparti en plusieurs modules :
   `Extra` (suivant les conventions Elm).
 
 ##### Points notables
-
 - Pour nous protéger contre des erreurs de programmation, le module Api
   restreint drastiquement l'accès aux informations de connexion. Ainsi, nous
   avons construit un ensemble de types qui garantit que :
