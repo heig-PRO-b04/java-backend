@@ -11,6 +11,8 @@
 
 [Journal](https://github.com/heig-PRO-b04/java-backend/wiki/Journal)
 
+[Rapport](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport)
+
 ## API
 [Home](https://github.com/heig-PRO-b04/java-backend/wiki/APIv1)
 
