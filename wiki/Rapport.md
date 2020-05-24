@@ -7,6 +7,9 @@ Ce dernier étant composé de trois axes, nous avons séparé les détails de ce
   + [Frontend Android](### Frontend Android)
   + [Back-end](### Back-end)
 - [Organisation du code](## Organisation du code)
+  + [Frontend web](### Frontend web)
+  + [Frontend Android](### Frontend Android)
+  + [Back-end](### Back-end)
 - [Suivi qualité](## Suivi qualité)
 
 ## Package de test/installation
@@ -151,6 +154,9 @@ Le code est réparti en plusieurs modules :
   `Picasso`.
 
 ### Frontend Android
+#### Structure générale
+Le code est divisé dans cinq paquets séparés, afin présenter cette Organisation, nous divisons ce contenu en autant de chapitres.
+
 #### Authentification
 Contient toutes les classes permettant de gérer l'authentification des utilisateurs.
 Afin de conserver le token d'authentification d'un utilisateur, nous avons décidé d'utiliser des LiveDatas que nous pouvons ensuite observer. Ceci nous permet d'être notifié en cas de déconnection.
@@ -189,9 +195,5 @@ Ce paquet contient différentes classes utilisées dans tout le projet.
 ### Back-end
 
 ## Suivi qualité
-
-### Frontend web
-
-### Frontend Android
-
-### Back-end
+Afin de nous assurer de la qualité de notre projet sur la durée, nous avons mis en place un certain nombre d'outils nous permettant de tester le bon fonctionnement de chaque axe du projet de manière automatisée.
+Notre objectif était de nous assurer d'avoir un endroit ou le projet reste dans un état cohérent, fonctionnel et accessible pour tous les membres du groupes. Nous avons donc décidé d'utiliser [GitHub](github.com) pour stocker une version que nous assurons toujours fonctionnelle de notre projet. Avec ceci, nous utilisons [Travis](https://travis-ci.org/) qui nous permet de faire tourner des tests à chaque Pull Request (PR) sur la branche maitresse de notre projet. Avec tous ces outils, nous avons pu mettre en place un certain nombre de règles nous empêchant de mettre sur la version centrale du projet, tout code ne passant pas les tests. De plus, nous avons décidé d'empecher l'ajout de code tant que ce dernier n'a pas été revu par un autre membre du groupe.
