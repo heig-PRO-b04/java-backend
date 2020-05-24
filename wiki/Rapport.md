@@ -2,23 +2,23 @@
 Ce document contient toutes les informations demandées pour le rendu final de ce projet.
 Ce dernier étant composé de trois axes, nous avons séparé les détails de ces trois axes.
 
-- [Package de test/installation](## Package de test/installation)
-  + [Frontend web](### Frontend web)
-  + [Frontend Android](### Frontend Android)
-  + [Back-end](### Back-end)
-- [Organisation du code](## Organisation du code)
-  + [Frontend web](### Frontend web)
-  + [Frontend Android](### Frontend Android)
-  + [Back-end](### Back-end)
-- [Suivi qualité](## Suivi qualité)
-  + [Générale](### Générale)
-  + [Frontend web](### Frontend web)
-  + [Frontend Android](### Frontend Android)
-  + [Back-end](### Back-end)
+- [Test/installation](##Test/installation)
+  + [Web](###Web)
+  + [Android](###Android)
+  + [Back-end](###Back-end)
+- [Structure](##Structure)
+  + [Web](###Web)
+  + [Android](###Android)
+  + [Back-end](###Back-end)
+- [Qualité](##Qualité)
+  + [Générale](###Générale)
+  + [Web](###Web)
+  + [Android](###Android)
+  + [Back-end](###Back-end)
 
-## Package de test/installation
+## Test/installation
 
-### Frontend web
+### Web
 Le frontend de notre application est distribué sous la forme d'un projet
 NodeJS, et utilise le build system Yarn pour la gestion des paquets et des
 dépendances. Il est actuellement déployé sur [GitHub Pages](https://rockin.app)
@@ -64,7 +64,7 @@ plateforme GitHub Actions / Ubuntu LTS et sont disponible dans le
 sous-dossier `.github/workflows`.
 
 
-### Frontend Android
+### Android
 Afin d'utiliser l'application créée dans ce projet, il faut commencer par l'installer.
 Il y a deux façon de ce faire.
 La première option et la plus simple est de la télécharger sur GooglePlay.
@@ -89,9 +89,9 @@ En cas de téléchargement de l'archive, l'extraire et passer à l'instruction s
 
 ### Back-end
 
-## Organisation du code
+## Structure
 
-### Frontend web
+### Web
 #### Structure générale
 
 Le frontend web de notre application est basé sur `npm` et utilise `yarn`. Le
@@ -157,7 +157,7 @@ Le code est réparti en plusieurs modules :
 - Quelques éléments d'interface graphique ont été factorisés dans le paquet
   `Picasso`.
 
-### Frontend Android
+### Android
 #### Structure générale
 Le code est divisé dans cinq paquets séparés, afin présenter cette Organisation, nous divisons ce contenu en autant de chapitres.
 
@@ -198,13 +198,13 @@ Ce paquet contient différentes classes utilisées dans tout le projet.
 
 ### Back-end
 
-## Suivi qualité
+## Qualité
 ### Générale
 Afin de nous assurer de la qualité de notre projet sur la durée, nous avons mis en place un certain nombre d'outils nous permettant de tester le bon fonctionnement de chaque axe du projet de manière automatisée.
 Notre objectif était de nous assurer d'avoir un endroit ou le projet reste dans un état cohérent, fonctionnel et accessible pour tous les membres du groupes. Nous avons donc décidé d'utiliser [GitHub](github.com) pour stocker une version que nous assurons toujours fonctionnelle de notre projet. Avec ceci, nous utilisons [Travis](https://travis-ci.org/) qui nous permet de faire tourner des tests à chaque Pull Request (PR) sur la branche maitresse de notre projet. Avec tous ces outils, nous avons pu mettre en place un certain nombre de règles nous empêchant de mettre sur la version centrale du projet, tout code ne passant pas les tests. De plus, nous avons décidé d'empêcher l'ajout de code tant que ce dernier n'a pas été revu par un autre membre du groupe.
 
-### Frontend web
+### Web
 
-### Frontend Android
+### Android
 
 ### Back-end
