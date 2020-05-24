@@ -11,6 +11,10 @@ Ce dernier étant composé de trois axes, nous avons séparé les détails de ce
   + [Frontend Android](### Frontend Android)
   + [Back-end](### Back-end)
 - [Suivi qualité](## Suivi qualité)
+  + [Générale](### Générale)
+  + [Frontend web](### Frontend web)
+  + [Frontend Android](### Frontend Android)
+  + [Back-end](### Back-end)
 
 ## Package de test/installation
 
@@ -195,5 +199,12 @@ Ce paquet contient différentes classes utilisées dans tout le projet.
 ### Back-end
 
 ## Suivi qualité
+### Générale
 Afin de nous assurer de la qualité de notre projet sur la durée, nous avons mis en place un certain nombre d'outils nous permettant de tester le bon fonctionnement de chaque axe du projet de manière automatisée.
-Notre objectif était de nous assurer d'avoir un endroit ou le projet reste dans un état cohérent, fonctionnel et accessible pour tous les membres du groupes. Nous avons donc décidé d'utiliser [GitHub](github.com) pour stocker une version que nous assurons toujours fonctionnelle de notre projet. Avec ceci, nous utilisons [Travis](https://travis-ci.org/) qui nous permet de faire tourner des tests à chaque Pull Request (PR) sur la branche maitresse de notre projet. Avec tous ces outils, nous avons pu mettre en place un certain nombre de règles nous empêchant de mettre sur la version centrale du projet, tout code ne passant pas les tests. De plus, nous avons décidé d'empecher l'ajout de code tant que ce dernier n'a pas été revu par un autre membre du groupe.
+Notre objectif était de nous assurer d'avoir un endroit ou le projet reste dans un état cohérent, fonctionnel et accessible pour tous les membres du groupes. Nous avons donc décidé d'utiliser [GitHub](github.com) pour stocker une version que nous assurons toujours fonctionnelle de notre projet. Avec ceci, nous utilisons [Travis](https://travis-ci.org/) qui nous permet de faire tourner des tests à chaque Pull Request (PR) sur la branche maitresse de notre projet. Avec tous ces outils, nous avons pu mettre en place un certain nombre de règles nous empêchant de mettre sur la version centrale du projet, tout code ne passant pas les tests. De plus, nous avons décidé d'empêcher l'ajout de code tant que ce dernier n'a pas été revu par un autre membre du groupe.
+
+### Frontend web
+
+### Frontend Android
+
+### Back-end
