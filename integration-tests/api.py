@@ -242,7 +242,7 @@ def postAnswer(token, idMod, idPoll, idQuestion, title, description):
             )
     res = requests.post(url, json = data)
     if (res.status_code == 200):
-        return
+        return res.json()
     else:
         return { "error" : res.status_code }
 
@@ -290,5 +290,19 @@ def vote(token, idMod, idPoll, idQuestion, idAnswer, checked):
     res = requests.put(url, json = data)
     if (res.status_code == 200):
         return
+    else:
+        return { "error" : res.status_code }
+
+# Poll statistics
+def statistics_poll(token, idMod, idPoll):
+    url = (server
+           + "/mod/" + str(idMod)
+           + "/poll/" + str(idPoll)
+           + "/statistics"
+           + "?token=" + token
+           )
+    res = requests.get(url)
+    if (res.status_code==200):
+        return res.json()
     else:
         return { "error" : res.status_code }
