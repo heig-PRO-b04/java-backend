@@ -56,7 +56,7 @@ Les tests effectués sont les suivants :
         - TODO Modification du mot de passe utilisateur
         - TODO Suppression du compte utilisateur
 
-## programmation en Elm
+## Programmation en Elm
 
 ## Instructions pour vérifier les protocoles
 L'entièreté des tests unitaires, d'intégration continue, de formatage, et autres ayant été effectués sur GitHub grâce à Travis CI et à GitHub Actions, un historique pour chacun de ces tests pour chaque Pull Request ou commit de merge sur le master y est disponible.\
