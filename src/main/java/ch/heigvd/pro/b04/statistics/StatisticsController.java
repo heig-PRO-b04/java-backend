@@ -211,6 +211,46 @@ public class StatisticsController {
       QuestionStatistics.QuestionStatisticsBuilder questionBuilder = QuestionStatistics.builder();
       questionBuilder.title(question.getTitle());
 
+      // Get all the participants that are accounted for.
+      var acceptedParticipants = question.getAnswersToQuestion().parallelStream()
+          // Get all the votes of the participants, for all of the answers of the question.
+          .flatMap(serverAnswer -> serverAnswer.getVoteSet().stream()
+              .map(serverVote -> serverVote.getIdVote()
+                  .getIdxParticipant()
+                  .getIdParticipant()))
+          .filter(participantIdentifier -> {
+            long positive = votes.findAllByParticipantAndQuestion(participantIdentifier,
+                question.getIdServerQuestion()).stream()
+                // Group the votes by answer identifier.
+                .collect(Collectors.groupingBy(serverVote -> serverVote.getIdVote()
+                    .getIdxServerAnswer()
+                    .getIdAnswer()))
+                .entrySet()
+                .parallelStream()
+                // Only keep the latest vote checked for a any answer.
+                .map(participantIdentifierListEntry ->
+                    participantIdentifierListEntry.getValue().stream()
+                        .max(Comparator
+                            .comparing(serverVote -> serverVote.getIdVote().getTimeVote()))
+                        .map(ServerVote::isAnswerChecked)
+                        .orElse(false))
+                // Count the number of positive votes.
+                .filter(Boolean::booleanValue)
+                .count();
+
+            // Are we in the allowed negative range ?
+            boolean acceptedNegative =
+                question.getAnswersMin() < 0 || question.getAnswersMin() <= positive;
+
+            // Are we in the allowed positive range ?
+            boolean acceptedPositive =
+                question.getAnswersMax() <= 0 || question.getAnswersMax() >= positive;
+
+            // Acceptance criteria for this participant for this question.
+            return acceptedNegative && acceptedPositive;
+          })
+          .collect(Collectors.toUnmodifiableSet());
+
       for (ServerAnswer answer : question.getAnswersToQuestion()) {
         AnswerStatistics.AnswerStatisticsBuilder answerBuilder = AnswerStatistics.builder();
         answerBuilder.title(answer.getTitle());
@@ -223,6 +263,8 @@ public class StatisticsController {
                 .getIdParticipant()))
             .entrySet()
             .parallelStream()
+            // Only participants with a valid number of votes are allowed this this question.
+            .filter(entry -> acceptedParticipants.contains(entry.getKey()))
             // Get the latest vote for the participant.
             .map(participantIdentifierListEntry ->
                 participantIdentifierListEntry.getValue().stream()
