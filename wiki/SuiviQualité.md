@@ -36,7 +36,7 @@ Les tests effectués sont les suivants :
 
 - Pour le frontend web :
     - tests de formatage du code Elm permettant une homogénéité du code entre les différents auteurs.
-    - tests analysant de code de manière statique permettant de vérifier l'utilisation de bonnes pratiques de 
+    - tests analysant de code de manière statique permettant de vérifier l'utilisation de bonnes pratiques de
     -  tests d'intégration continue end-to-end scriptant une utilisation graphique de l'application web.\
     Ces tests sont effectués déployant le backend et le frontend en local, et utilisant Selenium pour scripter une utilisation graphique de l'application et assurer que plusieurs scénarios d'utilisations sont toujours possibles et qu'aucune régression fonctionnelle n'est engendrée par les modifications.\
     Les Scénarios d'utilisation testés graphiquement avec Selenium sont les suivants :
@@ -54,9 +54,9 @@ Les tests effectués sont les suivants :
         - Suppression d'un sondage
         - TODO Modification du nom de compte utilisateur
         - TODO Modification du mot de passe utilisateur
-        - TODO Suppression du compte utilisateurprogrammation en Elm
+        - TODO Suppression du compte utilisateur
 
-        
+## programmation en Elm
 
 ## Instructions pour vérifier les protocoles
 L'entièreté des tests unitaires, d'intégration continue, de formatage, et autres ayant été effectués sur GitHub grâce à Travis CI et à GitHub Actions, un historique pour chacun de ces tests pour chaque Pull Request ou commit de merge sur le master y est disponible.\

@@ -56,8 +56,7 @@ La configuration `yarn` permet aussi d'utiliser les commandes suivantes :
 #### Tests d'intégration
 
 Une suite de tests d'intégration est lancée à chaque commit sur GitHub. Les
-résultats d'exécution sont disponibles dans la section
-[Actions](https://github.com/heig-PRO-b04/elm-frontend/actions?query=workflow%3A%22Integration+Tests%22)
+résultats d'exécution sont disponibles dans la section [Actions](https://github.com/heig-PRO-b04/elm-frontend/actions?query=workflow%3A%22Integration+Tests%22)
 du repository. Les scripts de lancement des tests ont été écrrits pour la
 plateforme GitHub Actions / Ubuntu LTS et sont disponible dans le
 sous-dossier `.github/workflows`.
@@ -75,7 +74,8 @@ Notre application peut être trouvée sur le Google Play Store sous le nom :
 Clicker sur *Installer* puis *Ouvrir* afin d'utiliser l'application.
 
 #### Git
-Afin d'installer cette application depuis le repository git, il faudra avoir [AndroidStudio](https://developer.android.com/studio/?gclid=CjwKCAjwqpP2BRBTEiwAfpiD-x7x769nVXJsrEjLQddG8JdqBmjl1YnouceOM0egLysoSMzrr1Z6DBoCB2gQAvD_BwE&gclsrc=aw.ds), ou un autre IDE compatible avec le developpement Android, installé sur votre machine.
+Afin d'installer cette application depuis le repository git, il faudra avoir
+[AndroidStudio](https://developer.android.com/studio/?gclid=CjwKCAjwqpP2BRBTEiwAfpiD-x7x769nVXJsrEjLQddG8JdqBmjl1YnouceOM0egLysoSMzrr1Z6DBoCB2gQAvD_BwE&gclsrc=aw.ds), ou un autre IDE compatible avec le developpement Android, installé sur votre machine.
 Il est aussi possible d'installer l'application en suivant les instructions suivantes :
 
 1. Télécharger ou cloner ce repository git sur votre machine locale.
@@ -246,20 +246,20 @@ Les tests effectués sont les suivants :
         + Ouverture du sondage aux participants
         + Récupération du code Emoji
         + Création de question dans les différents modes de visibilité disponibles
-        + TODO Modification de la description de la question
+        + Modification de la description de la question
         + Création d'une réponse
         + Modification de nombre de réponses minimum / maximum pour une question
         + Suppression d'une réponse
         + Suppression d'une question
         + Suppression d'un sondage
-        + TODO Modification du nom de compte utilisateur
-        + TODO Modification du mot de passe utilisateur
-        + TODO Suppression du compte utilisateurprogrammation en Elm
+        + Modification du nom de compte utilisateur
+        + Modification du mot de passe utilisateur
+        + Suppression du compte utilisateur
 
 ### Instructions pour vérifier les protocoles
 L'entièreté des tests unitaires, d'intégration continue, de formatage, et autres ayant été effectués sur GitHub grâce à Travis CI et à GitHub Actions, un historique pour chacun de ces tests pour chaque Pull Request ou commit de merge sur le master y est disponible.\
-Chaque Pull Request avec les tests effectués, la personne ayant revu le code (et potentiellement commenté / demandé des modifications), ainsi que les changements effectués sont disponibles aux adresses suivantes:
+Chaque Pull Request avec les tests effectués, la personne ayant revu le code (et potentiellement commenté / demandé des modifications), ainsi que les changements effectués sont disponibles aux adresses suivantes :
 
-- Pour le backend: https://github.com/heig-PRO-b04/java-backend/pulls?q=is:pr+is:closed
-- Pour le frontend android: https://github.com/heig-PRO-b04/android-frontend/pulls?q=is:pr+is:closed
-- Pour le frontend web: https://github.com/heig-PRO-b04/elm-frontend/pulls?q=is:pr+is:closed
+- Pour le [backend](https://github.com/heig-PRO-b04/java-backend/pulls?q=is:pr+is:closed)
+- Pour le [frontend android](https://github.com/heig-PRO-b04/android-frontend/pulls?q=is:pr+is:closed)
+- Pour le [frontend web](https://github.com/heig-PRO-b04/elm-frontend/pulls?q=is:pr+is:closed)
