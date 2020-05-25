@@ -19,9 +19,7 @@ ans = [ "Shaak Ti"
        , "Aayla Secura"
        ,"Ahsoka Tano"
        ,"Dark Talon" ]
-##idA1=ans[0]["idAnswer"]
 idA1=0
-#idA2=ans[1]["idAnswer"]
 idA2=1
 
 api.postAnswer(tokenMod, idMod, idPoll, idQ1, ans[0], "")
@@ -61,7 +59,7 @@ api.vote(tokenUser, user_idMod, user_idPoll, idQ1, idA1, True)
 api.vote(tokenUser2, user2_idMod, user2_idPoll, idQ2, idA1, True)
 
 user_questions = api.getQuestion(tokenUser, user_idMod, user_idPoll)
-stats=api.getStats(tokenMod,idMod,idPoll)
+stats=api.statistics_poll(tokenMod,idMod,idPoll)
 
 flag = False;
 for each in stats:
@@ -74,9 +72,9 @@ for question in user_questions:
         sys.exit(1)
 
     answers = api.getAnswer(tokenUser, user_idMod, user_idPoll, question["idQuestion"])
-    #for a in answers:
-        #if a["title"] in ans:
-            #flag = True
+    for a in answers:
+        if a["title"] in ans:
+            flag = True
 
 if not flag:
     print("[FAILED] Title from answers should be found in answer list")
