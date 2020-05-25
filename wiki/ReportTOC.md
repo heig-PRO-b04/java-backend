@@ -1,4 +1,4 @@
-#Rapport : Table des matières
+# Rapport : Table des matières
 
 - [Rapport : rendu final](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#rapport---rendu-final)
   * [Package de test/installation](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#package-de-test-installation)
