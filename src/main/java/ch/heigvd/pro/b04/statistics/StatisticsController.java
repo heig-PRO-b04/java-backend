@@ -20,8 +20,10 @@ import ch.heigvd.pro.b04.statistics.ServerQuestionStatistics.VoteCount;
 import ch.heigvd.pro.b04.votes.ServerVote;
 import ch.heigvd.pro.b04.votes.ServerVoteRepository;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -238,64 +240,54 @@ public class StatisticsController {
           .map(participantIdentifierListEntry ->
               participantIdentifierListEntry.getValue().stream()
                   .sorted((a1, a2) -> a1.compareTo(a2))
-                  //.limit(question.getAnswersMax())
-                  //.max(Comparator.comparing(serverVote -> serverVote.getIdVote().getTimeVote()))
-                  //.map(ServerVote::isAnswerChecked)
                   .collect(Collectors.toList()))
-          //.orElse(false))
           .collect(Collectors.toUnmodifiableList());
       //at this point, groupedByParticipant is a List<List<ServerVote>>
 
-      //*2 to avoid surely out of bounds, theoretically (+1) would be enough
-      short[] positive = new short[question.getAnswersToQuestion().size() * 2];
-      short[] negative = new short[question.getAnswersToQuestion().size() * 2];
-
+      Map<Long, Short> posV = new HashMap<>();
+      Map<Long, Short> negV = new HashMap<>();
       //counting negative and positives votes one participant at a time
-      for (short x = 0; x < groupedByParticipant.size(); ++x) {
+      for (List<ServerVote> serverVotes : groupedByParticipant) {
         short participantCount = 0;
         short y = 0;
-        for (; y < groupedByParticipant.get(x).size(); ++y) {
-          if (groupedByParticipant.get(x).get(y).isAnswerChecked()) {
+        for (; y < serverVotes.size(); ++y) {
+          if (serverVotes.get(y).isAnswerChecked()) {
             ++participantCount;
             //limit to answersMax positive votes.
             // remember most recent votes are the first ones in the list.
             if (!(participantCount > question.getAnswersMax())) {
-              ++positive[(int) groupedByParticipant.get(x).get(y).getIdVote().getIdxServerAnswer()
-                  .getIdAnswer()
-                  .getIdAnswer()];
+              posV.merge(
+                  serverVotes.get(y).getIdVote().getIdxServerAnswer().getIdAnswer().getIdAnswer(),
+                  (short) 1, (old, newV) -> ++old);
             }
           } else {
-            ++negative[(int) groupedByParticipant.get(x).get(y).getIdVote().getIdxServerAnswer()
-                .getIdAnswer()
-                .getIdAnswer()];
+            negV.merge(
+                serverVotes.get(y).getIdVote().getIdxServerAnswer().getIdAnswer().getIdAnswer(),
+                (short) 1, (old, newV) -> ++old);
           }
         }
+        --y; // to compensate the ++y before quitting the loop
         //votes not counted if total lesser than answersMin
         if (participantCount < question.getAnswersMin()) {
-          positive[(int) groupedByParticipant.get(x).get(y).getIdVote().getIdxServerAnswer()
-              .getIdAnswer()
-              .getIdAnswer()] = 0;
+          posV.put(serverVotes.get(y).getIdVote().getIdxServerAnswer().getIdAnswer().getIdAnswer(),
+              (short) 0);
         }
       }
 
       //build statistics
       for (ServerAnswer a : question.getAnswersToQuestion()) {
         AnswerStatistics.AnswerStatisticsBuilder answerBuilder = AnswerStatistics.builder();
+        long key = a.getIdAnswer().getIdAnswer();
         answerBuilder.idAnswer(a.getIdAnswer().getIdAnswer());
         answerBuilder.title(a.getTitle());
-        answerBuilder.negative(negative[(int) a.getIdAnswer().getIdAnswer()]);
-        answerBuilder.positive(positive[(int) a.getIdAnswer().getIdAnswer()]);
+        answerBuilder.negative(negV.containsKey(key) ? negV.get(a.getIdAnswer().getIdAnswer()) : 0);
+        answerBuilder.positive(posV.containsKey(key) ? posV.get(a.getIdAnswer().getIdAnswer()) : 0);
         answersS.add(answerBuilder.build());
       }
-      // Fetch the positive and negative answer counts.
-      //answerBuilder.negative(((int) groupedByParticipant.stream().filter(b -> b!=b).count()));
-      //answerBuilder.positive(((int) groupedByParticipant.stream().filter(b -> b==b).count()));
 
-      //questionBuilder.answer(answers);
       questionBuilder.answers(answersS);
       //}//end foreach answer
       questionsS.add(questionBuilder.build());
-      //builder.question(questionBuilder.build());
     } //end foreach question
     builder.questions(questionsS);
     return builder.build();
