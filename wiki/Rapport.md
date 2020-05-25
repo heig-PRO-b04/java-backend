@@ -2,21 +2,20 @@
 Ce document contient toutes les informations demandées pour le rendu final de ce projet.
 Ce dernier étant composé de trois axes, nous avons séparé les détails de ces trois axes.
 
-- [Test/installation](##Test/installation)
-  + [Web](###Web)
-  + [Android](###Android)
-  + [Back-end](###Back-end)
-- [Structure](##Structure)
-  + [Web](###Web)
-  + [Android](###Android)
-  + [Back-end](###Back-end)
-- [Qualité](##Qualité)
-  + [Générale](###Générale)
-  + [Web](###Web)
-  + [Android](###Android)
-  + [Back-end](###Back-end)
+- [Package de test/installation](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Package-de-testinstallation)
+  + [Web](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Web)
+  + [Android](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Android)
+  + [Back-end](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Back-end)
+- [Organisation du code](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Organisation-du-code)
+  + [Web](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Web-1)
+  + [Android](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Android-1)
+  + [Back-end](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Back-end-1)
+- [Suivi Qualité](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Suivi-Qualité)
+  + [Principe général](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Principe-général)
+  + [Liste des contrôles effectués](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Liste-des-contrôles-effectués)
+  + [Instructions pour vérifier les protocoles](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport#Instructions-pour-vérifier-les-protocoles)
 
-## Test/installation
+## Package de test/installation
 
 ### Web
 Le frontend de notre application est distribué sous la forme d'un projet
@@ -57,8 +56,7 @@ La configuration `yarn` permet aussi d'utiliser les commandes suivantes :
 #### Tests d'intégration
 
 Une suite de tests d'intégration est lancée à chaque commit sur GitHub. Les
-résultats d'exécution sont disponibles dans la section
-[Actions](https://github.com/heig-PRO-b04/elm-frontend/actions?query=workflow%3A%22Integration+Tests%22)
+résultats d'exécution sont disponibles dans la section [Actions](https://github.com/heig-PRO-b04/elm-frontend/actions?query=workflow%3A%22Integration+Tests%22)
 du repository. Les scripts de lancement des tests ont été écrrits pour la
 plateforme GitHub Actions / Ubuntu LTS et sont disponible dans le
 sous-dossier `.github/workflows`.
@@ -76,7 +74,8 @@ Notre application peut être trouvée sur le Google Play Store sous le nom :
 Clicker sur *Installer* puis *Ouvrir* afin d'utiliser l'application.
 
 #### Git
-Afin d'installer cette application depuis le repository git, il faudra avoir [AndroidStudio](https://developer.android.com/studio/?gclid=CjwKCAjwqpP2BRBTEiwAfpiD-x7x769nVXJsrEjLQddG8JdqBmjl1YnouceOM0egLysoSMzrr1Z6DBoCB2gQAvD_BwE&gclsrc=aw.ds), ou un autre IDE compatible avec le developpement Android, installé sur votre machine.
+Afin d'installer cette application depuis le repository git, il faudra avoir
+[AndroidStudio](https://developer.android.com/studio/?gclid=CjwKCAjwqpP2BRBTEiwAfpiD-x7x769nVXJsrEjLQddG8JdqBmjl1YnouceOM0egLysoSMzrr1Z6DBoCB2gQAvD_BwE&gclsrc=aw.ds), ou un autre IDE compatible avec le developpement Android, installé sur votre machine.
 Il est aussi possible d'installer l'application en suivant les instructions suivantes :
 
 1. Télécharger ou cloner ce repository git sur votre machine locale.
@@ -89,7 +88,7 @@ En cas de téléchargement de l'archive, l'extraire et passer à l'instruction s
 
 ### Back-end
 
-## Structure
+## Organisation du code
 
 ### Web
 #### Structure générale
@@ -198,13 +197,69 @@ Ce paquet contient différentes classes utilisées dans tout le projet.
 
 ### Back-end
 
-## Qualité
-### Générale
+## Suivi Qualité
+### Principe général
 Afin de nous assurer de la qualité de notre projet sur la durée, nous avons mis en place un certain nombre d'outils nous permettant de tester le bon fonctionnement de chaque axe du projet de manière automatisée.
 Notre objectif était de nous assurer d'avoir un endroit ou le projet reste dans un état cohérent, fonctionnel et accessible pour tous les membres du groupes. Nous avons donc décidé d'utiliser [GitHub](github.com) pour stocker une version que nous assurons toujours fonctionnelle de notre projet. Avec ceci, nous utilisons [Travis](https://travis-ci.org/) qui nous permet de faire tourner des tests à chaque Pull Request (PR) sur la branche maitresse de notre projet. Avec tous ces outils, nous avons pu mettre en place un certain nombre de règles nous empêchant de mettre sur la version centrale du projet, tout code ne passant pas les tests. De plus, nous avons décidé d'empêcher l'ajout de code tant que ce dernier n'a pas été revu par un autre membre du groupe.
 
-### Web
+### Liste des contrôles effectués
+Comme expliqué dans la section précédente, chaque modification de code sur la branche master est effectuée par une avec code review par au moins une personne comprenant le code et travaillant dans le même pôle. En plus de cela, un certain nombre de tests sont effectués automatiquement et dont les résultats sont disponibles sur la page GitHub de la Pull Request en question. Au cours du projet, de plus en plus de tests permettant de garantir la qualité du produit ont été ajoutés.\
+Les tests effectués sont les suivants :
 
-### Android
+- Pour le backend
+    + tests unitaires testant le chacun des endpoints de la manière suivante:
+        + Simuler la population du contenu de la base de donnée avec des données factices
+        + Vérification que un scénario d'utilisation standard de l'endpoint produise le résultat attendu
+        + Vérification que un scénario de mauvaise utilisation de l'endpoint lève les exceptions attendues
+    + tests de formattage suivant Google Checkstyle
+        + Documentation obligatoire pour tout méthode publique
+        + Formattage du code selon le "Google Java Style Guide"
+    + tests d'intégration vérifiant le fonctionnement des différents endpoints et leur conformité à l'api.\
+    Ces tests sont effectués en déployant le backend en local grâce à Docker-Compose et effectuant des requêtes grâce à des scripts python\
+    Les tests effectués sont les suivants :
+        + En tant que modérateur    
+            + Enregistrement d'un utilisateur
+            + Connexion d'un utilisateur
+            + Création d'un sondage
+            + Création de questions
+            + Création de réponses
+            + Ouverture du sondage aux participants
+        + En tant que participant
+            + Connexion à un sondage
+            + Récupération des questions
+            + Récupération des réponses
 
-### Back-end
+- Pour le frontend android :
+    + Test de compilation
+    + TODO Tests graphiques avec Espresso
+    + A noter que le formatage "Google Java Style Guide" n'a pas été appliqué de manière stricte, le Framework Android le rendant non pertinent. Tout les collaborateurs ayant contribué au frontend android utilisent donc le même éditeur, qui formate le code de la même manière localement.
+
+- Pour le frontend web :
+    + tests de formatage du code Elm permettant une homogénéité du code entre les différents auteurs.
+    + tests analysant de code de manière statique permettant de vérifier l'utilisation de bonnes pratiques de
+    +  tests d'intégration continue end-to-end scriptant une utilisation graphique de l'application web.\
+    Ces tests sont effectués déployant le backend et le frontend en local, et utilisant Selenium pour scripter une utilisation graphique de l'application et assurer que plusieurs scénarios d'utilisations sont toujours possibles et qu'aucune régression fonctionnelle n'est engendrée par les modifications.\
+    Les Scénarios d'utilisation testés graphiquement avec Selenium sont les suivants :
+        + Enregistrement d'un utilisateur
+        + Connexion d'un utilisateur
+        + Création d'un sondage
+        + Ouverture du sondage aux participants
+        + Récupération du code Emoji
+        + Création de question dans les différents modes de visibilité disponibles
+        + Modification de la description de la question
+        + Création d'une réponse
+        + Modification de nombre de réponses minimum / maximum pour une question
+        + Suppression d'une réponse
+        + Suppression d'une question
+        + Suppression d'un sondage
+        + Modification du nom de compte utilisateur
+        + Modification du mot de passe utilisateur
+        + Suppression du compte utilisateur
+
+### Instructions pour vérifier les protocoles
+L'entièreté des tests unitaires, d'intégration continue, de formatage, et autres ayant été effectués sur GitHub grâce à Travis CI et à GitHub Actions, un historique pour chacun de ces tests pour chaque Pull Request ou commit de merge sur le master y est disponible.\
+Chaque Pull Request avec les tests effectués, la personne ayant revu le code (et potentiellement commenté / demandé des modifications), ainsi que les changements effectués sont disponibles aux adresses suivantes :
+
+- Pour le [backend](https://github.com/heig-PRO-b04/java-backend/pulls?q=is:pr+is:closed)
+- Pour le [frontend android](https://github.com/heig-PRO-b04/android-frontend/pulls?q=is:pr+is:closed)
+- Pour le [frontend web](https://github.com/heig-PRO-b04/elm-frontend/pulls?q=is:pr+is:closed)
