@@ -19,8 +19,10 @@ ans = [ "Shaak Ti"
        , "Aayla Secura"
        ,"Ahsoka Tano"
        ,"Dark Talon" ]
-idA1=ans[0]["idAnswer"]["idAnswer"]
-idA2=ans[1]["idAnswer"]["idAnswer"]
+##idA1=ans[0]["idAnswer"]
+idA1=0
+#idA2=ans[1]["idAnswer"]
+idA2=1
 
 api.postAnswer(tokenMod, idMod, idPoll, idQ1, ans[0], "")
 api.postAnswer(tokenMod, idMod, idPoll, idQ1, ans[1], "")
