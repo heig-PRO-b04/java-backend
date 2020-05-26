@@ -256,8 +256,8 @@ public class QuestionController {
         findQuestionByPollAndModerator(idModerator, idPoll, idQuestion, token)
             .orElseThrow(ResourceNotFoundException::new);
 
-    short answersMax=(question.getAnswersMax()<question.getAnswersMin()?
-        question.getAnswersMin():question.getAnswersMax());
+    short answersMax = (question.getAnswersMax() < question.getAnswersMin()
+        ? question.getAnswersMin() : question.getAnswersMax());
 
     updated.setIndexInPoll(question.getIndexInPoll());
     updated.setTitle(question.getTitle());

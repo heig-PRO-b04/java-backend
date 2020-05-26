@@ -86,8 +86,8 @@ public class ServerPoll implements Serializable {
    * @param newQuestion The question to be added.
    */
   public ServerQuestion newQuestion(QuestionRepository repoQ, ClientQuestion newQuestion) {
-    short answersMax=(newQuestion.getAnswersMax()<newQuestion.getAnswersMin()?
-        newQuestion.getAnswersMin():newQuestion.getAnswersMax());
+    short answersMax = (newQuestion.getAnswersMax() < newQuestion.getAnswersMin()
+        ? newQuestion.getAnswersMin() : newQuestion.getAnswersMax());
 
     ServerQuestion qqW = ServerQuestion.builder()
         .idServerQuestion(ServerQuestionIdentifier.builder()
@@ -130,7 +130,8 @@ public class ServerPoll implements Serializable {
     return repository.saveAndFlush(newServerSession);
   }
 
-  /** Returns the latest session made in this poll.
+  /**
+   * Returns the latest session made in this poll.
    *
    * @param repository The session repository
    * @return An Optional {@link ServerSession}. If set, it contains the last session of the poll.
