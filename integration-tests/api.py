@@ -292,7 +292,7 @@ def vote(token, idMod, idPoll, idQuestion, idAnswer, checked):
         return
     else:
         return { "error" : res.status_code }
-
+    
 # Poll statistics
 def statistics_poll(token, idMod, idPoll):
     url = (server
