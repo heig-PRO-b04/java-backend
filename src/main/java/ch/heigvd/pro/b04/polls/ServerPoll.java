@@ -86,6 +86,9 @@ public class ServerPoll implements Serializable {
    * @param newQuestion The question to be added.
    */
   public ServerQuestion newQuestion(QuestionRepository repoQ, ClientQuestion newQuestion) {
+    short answersMax=(newQuestion.getAnswersMax()<newQuestion.getAnswersMin()?
+        newQuestion.getAnswersMin():newQuestion.getAnswersMax());
+
     ServerQuestion qqW = ServerQuestion.builder()
         .idServerQuestion(ServerQuestionIdentifier.builder()
             .idxPoll(this)
@@ -95,7 +98,7 @@ public class ServerPoll implements Serializable {
         .details(newQuestion.getDetails())
         .visibility(newQuestion.getVisibility())
         .indexInPoll(newQuestion.getIndexInPoll())
-        .answersMax(newQuestion.getAnswersMax())
+        .answersMax(answersMax)
         .answersMin(newQuestion.getAnswersMin()).build();
     return repoQ.save(qqW);
   }

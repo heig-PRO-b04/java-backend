@@ -256,12 +256,15 @@ public class QuestionController {
         findQuestionByPollAndModerator(idModerator, idPoll, idQuestion, token)
             .orElseThrow(ResourceNotFoundException::new);
 
+    short answersMax=(question.getAnswersMax()<question.getAnswersMin()?
+        question.getAnswersMin():question.getAnswersMax());
+
     updated.setIndexInPoll(question.getIndexInPoll());
     updated.setTitle(question.getTitle());
     updated.setDetails(question.getDetails());
     updated.setVisibility(question.getVisibility());
     updated.setAnswersMin(question.answersMin);
-    updated.setAnswersMax(question.answersMax);
+    updated.setAnswersMax(answersMax);
 
     return updated;
   }
