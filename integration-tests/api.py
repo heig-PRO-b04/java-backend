@@ -14,15 +14,6 @@ def register(username, password):
     else:
         return { "error" : res.status_code }
 
-def login(username, password):
-    data = { "username" : username, "password" : password }
-    url = server + "/auth"
-    res = requests.post(url, json = data)
-    if (res.status_code == 200):
-        return res.json()
-    else:
-        return { "error" : res.status_code }
-
 def auth(username, password):
     data = { "username" : username, "password" : password }
     url = server + "/auth"
