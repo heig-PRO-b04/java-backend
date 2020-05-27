@@ -288,11 +288,8 @@ def vote(token, idMod, idPoll, idQuestion, idAnswer, checked):
             )
     data = { "checked" : checked }
     res = requests.put(url, json = data)
-    if (res.status_code == 200):
-        return
-    else:
-        return { "error" : res.status_code }
-    
+    return { "code" : res.status_code }
+
 # Poll statistics
 def statistics_poll(token, idMod, idPoll):
     url = (server

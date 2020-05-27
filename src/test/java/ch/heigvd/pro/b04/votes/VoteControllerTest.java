@@ -1,12 +1,10 @@
 package ch.heigvd.pro.b04.votes;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-import ch.heigvd.pro.b04.answers.AnswerController;
 import ch.heigvd.pro.b04.answers.AnswerRepository;
 import ch.heigvd.pro.b04.answers.ServerAnswer;
 import ch.heigvd.pro.b04.answers.ServerAnswerIdentifier;
@@ -21,6 +19,7 @@ import ch.heigvd.pro.b04.polls.ServerPoll;
 import ch.heigvd.pro.b04.polls.ServerPollIdentifier;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.questions.QuestionRepository;
+import ch.heigvd.pro.b04.questions.QuestionVisibility;
 import ch.heigvd.pro.b04.questions.ServerQuestion;
 import ch.heigvd.pro.b04.questions.ServerQuestionIdentifier;
 import ch.heigvd.pro.b04.sessions.ServerSession;
@@ -28,7 +27,6 @@ import ch.heigvd.pro.b04.sessions.SessionIdentifier;
 import ch.heigvd.pro.b04.sessions.SessionRepository;
 import ch.heigvd.pro.b04.sessions.SessionState;
 import ch.heigvd.pro.b04.sessions.exceptions.SessionNotAvailableException;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -108,6 +106,7 @@ public class VoteControllerTest {
         .idServerQuestion(qi1)
         .title("Do you dream of Scorchers ?")
         .answersToQuestion(Set.of(a1, a2))
+        .visibility(QuestionVisibility.VISIBLE)
         .build();
 
     poll = ServerPoll.builder()
