@@ -91,7 +91,7 @@ public class PollController {
 
     Optional<Moderator> authenticatedModerator = moderators.findByToken(token);
     Optional<Participant> authenticatedParticipant = participants.findByToken(token)
-        .filter(p -> SessionState.OPEN == p.getIdParticipant()
+        .filter(p -> SessionState.CLOSED != p.getIdParticipant()
             .getIdxServerSession()
             .getState());
 
