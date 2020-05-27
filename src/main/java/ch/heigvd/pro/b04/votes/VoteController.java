@@ -11,6 +11,7 @@ import ch.heigvd.pro.b04.participants.Participant;
 import ch.heigvd.pro.b04.participants.ParticipantRepository;
 import ch.heigvd.pro.b04.polls.ServerPollRepository;
 import ch.heigvd.pro.b04.questions.QuestionRepository;
+import ch.heigvd.pro.b04.questions.QuestionVisibility;
 import ch.heigvd.pro.b04.questions.ServerQuestion;
 import ch.heigvd.pro.b04.questions.ServerQuestionIdentifier;
 import ch.heigvd.pro.b04.sessions.ServerSession;
@@ -103,6 +104,7 @@ public class VoteController {
             .idServerQuestion(idQuestion)
             .idxPoll(session.getIdSession().getIdxPoll())
             .build())
+        .filter( serverQuestion -> serverQuestion.getVisibility().equals(QuestionVisibility.VISIBLE))
         .orElseThrow(ResourceNotFoundException::new);
 
     ServerAnswer answerChanged = answerRepository
