@@ -104,7 +104,7 @@ public class VoteController {
             .idServerQuestion(idQuestion)
             .idxPoll(session.getIdSession().getIdxPoll())
             .build())
-        .filter(serverQuestion -> serverQuestion.getVisibility().equals(QuestionVisibility.VISIBLE))
+        .filter(serverQuestion -> serverQuestion.getVisibility() == QuestionVisibility.VISIBLE)
         .orElseThrow(ResourceNotFoundException::new);
 
     ServerAnswer answerChanged = answerRepository
