@@ -223,7 +223,7 @@ public class SessionController {
   @GetMapping(value = "/session")
   @Transactional
   public ServerSession getUserSession(@RequestParam(name = "token") String token)
-      throws WrongCredentialsException,SessionNotAvailableException {
+      throws WrongCredentialsException {
     ServerSession session = participantRepository.getAssociatedSession(token)
         .orElseThrow(WrongCredentialsException::new);
 

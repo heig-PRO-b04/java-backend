@@ -222,8 +222,7 @@ public class SessionControllerTest {
         when(participantRepository.getAssociatedSession(token)).thenReturn(
             Optional.of(serverSession));
 
-        assertThrows(SessionNotAvailableException.class,
-            () -> sessionController.getUserSession(token));
+        assertDoesNotThrow(() -> sessionController.getUserSession(token));
     }
 
     @Test
@@ -237,8 +236,7 @@ public class SessionControllerTest {
         when(participantRepository.getAssociatedSession(token)).thenReturn(
             Optional.of(serverSession));
 
-        assertThrows(SessionNotAvailableException.class,
-            () -> sessionController.getUserSession(token));
+        assertDoesNotThrow(() -> sessionController.getUserSession(token));
     }
 
     @Test
