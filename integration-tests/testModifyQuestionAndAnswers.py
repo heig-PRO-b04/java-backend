@@ -1,7 +1,7 @@
 import api
 import sys
 
-reg = api.register("aloy", "chieftain")
+reg = api.auth("aloy", "chieftain")
 
 tokenMod = reg["token"]
 idMod = reg["idModerator"]
