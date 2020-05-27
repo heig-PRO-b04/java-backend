@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.util.Set;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -28,6 +29,8 @@ public class ServerAnswer {
   private ServerAnswerIdentifier idAnswer;
 
   private String title;
+
+  @Column(columnDefinition = "TEXT")
   private String description;
 
   @Transient

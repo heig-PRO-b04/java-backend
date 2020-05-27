@@ -6,6 +6,7 @@ import ch.heigvd.pro.b04.answers.ServerAnswer;
 import ch.heigvd.pro.b04.answers.ServerAnswerIdentifier;
 import java.util.Set;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -29,6 +30,7 @@ public class ServerQuestion {
   protected String title;
   @Setter
   @Getter
+  @Column(columnDefinition = "TEXT")
   protected String details;
   @Setter
   @Getter
