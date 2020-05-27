@@ -49,5 +49,3 @@ if user_poll3["error"] != 403:
     sys.exit(1)
 
 api.account_delete(tokenMod, idMod, password)
-
-print("[SUCCESS]")
