@@ -227,10 +227,6 @@ public class SessionController {
     ServerSession session = participantRepository.getAssociatedSession(token)
         .orElseThrow(WrongCredentialsException::new);
 
-    if (! session.getState().equals(SessionState.OPEN)) {
-      throw new SessionNotAvailableException();
-    }
-
     return session;
   }
 }
