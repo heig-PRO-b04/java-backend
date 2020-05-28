@@ -1,8 +1,5 @@
 Welcome to the **heig-PRO-b04** wiki!
 
-A **journal** with the latest news and meeting notes can be found
-[here](Journal/Journal) and a **report** with required indications can be found [here](Rapport). Unlike the rest of the wiki, they are stored in French.
-
 * Collaboration guidelines can be found [on the Collaboration document](Collaboration).
   + Specifics about meetings are in the [meetings document](Meetings).
 * A database setup guide can be found on [this document](Database.Setup).
