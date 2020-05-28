@@ -9,8 +9,6 @@
 
 [Meetings](https://github.com/heig-PRO-b04/java-backend/wiki/Meetings)
 
-[Journal](https://github.com/heig-PRO-b04/java-backend/wiki/Journal)
-
 [Rapport](https://github.com/heig-PRO-b04/java-backend/wiki/Rapport)
 
 ## API
